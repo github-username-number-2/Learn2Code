@@ -1,0 +1,11 @@
+html,
+body {
+	width: 100vw;
+	height: 100vh;
+	margin: 0px;
+	overflow: hidden;
+	max-width: 100%;
+	font-family: "Source Code Pro", monospace;
+	cursor: default;
+	text-rendering: optimizeLegibility;
+}

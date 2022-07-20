@@ -1,0 +1,16 @@
+{
+	"info": {
+		"id": "demo",
+		"display": "Demo"
+	},
+	"defaultOpenFile": "testFolder/main.js",
+	"startingFileSystem": {
+		"testFolder": {
+			"main.js": "console.log(mmm);"
+		},
+		"index.html": "<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src=\"main/js\"></script>\n\t</body>\n</html>"
+	},
+	"tutorial": [
+		{}
+	]
+}
