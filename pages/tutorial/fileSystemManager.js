@@ -25,24 +25,26 @@ export default async function createFileSystemManager() {
 		iconImages[iconName] = await loadImage(`/images/${iconName}`);
 	}));
 
+	let fileSystem, activeItem, activeDirectory;
+
 	return {
-		fileSystem: {},
-		activeItem: "root",
+		loadFileSystem: function (newFileSystem) {
+			fileSystem = { "root": {} };
+			activeItem = "root";
+			activeDirectory = fileSystem;
 
-		loadFileSystem: function (fileSystem) {
-			this.fileSystem = { "root": {} };
-
-			for (const item in fileSystem) {
-				this.addItem(item, fileSystem[item], "root");
+			for (const item in newFileSystem) {
+				this.addItem(item, newFileSystem[item], "root");
 			}
 		},
 		addItem: function (itemName, itemContents, targetDirectoryPath) {
 			targetDirectoryPath = targetDirectoryPath.split(" ");
-			const targetDirectoryName = targetDirectoryPath.pop();
-			const targetDirectory = document.querySelector(`div[data-name="${targetDirectoryName}"][data-path="${targetDirectoryPath.join(" ")}"]`);
-			const currentPath = targetDirectoryPath.length ? `${targetDirectoryPath.join(" ")} ${targetDirectoryName}` : targetDirectoryName;
-			const itemDepth = targetDirectoryPath.length + 1;
-			const isDirectory = typeof itemContents === "object";
+			const targetDirectoryName = targetDirectoryPath.pop(),
+				targetDirectory = document.querySelector(`div[data-name="${targetDirectoryName}"][data-path="${targetDirectoryPath.join(" ")}"]`);
+
+			const currentPath = targetDirectoryPath.length ? `${targetDirectoryPath.join(" ")} ${targetDirectoryName}` : targetDirectoryName,
+				itemDepth = targetDirectoryPath.length + 1,
+				isDirectory = typeof itemContents === "object";
 
 			const itemElement = elementFromString(
 				`<div class="file" data-path="${currentPath}"><canvas class="fileIcon"></canvas><p class="fileText"></p></div>`
@@ -64,11 +66,11 @@ export default async function createFileSystemManager() {
 
 			const context = icon.getContext("2d");
 
-			let targetDirectoryObject = this.fileSystem;
+			let targetDirectoryObject = fileSystem;
 			for (const directory of currentPath.split(" ")) {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
-			targetDirectoryObject[itemName] = isDirectory ? {} : itemContents;
+			targetDirectoryObject[itemName] = isDirectory ? {} : "";
 
 			const itemPlacementIndex = sortDirectoryToArray(targetDirectoryObject).findIndex(name => name[0] === itemName);
 			const itemPrevious = [
@@ -102,6 +104,12 @@ export default async function createFileSystemManager() {
 				context.globalCompositeOperation = "source-in";
 				context.fillStyle = iconData[1];
 				context.fillRect(0, 0, width, height);
+
+				monaco.editor.createModel(
+					itemContents,
+					undefined,
+					monaco.Uri.file(`${currentPath} ${itemName}`),
+				);
 			}
 		},
 		removeItem: function (targetItemName, targetItemPath) {
@@ -112,29 +120,85 @@ export default async function createFileSystemManager() {
 				for (const subItem of subItems) {
 					filesContainer.removeChild(subItem);
 				}
+			} else {
+				monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`)).dispose();
 			}
 
 			filesContainer.removeChild(targetItem);
 
-			let targetDirectoryObject = this.fileSystem;
+			let targetDirectoryObject = fileSystem;
 			for (const directory of targetItemPath.split(" ")) {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
 			delete targetDirectoryObject[targetItemName];
 		},
 		changeItemName: function (newItemName, targetItemName, targetItemPath) {
-			let targetDirectoryObject = this.fileSystem;
+			let targetDirectoryObject = fileSystem;
 			for (const directory of targetItemPath.split(" ")) {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
-			const contents = targetDirectoryObject[targetItemName];
+			const contents = targetDirectoryObject[targetItemName]
+				? targetDirectoryObject[targetItemName]
+				: "";
 
 			this.removeItem(targetItemName, targetItemPath);
 			this.addItem(newItemName, contents, targetItemPath);
 		},
-		setActiveItem: function (itemElement) {
-			this.activeItem = itemElement;
+		moveItem: function (newItemPath, targetItemName, targetItemPath) {
+			let targetDirectoryObject = fileSystem;
+			for (const directory of targetItemPath.split(" ")) {
+				targetDirectoryObject = targetDirectoryObject[directory];
+			}
+			const contents = targetDirectoryObject[targetItemName]
+				? targetDirectoryObject[targetItemName]
+				: "";
 
+			this.removeItem(targetItemName, targetItemPath);
+			this.addItem(targetItemName, contents, newItemPath);
+		},
+		setActiveItem: function (itemElement) {
+			let targetDirectoryObject = fileSystem;
+			for (const directory of itemElement.getAttribute("data-path").split(" ")) {
+				targetDirectoryObject = targetDirectoryObject[directory];
+			}
+
+			const targetItemName = itemElement.getAttribute("data-name");
+
+			// only update if item is not already active
+			if (activeDirectory !== targetDirectoryObject || activeItem !== targetItemName) {
+				for (const fileElement of document.getElementsByClassName("file")) {
+					fileElement.style.backgroundColor = null;
+				}
+				itemElement.style.backgroundColor = "#cccccc";
+				activeItem = targetItemName;
+				activeDirectory = targetDirectoryObject;
+
+				if (!itemElement.getAttribute("data-is-directory")) {
+					const targetItemPath = itemElement.getAttribute("data-path");
+					const model = monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`));
+					editor.setModel(model);
+				}
+			}
+		},
+		getFileSystem: function () {
+			function getDirectoryContents(path) {
+				const directoryContents = {};
+				let targetDirectory = fileSystem;
+
+				for (const directory of path.split(" ")) targetDirectory = targetDirectory[directory];
+
+				for (const item in targetDirectory) {
+					if (typeof targetDirectory[item] === "string") {
+						directoryContents[item] = monaco.editor.getModel(monaco.Uri.file(`${path} ${item}`)).getValue();
+					} else {
+						directoryContents[item] = getDirectoryContents(`${path} ${item}`);
+					}
+				}
+
+				return directoryContents;
+			};
+
+			return getDirectoryContents("root");
 		},
 	};
 

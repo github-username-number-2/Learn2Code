@@ -17,14 +17,16 @@ window.addEventListener("load", async () => {
 
 	// loads in file system and editor
 
-	const fileSystemManager = await createFileSystemManager();
+	window.fileSystemManager = await createFileSystemManager();
 	fileSystemManager.loadFileSystem(fileSystem);
 	fileSystemManager.changeItemName("otherFile", "file", "root testFolder testFolder");
 	fileSystemManager.changeItemName("testFoldersssss", "testFolder", "root testFolder");
 	fileSystemManager.removeItem("testFolder", "root testFolsder");
 	fileSystemManager.removeItem("main.js", "root testFolsder");
 	fileSystemManager.changeItemName("0.s", "3.s", "root testFolder testFoldersssss testFolder testFolder");
-	fileSystemManager.addItem("4.s", "", "root testFolder testFoldersssss testFolder testFolder");
+	fileSystemManager.addItem("4.s", "", "root testFolder testFoldersssss testFolder testFolder");	
+	fileSystemManager.moveItem("root testFolsder", "testFolder", "root testFolder testFoldersssss");
 
-	initializeUI("tutorial");
+
+	initializeUI("main");
 });
