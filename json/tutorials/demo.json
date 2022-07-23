@@ -8,9 +8,15 @@
 		"testFolder": {
 			"main.js": "console.log(mmm);"
 		},
-		"index.html": "<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src=\"main/js\"></script>\n\t</body>\n</html>"
+		"index.html": "<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src=\"main.js\"></script>\n\t</body>\n</html>"
 	},
 	"tutorial": [
-		{}
+		{
+			"type": "displayText",
+			"text": "test"
+		},
+		{
+			"type": "waitForNext"
+		}
 	]
 }

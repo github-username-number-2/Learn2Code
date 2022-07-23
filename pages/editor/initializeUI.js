@@ -1,3 +1,5 @@
+import { selectTab } from "./functions.js";
+
 export default function initializeUI(defaultTab) {
 	const resizeContainers = (function () {
 		let intervals = [], mouseX;
@@ -7,7 +9,7 @@ export default function initializeUI(defaultTab) {
 			editorContainer = document.getElementById("editorContainer");
 
 		return {
-			_resize: function (xOffset, separatorWidth) {
+			_resize(xOffset, separatorWidth) {
 				// set left and right limiters
 				if (mouseX - xOffset < separatorWidth) mouseX = xOffset = 0;
 				if (mouseX - xOffset > window.innerWidth - separatorWidth * 2) {
@@ -19,7 +21,7 @@ export default function initializeUI(defaultTab) {
 				panelContainer.style.width = mouseX - xOffset + "px";
 				editorContainer.style.width = window.innerWidth - mouseX + xOffset - separatorWidth + "px";
 			},
-			resizeOnce: function () {
+			resizeOnce() {
 				const separatorStyle = getComputedStyle(separator),
 					separatorWidth =
 						parseInt(separatorStyle.width.slice(0, -2)) +
@@ -30,7 +32,7 @@ export default function initializeUI(defaultTab) {
 
 				editorContainer.style.width = window.innerWidth - xOffset - separatorWidth + "px";
 			},
-			startResize: function (event) {
+			startResize(event) {
 				separator.children[0].style.backgroundColor = "#595959";
 
 				const separatorStyle = getComputedStyle(separator),
@@ -44,7 +46,7 @@ export default function initializeUI(defaultTab) {
 					this._resize(xOffset, separatorWidth);
 				}, 20));
 			},
-			stopResize: function () {
+			stopResize() {
 				separator.children[0].style.removeProperty("background-color");
 				intervals.filter(interval => clearInterval(interval));
 			},
@@ -64,19 +66,4 @@ export default function initializeUI(defaultTab) {
 	}
 
 	selectTab(defaultTab);
-}
-
-function selectTab(tabName) {
-	const tabs = document.getElementsByClassName("panelTab");
-	for (const tab of tabs) {
-		tab.style.backgroundColor = "#eeeeee";
-	}
-
-	const contentContainers = document.getElementsByClassName("panelContent");
-	for (const container of contentContainers) {
-		container.style.display = "none";
-	}
-
-	document.getElementById(tabName + "PanelTab").style.backgroundColor = "#cccccc";
-	document.getElementById(tabName + "PanelContent").style.display = "block";
 }
