@@ -12,7 +12,7 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 
 // custom alert and prompt functions
 !function () {
-	window.alertCustom = function (message) {
+	window.alertCustom = function (message, width = null, height = null) {
 		return new Promise(resolve => {
 			const alertElement = createPopupElement(
 				`<div class="popup alert">

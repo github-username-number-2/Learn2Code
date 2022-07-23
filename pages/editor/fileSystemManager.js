@@ -30,7 +30,7 @@ export default async function createFileSystemManager() {
 	editor.setModel(defaultModel);
 
 	// load file extension mappings to icons
-	const iconData = await (await fetch("/json/iconData.json")).json();
+	const iconData = await (await fetch("/data/iconData.json")).json();
 
 	// pre loads all icon images
 	const iconNames = new Set();

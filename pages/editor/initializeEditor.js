@@ -1,4 +1,3 @@
-import createFileSystemManager from "./fileSystemManager.js";
 import initializeUI from "./initializeUI.js";
 import { elementFromString } from "./functions.js";
 
@@ -9,11 +8,13 @@ export default async function initializeEditor() {
 
 	if (hash.startsWith("tutorial")) {
 		const tutorialID = hash.split("-")[1];
-		const tutorialData = await (fetch(`/json/tutorials/${tutorialID}.json`).then(response =>
-			response.status === 200 ? response.json() : redirectToHome()
-		));
+		const tutorialData = await (import(`/data/tutorials/${tutorialID}.js`).catch((error) => {console.log(error)
+			alertCustom("Error: Could not load tutorial<br><br>Tutorials can be accessed from the main page under the tutorials tab<br><br>You will be redirected automatically in 15 seconds");
 
-		runTutorial(tutorialData);
+			//setTimeout(() => redirectToHome(), 15000);
+		}));
+
+		runTutorial(tutorialData.default);
 	} else if (hash.startsWith("editor")) {
 
 	} else {
@@ -24,7 +25,7 @@ export default async function initializeEditor() {
 		window.location.href = "//" + window.location.host;
 	}
 
-	function runTutorial(tutorialJSON) {
+	async function runTutorial(tutorialJSON) {
 		const tutorialTabElement = elementFromString(`<td id="tutorialPanelTab" class="panelTab">Tutorial</td>`),
 			tutorialContentElement = elementFromString(`<div id="tutorialPanelContent" class="panelContent">tutorial</div>`)
 
@@ -35,10 +36,22 @@ export default async function initializeEditor() {
 		headerTextElement.innerText = "Tutorial: " + tutorialJSON.info.display;
 
 		initializeUI("tutorial");
-		fileSystemManager.loadFileSystem(tutorialJSON.startingFileSystem);
 	}
 
 	function runEditor(projectName) {
 		initializeUI("main");
 	}
 }
+
+const tutorialActions = {
+	loadFileSystem: function () {
+	},
+	enableInteraction: function () {
+	},
+	disableInteraction: function () {
+	},
+	displayText: function () {
+	},
+	highlightElement: function () {
+	},
+};

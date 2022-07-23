@@ -9,18 +9,6 @@ export default function initializeUI(defaultTab) {
 			editorContainer = document.getElementById("editorContainer");
 
 		return {
-			_resize(xOffset, separatorWidth) {
-				// set left and right limiters
-				if (mouseX - xOffset < separatorWidth) mouseX = xOffset = 0;
-				if (mouseX - xOffset > window.innerWidth - separatorWidth * 2) {
-					mouseX = window.innerWidth - separatorWidth;
-					xOffset = 0;
-				}
-
-				separator.style.left = mouseX - xOffset + "px";
-				panelContainer.style.width = mouseX - xOffset + "px";
-				editorContainer.style.width = window.innerWidth - mouseX + xOffset - separatorWidth + "px";
-			},
 			resizeOnce() {
 				const separatorStyle = getComputedStyle(separator),
 					separatorWidth =
@@ -43,14 +31,23 @@ export default function initializeUI(defaultTab) {
 
 				const xOffset = event.pageX - separator.getBoundingClientRect().x;
 				intervals.push(setInterval(() => {
-					this._resize(xOffset, separatorWidth);
+					// set left and right limiters
+					if (mouseX - xOffset < separatorWidth) mouseX = xOffset = 0;
+					if (mouseX - xOffset > window.innerWidth - separatorWidth * 2) {
+						mouseX = window.innerWidth - separatorWidth;
+						xOffset = 0;
+					}
+
+					separator.style.left = mouseX - xOffset + "px";
+					panelContainer.style.width = mouseX - xOffset + "px";
+					editorContainer.style.width = window.innerWidth - mouseX + xOffset - separatorWidth + "px";
 				}, 20));
 			},
 			stopResize() {
 				separator.children[0].style.removeProperty("background-color");
 				intervals.filter(interval => clearInterval(interval));
 			},
-		}
+		};
 	})();
 
 

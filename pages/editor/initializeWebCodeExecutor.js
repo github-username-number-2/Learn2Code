@@ -1,5 +1,6 @@
 export default function initializeWebCodeExecutor(executorRootURL, startingPagePath) {
 	const runButton = document.getElementById("runCode");
+	let iframe, retryTimeout, timeoutLength = 500;
 
 	return new Promise(resolve => {
 		const executorURL = executorRootURL + "/_L2C_RESERVED_INDEX_.html";
@@ -14,6 +15,8 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 
 						window.open(executorRootURL + startingPagePath);
 					} else {
+						clearTimeout(retryTimeout);
+
 						initializationComplete = true;
 
 						runButton.addEventListener("click", () =>
@@ -29,16 +32,8 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 			}
 		});
 
-		const iframe = document.createElement("iframe");
-		iframe.addEventListener("load", function handleLoad() {
-			// reload iframe to refresh service workers
-			iframe.removeEventListener("load", handleLoad);
-			iframe.src += "";
-		});
-
-		iframe.setAttribute("src", executorURL);
-		iframe.style.display = "none";
-		document.body.appendChild(iframe);
+		createIframe();
+		setRetryTimeout();
 
 		const webCodeExecutor = {
 			ready: false,
@@ -51,6 +46,33 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 				}
 			},
 		};
+
+		function createIframe() {
+			iframe = document.createElement("iframe");
+			iframe.addEventListener("load", function handleLoad() {
+				// reload iframe to refresh service workers
+				iframe.removeEventListener("load", handleLoad);
+				iframe.src += "";
+			});
+
+			iframe.setAttribute("src", executorURL);
+			iframe.style.display = "none";
+			document.body.appendChild(iframe);
+		}
+
+		function setRetryTimeout() {
+			retryTimeout = setTimeout(() => {
+				// restart and reload iframe
+				firstMessageReceived = initializationComplete = webCodeExecutor.ready = false;
+				document.body.removeChild(iframe);
+
+				// gradually increase wait time for potentially slow connections
+				timeoutLength += 1000;
+
+				createIframe();
+				setRetryTimeout();
+			}, timeoutLength);
+		}
 
 		function onready() {
 			webCodeExecutor.ready = true;
