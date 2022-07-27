@@ -3,7 +3,7 @@ import { elementFromString } from "./functions.js";
 
 export default async function createFileSystemManager() {
 	const filesContainer = document.getElementById("filesContainerInner");
-	const observer = new ResizeObserver(entries => {
+	const observer = new ResizeObserver(() => {
 		let largestWidth = 0, vw = window.innerWidth / 100;
 		for (const file of filesContainer.children) {
 			file.style.width = "fit-content";
@@ -49,6 +49,8 @@ export default async function createFileSystemManager() {
 	let fileSystem;
 
 	const manager = {
+		editor,
+
 		activeFile: "",
 		activeFilePath: "",
 		activeFileDirectory: {},
@@ -63,6 +65,8 @@ export default async function createFileSystemManager() {
 			this.activeItem = "root";
 			this.activePath = "";
 			this.activeDirectory = fileSystem.root;
+
+			filesContainer.innerHTML = `<div id="fileSystemRoot" data-path="" data-name="root" data-is-directory="1" data-directory-state="1"></div>`;
 
 			for (const item in newFileSystem) {
 				this.addItem(item, newFileSystem[item], "root");
@@ -89,9 +93,14 @@ export default async function createFileSystemManager() {
 				itemDepth = targetDirectoryPath.length + 1,
 				isDirectory = typeof itemContents === "object";
 
-			const itemElement = elementFromString(
-				`<div class="file" data-path="${currentPath}"><canvas class="fileIcon"></canvas><p class="fileText"></p><img class="fileOption fileDelete" src="/images/icons/deleteIcon.png"><img class="fileOption fileRename" src="/images/icons/renameIcon.png"></div>`
-			);
+			const itemElement = elementFromString(`
+				<div class="file" data-path="${currentPath}">
+					<canvas class="fileIcon"></canvas>
+					<p class="fileText"></p>
+					<img class="fileOption fileDelete" src="/images/icons/deleteIcon.png">
+					<img class="fileOption fileRename" src="/images/icons/renameIcon.png">
+				</div>
+			`);
 			itemElement.setAttribute("data-name", itemName);
 			itemElement.style.display = itemDepth - 1 ? "none" : "block";
 
@@ -106,10 +115,10 @@ export default async function createFileSystemManager() {
 			icon.height = 100;
 			const { width, height } = icon;
 
-			icon.style.left = itemDepth * 1.5 + "vw";
+			icon.style.left = itemDepth * 2.5 + "vh";
 
 			text.innerText = itemName;
-			text.style.marginLeft = itemDepth * 1.5 + "vw";
+			text.style.marginLeft = itemDepth * 2.5 + "vh";
 
 			deleteButton.addEventListener("click", async event => {
 				event.stopPropagation();
@@ -121,7 +130,7 @@ export default async function createFileSystemManager() {
 				event.stopPropagation();
 
 				const newName = await promptCustom(`Enter new name:`);
-				if (checkItemValid(newName, currentPath)) manager.changeItemName(newName, itemName, currentPath);
+				if (checkItemValid(newName, currentPath, isDirectory ? "folder" : "file")) manager.changeItemName(newName, itemName, currentPath);
 			});
 
 			const context = icon.getContext("2d");
@@ -218,6 +227,17 @@ export default async function createFileSystemManager() {
 
 			this.removeItem(targetItemName, targetItemPath);
 			this.addItem(newItemName, contents, targetItemPath);
+
+			// close and reopen folder if directory is not root
+			if (targetItemPath != "root") {
+				targetItemPath = targetItemPath.split(" ");
+				const parentDirectoryName = targetItemPath.pop();
+
+				const directoryElement = fileSystemManager.selectItem(parentDirectoryName, targetItemPath.join(" "));
+				fileSystemManager.toggleDirectory(directoryElement);
+
+				if (fileSystemManager.getDirectoryState(directoryElement) === "0") fileSystemManager.toggleDirectory(directoryElement);
+			}
 		},
 		moveItem(newItemPath, targetItemName, targetItemPath) {
 			let targetDirectoryObject = fileSystem;
@@ -232,6 +252,12 @@ export default async function createFileSystemManager() {
 			this.addItem(targetItemName, contents, newItemPath);
 		},
 		setActiveItem(itemElement) {
+			if (itemElement === document.getElementById("fileSystemRoot")) {
+				this.activeFile = "";
+				this.activeFilePath = "";
+				this.activeFileDirectory = {};
+			}
+
 			const targetItemName = itemElement.getAttribute("data-name"),
 				targetItemPath = itemElement.getAttribute("data-path");
 
@@ -259,7 +285,7 @@ export default async function createFileSystemManager() {
 					const model = monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`));
 					editor.setModel(model);
 
-					editor.updateOptions({ readOnly: false });
+					editor.updateOptions({ readOnly: itemElement.getAttribute("data-is-readonly") });
 				}
 			}
 		},
@@ -307,6 +333,9 @@ export default async function createFileSystemManager() {
 		getDirectoryState(directoryElement) {
 			return directoryElement.getAttribute("data-directory-state");
 		},
+		getFileContents(path, name) {
+			return monaco.editor.getModel(monaco.Uri.file(`${path} ${name}`)).getValue();
+		},
 		getFileSystem() {
 			function getDirectoryContents(path) {
 				const directoryContents = {};
@@ -348,6 +377,20 @@ export default async function createFileSystemManager() {
 				return files;
 			}
 		},
+		setFileReadOnly(filePath, fileName, readOnly) {
+			const fileElement = this.selectItem(fileName, filePath);
+			if (readOnly) fileElement.setAttribute("data-is-readonly", "1");
+			else fileElement.removeAttribute("data-is-readonly");
+
+			if (this.activeFile === fileName && this.activeFilePath === filePath) {
+				editor.updateOptions({ readOnly: true });
+			}
+		},
+
+		// tutorial specific
+		setFileCorrectState(filePath, fileName, state) {
+			this.selectItem(fileName, filePath).children[1].style.color = state ? "#00aa00" : "#000000";
+		},
 	};
 
 	return manager;
@@ -357,9 +400,9 @@ export default async function createFileSystemManager() {
 		if (item.getAttribute("data-is-directory")) {
 			const directoryName = item.getAttribute("data-name"),
 				directoryPath = item.getAttribute("data-path");
-			const childElements = manager.getAllWithinDirectory(`${directoryPath} ${directoryName}`);
+			const directoryElements = [item, ...manager.getAllWithinDirectory(`${directoryPath} ${directoryName}`)];
 
-			return childElements[childElements.length - 1];
+			return directoryElements[directoryElements.length - 1];
 		} else {
 			return item;
 		}
@@ -397,8 +440,7 @@ export default async function createFileSystemManager() {
 	async function addNewItem(type) {
 		let path = fileSystemManager.activePath;
 		const activeItem = fileSystemManager.activeItem,
-			activePath = fileSystemManager.activePath,
-			isCurrentItemDirectory = fileSystemManager.isItemDirectory(activeItem, activePath);
+			isCurrentItemDirectory = fileSystemManager.isItemDirectory(activeItem, path);
 
 		if (isCurrentItemDirectory) path = `${path} ${activeItem}`.trim();
 
@@ -428,7 +470,7 @@ export default async function createFileSystemManager() {
 			...fileSystemManager.getImmidiateWithinDirectory(path)
 		].map(element => fileSystemManager.getItemName(element));
 
-		if (!name) return alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot be blank`) || false;
+		if (!name) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot be blank`) || false;
 		if (siblingNames.includes(name)) return void alertCustom(`A ${type} in this directory already has the name "${name}"`) || false;
 		if (!/^[0-9a-zA-Z._-]+$/.test(name)) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`) || false;
 		if (name.endsWith(".")) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot end with "."`) || false;

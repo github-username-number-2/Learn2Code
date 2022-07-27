@@ -12,14 +12,15 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 
 // custom alert and prompt functions
 !function () {
-	window.alertCustom = function (message, width = null, height = null) {
+	window.alertCustom = function (message, options = {}) {
 		return new Promise(resolve => {
 			const alertElement = createPopupElement(
 				`<div class="popup alert">
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
 					<button class="popupButton">Close</button>
-				</div>`
+				</div>`,
+				options,
 			);
 
 			setTimeout(() =>
@@ -30,7 +31,7 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 		});
 	};
 
-	window.confirmCustom = function (message, defaultInputValue = "", maxLength = "") {
+	window.confirmCustom = function (message, options = {}) {
 		return new Promise(resolve => {
 			const confirmElement = createPopupElement(
 				`<div class="popup confirm">
@@ -38,7 +39,8 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 					<p class="popupText">${message}</p>
 					<button class="popupButton confirm">Confirm</button>
 					<button class="popupButton cancel">Cancel</button>
-				</div>`
+				</div>`,
+				options,
 			);
 
 			setTimeout(() => {
@@ -54,15 +56,16 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 		});
 	};
 
-	window.promptCustom = function (message, defaultInputValue = "", maxLength = "") {
+	window.promptCustom = function (message, options = { defaultInputValue: "", maxLength: "" }) {
 		return new Promise(resolve => {
 			const promptElement = createPopupElement(
 				`<div class="popup prompt">
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
-					<input class="popupInput" value="${defaultInputValue}" maxlength="${maxLength} type="text">
+					<input class="popupInput" value="${options.defaultInputValue}" maxlength="${options.maxLength} type="text">
 					<button class="popupButton">Confirm</button>
-				</div>`
+				</div>`,
+				options,
 			);
 
 			setTimeout(() => {
@@ -84,13 +87,29 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 		});
 	};
 
-	function createPopupElement(popupHTML) {
+	function createPopupElement(popupHTML, { left, right, top, bottom, width, height }) {
 		const template = document.createElement("template");
 		template.innerHTML = popupHTML;
 
 		for (const element of mask.children) element.style.display = "none";
 
 		const popupElement = template.content.firstChild;
+		const vw = window.innerWidth / 100,
+			vh = window.innerHeight / 100;
+		const parameterList = ["left", "right", "top", "bottom", "width", "height"],
+			unitList = [vw, vw, vh, vh, vw, vh];
+		for (let i = 0; i < 6; i++) {
+			const parameterName = parameterList[i],
+				value = arguments[1][parameterName];
+
+			if (value) {
+				popupElement.style[parameterName] = unitList[i] + value + "px";
+			}
+		}
+
+		if (left || right) popupElement.style.transform = "none";
+		if (top || bottom) popupElement.style.top = "auto";
+
 		mask.appendChild(popupElement);
 		mask.style.display = "block";
 

@@ -172,7 +172,7 @@
 }
 
 .file {
-	text-indent: 2vw;
+	text-indent: 1vh;
 	height: 3vh;
 	cursor: pointer;
 }
@@ -190,7 +190,7 @@
 .fileText {
 	padding-left: 3vh;
 	padding-right: 6vh;
-	margin: 0.1vh 0 0 1.5vw;
+	margin: 0.1vh 0 0 0;
 	font-size: 2vh;
 }
 
@@ -209,4 +209,92 @@
 
 .fileRename:hover {
 	opacity: 1;
+}
+
+/* tutorial specific */
+#tutorialMask {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 5;
+	width: 100vw;
+	height: 100vh;
+	background-color: #00000000;
+}
+
+#tutorialPanelContent {
+	box-sizing: border-box;
+	padding: 1vh;
+	text-align: center;
+}
+
+.tutorialHighlighter {
+	position: fixed;
+	z-index: 5;
+	box-shadow: 0 0 0 9999px #00000077;
+}
+
+.tutorialButton {
+	display: none;
+	position: absolute;
+	font-size: 5vh;
+	font-family: Arial, Helvetica, sans-serif;
+	z-index: 6;
+	background-color: #55ee55;
+	cursor: pointer;
+}
+
+.tutorialButton:hover {
+	background-color: #11ee11;
+	box-shadow: 0 0 10vh 1vh #dddddd;
+}
+
+#tutorialStartButton {
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 20vh;
+	height: 10vh;
+}
+
+#tutorialNextButton {
+	right: 5vh;
+	bottom: 5vh;
+	width: 15vh;
+	height: 7vh;
+}
+
+.tutorialPopup {
+	position: fixed;
+	left: 50%;
+	bottom: 5vh;
+	z-index: 6;
+	transform: translate(-50%);
+	width: fit-content;
+	min-width: 16vw;
+	max-width: 60vw;
+	padding: 2vh 2vw 0 2vw;
+	border-radius: 2vh;
+	background-color: #fffffe;
+	text-align: center;
+	box-shadow: 0 0 10vh 0.1vh #bbbbbb;
+}
+
+.tutorialPopupHeader {
+	display: block;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 3vh;
+	border-bottom: 0.3vh solid #595959;
+	border-top-left-radius: 2vh;
+	border-top-right-radius: 2vh;
+	background-color: #00ee00;
+}
+
+.tutorialPopupText {
+	font-size: 3vh;
+	word-wrap: break-word;
 }

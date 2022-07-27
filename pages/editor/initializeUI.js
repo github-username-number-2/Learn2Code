@@ -29,7 +29,7 @@ export default function initializeUI(defaultTab) {
 						parseInt(separatorStyle.borderLeft.slice(0, -2)) +
 						parseInt(separatorStyle.borderRight.slice(0, -2));
 
-				const xOffset = event.pageX - separator.getBoundingClientRect().x;
+				let xOffset = event.pageX - separator.getBoundingClientRect().x;
 				intervals.push(setInterval(() => {
 					// set left and right limiters
 					if (mouseX - xOffset < separatorWidth) mouseX = xOffset = 0;
