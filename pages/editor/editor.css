@@ -212,6 +212,18 @@
 }
 
 /* tutorial specific */
+.prettify {
+	min-width: fit-content;
+}
+
+pre[data-lang] {
+	min-width: fit-content;
+	padding: 1.5vh;
+	border-radius: 1vh;
+	font-size: 2vh;
+	background-color: #eeeeee;
+}
+
 #tutorialMask {
 	display: none;
 	position: fixed;
@@ -227,6 +239,7 @@
 	box-sizing: border-box;
 	padding: 1vh;
 	text-align: center;
+	overflow: auto;
 }
 
 .tutorialHighlighter {

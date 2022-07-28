@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+	<h1>This file and referenced files are used for the execution of code sent by the IDE</h1>
+	
+	<script>
+		const cacheName = "_L2C_RESERVED_CACHE_USER_FILES_V1_";
+		const mainSiteURL = "http://127.0.0.1:5501/";
+
+		!async function () {
+			await navigator.serviceWorker.register("_L2C_RESERVED_WORKER_.js");
+
+			self.addEventListener("message", async event => {
+				const fileList = JSON.parse(event.data);
+
+				await caches.delete(cacheName);
+				const cache = await caches.open(cacheName);
+
+				const promiseList = [];
+				for (const file of fileList)
+					promiseList.push(cache.put(file[0], new Response(
+						file[1],
+						{
+							status: 200,
+							headers: new Headers({
+								"content-type": file[2] + "; charset=utf-8",
+							}),
+						},
+					)));
+
+				await Promise.all(promiseList);
+
+				// send 1 when caching complete
+				window.parent.postMessage("1", mainSiteURL);
+			});
+			// send 0 when initialized and ready
+			window.parent.postMessage("0", mainSiteURL);
+		}();
+	</script>
+</body>
+
+</html>

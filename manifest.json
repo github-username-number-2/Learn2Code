@@ -1,0 +1,10 @@
+{
+	"name": "Learn2Code",
+	"icons": [
+		{
+			"src": "/images/logoSolid.png"
+		}
+	],
+	"start_url": "/index.html",
+	"display": "standalone"
+}

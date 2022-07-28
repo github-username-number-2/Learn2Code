@@ -106,11 +106,15 @@ const tutorialData = {
 		},
 		{
 			action: "setPanelText",
-			text: "Write the following code into the main.js file under the js folder: <pre class=\"prettyprint\">alert(\"Hello World\");</pre>",
+			text: "Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
 		},
 		{
 			action: "displayText",
-			text: "Write the following code into the main.js file under the js folder: <pre class=\"prettyprint\">alert(\"Hello World\");</pre>",
+			text: "Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+		},
+		{
+			action: "highlightCode",
+			types: ["text/javascript"],
 		},
 		{
 			action: "enableInteraction",

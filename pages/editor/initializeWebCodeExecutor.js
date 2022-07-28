@@ -8,13 +8,9 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 		let firstMessageReceived = false,
 			initializationComplete;
 		window.addEventListener("message", event => {
-			if (event.data === "ready") {
+			if (event.data === "0") {
 				if (firstMessageReceived) {
-					if (initializationComplete) {
-						onready();
-
-						window.open(executorRootURL + startingPagePath);
-					} else {
+					if (!initializationComplete) {
 						clearTimeout(retryTimeout);
 
 						initializationComplete = true;
@@ -29,6 +25,10 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 				} else {
 					firstMessageReceived = true;
 				}
+			} else if (event.data === "1") {
+				onready();
+
+				window.open(executorRootURL + startingPagePath);
 			}
 		});
 

@@ -1,10 +1,11 @@
 import createFileSystemManager from "./fileSystemManager.js";
 import initializeEditor from "./initializeEditor.js";
-//import storageManager from "./storageManager.js";
 import initializeWebCodeExecutor from "./initializeWebCodeExecutor.js";
+import initializeStorageManager from "./storageManager.js";
 
 
 window.addEventListener("load", async () => {
+	window.storageManager = await initializeStorageManager();
 	/*const fileSystem = {
 		"testFolder": {
 			"main.js": "console.log(mmm);",
@@ -36,7 +37,7 @@ window.addEventListener("load", async () => {
 	alert(await promptCustom("da"))
 	alert(await confirmCustom("dadsa wa ad kah duah diahd iauhwd iuaulll"))
 	*/
-	const webCodeExecutor = await initializeWebCodeExecutor("http://127.0.0.1:5500", "/index.html");
+	const webCodeExecutor = await initializeWebCodeExecutor("https://Learn2CodeWebCodeExecutor.repl-account.repl.co", "/index.html");
 	//webCodeExecutor.executeFileSystem(fileSystemManager.getFilesList());
 
 	await initializeEditor();

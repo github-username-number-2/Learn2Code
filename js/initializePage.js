@@ -1,3 +1,7 @@
+// register service worker
+navigator.serviceWorker.register("/js/sw.js");
+
+
 // prevents dragging of images and text selection
 document.addEventListener("dragstart", event => event.preventDefault());
 document.addEventListener("selectstart", event => event.preventDefault());

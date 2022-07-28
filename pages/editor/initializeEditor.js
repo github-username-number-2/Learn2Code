@@ -121,6 +121,13 @@ export default async function initializeEditor() {
 			runFunction: async ({ func }) => {
 				func();
 			},
+			highlightCode: async ({ types }) => {
+				for (const type of types) {
+					for (const element of document.querySelectorAll(`[data-lang="${type}"]`)) {
+						monaco.editor.colorizeElement(element);
+					}
+				}
+			},
 		};
 
 
