@@ -3,7 +3,6 @@ import initializeEditor from "./initializeEditor.js";
 import initializeWebCodeExecutor from "./initializeWebCodeExecutor.js";
 import initializeStorageManager from "./storageManager.js";
 
-
 window.addEventListener("load", async () => {
 	window.storageManager = await initializeStorageManager();
 	/*const fileSystem = {

@@ -1,9 +1,7 @@
 import initializeUI from "./initializeUI.js";
-import { elementFromString } from "./functions.js";
+import initializeTutorialFunctions from "./tutorialFunctions.js";
 
 export default async function initializeEditor() {
-	const panelTabContainer = document.getElementById("panelTabContainer").firstElementChild.firstElementChild,
-		panelContentContainer = document.getElementById("panelContentContainer");
 	const hash = window.location.hash.substring(1);
 
 	if (hash.startsWith("tutorial")) {
@@ -12,170 +10,41 @@ export default async function initializeEditor() {
 			console.log(error);
 
 			alertCustom("Error: Could not load tutorial<br><br>Tutorials can be accessed from the main page under the tutorials tab<br><br>You will be redirected automatically in 15 seconds");
-			setTimeout(() => redirectToHome(), 15000);
+			setTimeout(() => window.location.href = "//" + window.location.host, 15000);
 		}));
 
 		runTutorial(tutorialData.default);
 	} else if (hash.startsWith("editor")) {
 		runEditor();
 	} else {
-		redirectToHome();
-	}
-
-	function redirectToHome() {
 		window.location.href = "//" + window.location.host;
 	}
 
 	async function runTutorial(tutorialJSON) {
-		window.pageType = "tutorial";
-
-		const { id, display } = tutorialJSON.info;
-
-		const tutorialActions = {
-			beginTutorial: () => {
-				return new Promise(resolve => {
-					const startButton = document.getElementById("tutorialStartButton");
-					startButton.style.display = "block";
-					startButton.addEventListener("click", function handler() {
-						startButton.removeEventListener("click", handler);
-						startButton.style.display = "none";
-
-						resolve();
-					});
-				});
-			},
-			endTutorial: async () => {
-				await tutorialActions.clearAll();
-				await tutorialActions.displayText({ text: `You have completed the ${display} tutorial. Click the next button to be redirected back to the home page.` });
-				await tutorialActions.displayNextButton();
-
-				redirectToHome();
-			},
-			loadFileSystem: async ({ fileSystem }) => {
-				fileSystemManager.loadFileSystem(fileSystem);
-				lastCheckPointFileSystem = fileSystem;
-			},
-			displayText: async ({ text }) => {
-				const popupElement = elementFromString(`
-					<div class="tutorialPopup">
-						<div class="tutorialPopupHeader"></div>
-						<p class="tutorialPopupText">${text}</p>
-					</div>
-				`);
-				document.body.appendChild(popupElement);
-			},
-			clearText: async () => {
-				for (const element of document.getElementsByClassName("tutorialPopup")) {
-					element.remove();
-				}
-			},
-			highlightElement: async ({ selector }) => {
-				const element = document.querySelector(selector);
-
-				const highlighter = document.createElement("div");
-				highlighter.classList.add("tutorialHighlighter");
-
-				const observer = new ResizeObserver(() => {
-					const boundingRect = element.getBoundingClientRect();
-
-					highlighter.style.left = boundingRect.x + "px";
-					highlighter.style.top = boundingRect.y + "px";
-					highlighter.style.width = boundingRect.width + "px";
-					highlighter.style.height = boundingRect.height + "px";
-				});
-				observer.observe(element);
-
-				document.body.appendChild(highlighter);
-			},
-			clearHighlighters: async () => {
-				for (const element of document.getElementsByClassName("tutorialHighlighter")) {
-					element.remove();
-				}
-			},
-			setPanelText: async ({ text }) => {
-				document.getElementById("tutorialPanelContent").innerHTML = text;
-			},
-			awaitEvent: async ({ eventListener }) => {
-				await eventListener();
-			},
-			displayNextButton: () => {
-				return new Promise(resolve => {
-					const nextButton = document.getElementById("tutorialNextButton");
-					nextButton.style.display = "block";
-					nextButton.addEventListener("click", function handler() {
-						nextButton.removeEventListener("click", handler);
-						nextButton.style.display = "none";
-
-						resolve();
-					});
-				});
-			},
-			clearAll: async () => {
-				await tutorialActions.clearHighlighters();
-				await tutorialActions.clearText();
-				await tutorialActions.setPanelText({ text: "" });
-			},
-			enableInteraction: async () => {
-				tutorialMaskElement.style.display = "none";
-			},
-			disableInteraction: async () => {
-				tutorialMaskElement.style.display = "block";
-			},
-			runFunction: async ({ func }) => {
-				func();
-			},
-			highlightCode: async ({ types }) => {
-				for (const type of types) {
-					for (const element of document.querySelectorAll(`[data-lang="${type}"]`)) {
-						monaco.editor.colorizeElement(element);
-					}
-				}
-			},
-			saveProgress: async () => {
-				storageManager.setTutorialData({ id, actionIndex, lastCheckPointFileSystem, requiredFileSystem });
-			},
-		};
-
+		window.tutorialFunctions = initializeTutorialFunctions(tutorialJSON);
 
 		// load stored progress
-		let lastCheckPointFileSystem, actionIndex = 0;
+		let actionIndex = 0;
 
-		const savedData = await storageManager.getTutorialData(id);
+		const savedData = await storageManager.getTutorialData(tutorialJSON.info.id);
 		if (savedData) {
-			({ actionIndex, lastCheckPointFileSystem, requiredFileSystem } = savedData);
+			({ actionIndex } = savedData);
+			const { lastCheckPointFileSystem, requiredFileSystem } = savedData;
 
-			tutorialActions.loadFileSystem(lastCheckPointFileSystem);
-			tutorialActions.setRequiredFileSystem(requiredFileSystem);
+			tutorialFunctions.loadFileSystem(lastCheckPointFileSystem);
+			tutorialFunctions.setRequiredFileSystem(requiredFileSystem);
 		}
-
-
-		const tutorialTabElement = elementFromString(`<td id="tutorialPanelTab" class="panelTab">Tutorial</td>`),
-			tutorialContentElement = elementFromString(`<div id="tutorialPanelContent" class="panelContent"></div>`),
-			tutorialMaskElement = elementFromString(`<div id="tutorialMask"></div>`),
-			tutorialNextElement = elementFromString(`<button id="tutorialNextButton" class="tutorialButton">Next</button>`),
-			tutorialStartElement = elementFromString(`<button id="tutorialStartButton" class="tutorialButton">Start</button>`);
-
-		panelTabContainer.insertBefore(tutorialTabElement, panelTabContainer.firstChild);
-		panelContentContainer.insertBefore(tutorialContentElement, panelContentContainer.firstChild);
-		document.body.appendChild(tutorialMaskElement);
-		document.body.appendChild(tutorialNextElement);
-		document.body.appendChild(tutorialStartElement);
-
-		const headerTextElement = document.getElementById("headerText");
-		headerTextElement.innerText = "Tutorial: " + display;
 
 		initializeUI("tutorial");
 
 		const actionList = tutorialJSON.actionList;
 		for (; actionIndex < actionList.length; actionIndex++) {
 			const instruction = tutorialJSON.actionList[actionIndex];
-			await tutorialActions[instruction.action](instruction);
+			await tutorialFunctions[instruction[0]](...instruction.slice(1), actionIndex);
 		}
 	}
 
 	function runEditor(projectName) {
-		window.pageType = "editor";
-
 		initializeUI("main");
 
 		fileSystemManager.loadFileSystem({});

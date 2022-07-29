@@ -13,7 +13,7 @@ switchSubPages(window.location.hash.substring(1));
 for (const index of subPages.keys()) {
 	const subPageButton = document.getElementById(subPages[index] + "Button");
 	subPageButton.style.left = 7 + index * 12 + "vw";
-	subPageButton.addEventListener("click", event => {
+	subPageButton.addEventListener("mousedown", event => {
 		switchSubPages(subPages[index]);
 	});
 }

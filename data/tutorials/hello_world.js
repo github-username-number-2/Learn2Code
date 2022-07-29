@@ -1,5 +1,3 @@
-import { resolveOnEvent, resolveOnCodeCorrect, setRequiredFileSystem, appendRequiredFileCode } from "/pages/editor/tutorialFunctions.js";
-
 const actionData = {
 	fileSystem: {
 		"js": {
@@ -15,139 +13,146 @@ const tutorialData = {
 		display: "Hello World",
 	},
 	actionList: [
-		{
-			action: "disableInteraction",
-		},
-		{
-			action: "beginTutorial",
-		},
-		{
-			action: "loadFileSystem",
-			fileSystem: actionData.fileSystem,
-		},
-		{
-			action: "runFunction",
-			func: () => {
-				setRequiredFileSystem(actionData.fileSystem);
-			},
-		},
-		{
-			action: "highlightElement",
-			selector: "#panelContainer",
-		},
-		{
-			action: "displayText",
-			text: "This is the panel container. Here, you can access information about the current tutorial, access files, settings, and more.",
-		},
-		{
-			action: "displayNextButton",
-		},
+		[
+			"disableInteraction",
+		],
+		[
+			"beginTutorial",
+		],
+		[
+			"loadFileSystem",
+			actionData.fileSystem,
+		],
+		[
+			"setRequiredFileSystem",
+			actionData.fileSystem,
+		],
+		[
+			"highlightElement",
+			"#panelContainer",
+		],
+		[
+			"displayText",
+			"This is the panel container. Here, you can access information about the current tutorial, access files, settings, and more.",
+		],
+		[
+			"displayNextButton",
+		],
 		//
-		{
-			action: "clearAll",
-		},
-		{
-			action: "highlightElement",
-			selector: "#panelTabContainer",
-		},
-		{
-			action: "displayText",
-			text: "These tabs let you switch between different panels.",
-		},
-		{
-			action: "displayNextButton",
-		},
+		[
+			"clearAll",
+		],
+		[
+			"highlightElement",
+			"#panelTabContainer",
+		],
+		[
+			"displayText",
+			"These tabs let you switch between different panels.",
+		],
+		[
+			"displayNextButton",
+		],
 		//
-		{
-			action: "clearAll",
-		},
-		{
-			action: "displayText",
-			text: "The main panel is where you can access files, and run your code. Click the tab titled \"main\" to swich to the main panel.",
-		},
-		{
-			action: "setPanelText",
-			text: "Switch to the main panel.",
-		},
-		{
-			action: "enableInteraction",
-		},
-		{
-			action: "awaitEvent",
-			eventListener: () => resolveOnEvent("click", document.getElementById("mainPanelTab")),
-		},
+		[
+			"clearAll",
+		],
+		[
+			"displayText",
+			"The main panel is where you can access files, and run your code. Click the tab titled \"main\" to swich to the main panel.",
+		],
+		[
+			"setPanelText",
+			"Switch to the main panel.",
+		],
+		[
+			"enableInteraction",
+		],
+		[
+			"resolveOnEvent",
+			"click",
+			document.getElementById("mainPanelTab"),
+		],
 		//
-		{
-			action: "disableInteraction",
-		},
-		{
-			action: "clearAll",
-		},
-		{
-			action: "runFunction",
-			func: () => {
-				appendRequiredFileCode("js main.js", "alert(\"Hello World\");");
-			},
-		},
-		{
-			action: "highlightElement",
-			selector: "#filesContainerOuter",
-		},
-		{
-			action: "displayText",
-			text: "These are all of your files. Throughout these tutorials, you will be asked to write code into these files. Once you have written the required code, the file names will turn green. As you can see, the index.html file is already complete.",
-		},
-		{
-			action: "displayNextButton",
-		},
+		[
+			"disableInteraction",
+		],
+		[
+			"clearAll",
+		],
+		[
+			"appendRequiredFileCode",
+			"js main.js",
+			"alert(\"Hello World\");",
+		],
+		[
+			"highlightElement",
+			"#filesContainerOuter",
+		],
+		[
+			"displayText",
+			"These are all of your files. Throughout these tutorials, you will be asked to write code into these files. Once you have written the required code, the file names will turn green. As you can see, the index.html file is already complete.",
+		],
+		[
+			"displayNextButton",
+		],
 		//
-		{
-			action: "clearAll",
-		},
-		{
-			action: "setPanelText",
-			text: "Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
-		},
-		{
-			action: "displayText",
-			text: "Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
-		},
-		{
-			action: "highlightCode",
-			types: ["text/javascript"],
-		},
-		{
-			action: "enableInteraction",
-		},
-		{
-			action: "awaitEvent",
-			eventListener: () => {
-				return resolveOnCodeCorrect();
-			},
-		},
+		[
+			"clearAll",
+		],
+		[
+			"setPanelText",
+			"Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+		],
+		[
+			"displayText",
+			"Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+		],
+		[
+			"highlightCode",
+			["text/javascript"],
+		],
+		[
+			"enableInteraction",
+		],
+		[
+			"resolveOnCodeCorrect",
+		],
 		//
-		{
-			action: "saveProgress",
-		},
-		{
-			action: "clearAll",
-		},
-		{
-			action: "displayText",
-			text: "Click the run button to execute your code.",
-		},
-		{
-			action: "setPanelText",
-			text: "Click the run button in the main tab to execute your code.",
-		},
-		{
-			action: "awaitEvent",
-			eventListener: () => resolveOnEvent("click", document.getElementById("runCode")),
-		},
+		[
+			"saveProgress",
+		],
+		[
+			"clearAll",
+		],
+		[
+			"displayText",
+			"Each time you finish writing the required code, a checkpoint is created. For example, if you were to reload the page right now, you would continue from here instead of back at the start.",
+		],
+		[
+			"displayNextButton",
+		],
 		//
-		{
-			action: "endTutorial",
-		},
+		[
+			"clearAll",
+		],
+		[
+			"displayText",
+			"Click the run button to execute your code.",
+		],
+		[
+			"setPanelText",
+			"Click the run button in the main tab to execute your code.",
+		],
+		[
+			"resolveOnEvent",
+			"click",
+			document.getElementById("runCode"),
+		],
+		//
+		[
+			"endTutorial",
+		],
 	],
 };
 
