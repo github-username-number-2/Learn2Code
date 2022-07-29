@@ -29,6 +29,8 @@ export default async function initializeEditor() {
 	async function runTutorial(tutorialJSON) {
 		window.pageType = "tutorial";
 
+		const { id, display } = tutorialJSON.info;
+
 		const tutorialActions = {
 			beginTutorial: () => {
 				return new Promise(resolve => {
@@ -42,15 +44,16 @@ export default async function initializeEditor() {
 					});
 				});
 			},
-			endTutorial: () => {
-				tutorialActions.clearAll();
+			endTutorial: async () => {
+				await tutorialActions.clearAll();
+				await tutorialActions.displayText({ text: `You have completed the ${display} tutorial. Click the next button to be redirected back to the home page.` });
+				await tutorialActions.displayNextButton();
 
-				tutorialActions.displayText({ text: `You have completed the ${tutorialJSON.info.display} tutorial. You will be redirected back to the home page in 10 seconds.` });
-				setTimeout(() => redirectToHome(), 10000);
+				redirectToHome();
 			},
 			loadFileSystem: async ({ fileSystem }) => {
 				fileSystemManager.loadFileSystem(fileSystem);
-				window.requiredFileSystem = fileSystem;
+				lastCheckPointFileSystem = fileSystem;
 			},
 			displayText: async ({ text }) => {
 				const popupElement = elementFromString(`
@@ -128,7 +131,22 @@ export default async function initializeEditor() {
 					}
 				}
 			},
+			saveProgress: async () => {
+				storageManager.setTutorialData({ id, actionIndex, lastCheckPointFileSystem, requiredFileSystem });
+			},
 		};
+
+
+		// load stored progress
+		let lastCheckPointFileSystem, actionIndex = 0;
+
+		const savedData = await storageManager.getTutorialData(id);
+		if (savedData) {
+			({ actionIndex, lastCheckPointFileSystem, requiredFileSystem } = savedData);
+
+			tutorialActions.loadFileSystem(lastCheckPointFileSystem);
+			tutorialActions.setRequiredFileSystem(requiredFileSystem);
+		}
 
 
 		const tutorialTabElement = elementFromString(`<td id="tutorialPanelTab" class="panelTab">Tutorial</td>`),
@@ -144,13 +162,13 @@ export default async function initializeEditor() {
 		document.body.appendChild(tutorialStartElement);
 
 		const headerTextElement = document.getElementById("headerText");
-		headerTextElement.innerText = "Tutorial: " + tutorialJSON.info.display;
+		headerTextElement.innerText = "Tutorial: " + display;
 
 		initializeUI("tutorial");
 
-		for (const instruction of tutorialJSON.actionList) {
-			const action = instruction.action;
-
+		const actionList = tutorialJSON.actionList;
+		for (; actionIndex < actionList.length; actionIndex++) {
+			const instruction = tutorialJSON.actionList[actionIndex];
 			await tutorialActions[instruction.action](instruction);
 		}
 	}

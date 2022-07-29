@@ -1,48 +1,58 @@
-export default async function initializeStorageManager() {
-	let db, objectStore;
-	const openRequest = indexedDB.open("UserFiles", 4);
+export default function initializeStorageManager() {
+	return new Promise(resolve => {
+		const storageManager = {
+			getTutorialData(tutorialID) {
+				return createTransaction("TutorialData", "readonly", store => store.get(tutorialID));
+			},
+			setTutorialData(tutorialData) {
+				return createTransaction("TutorialData", "readwrite", store => store.add(tutorialData));
+			},
+			getProjectData(projectName) {
+				return createTransaction("ProjectData", "readonly", store => store.get(projectName));
+			},
+			setProjectData(projectData) {
+				return createTransaction("ProjectData", "readwrite", store => store.add(projectData));
+			},
+		};
 
-	openRequest.addEventListener("success", event => db = event.target.result);
 
-	openRequest.addEventListener("error", error => console.log(error));
+		let db;
+		const openRequest = indexedDB.open("UserFiles", 4);
 
-	openRequest.addEventListener("upgradeneeded", event => {
-		db = event.target.result;
+		openRequest.addEventListener("success", event => {
+			db = event.target.result;
+			resolve(storageManager);
+		});
 
-		if (!db.objectStoreNames.contains("userFiles")) {
-			db.createObjectStore("userFiles", {
-				keyPath: "type",
-			});
-		}
-		if (!db.objectStoreNames.contains("tutorialFiles")) {
-			db.createObjectStore("tutorialFiles", {
-				keyPath: "type",
-			});
-		}
-		if (!db.objectStoreNames.contains("userData")) {
-			db.createObjectStore("userData", {
-				keyPath: "type",
+		openRequest.addEventListener("error", error => console.log(error));
+
+		openRequest.addEventListener("upgradeneeded", event => {
+			db = event.target.result;
+
+			if (!db.objectStoreNames.contains("ProjectData")) {
+				db.createObjectStore("ProjectData", {
+					keyPath: "name",
+				});
+			}
+			if (!db.objectStoreNames.contains("TutorialData")) {
+				db.createObjectStore("TutorialData", {
+					keyPath: "id",
+				});
+			}
+
+			resolve(storageManager);
+		});
+
+		function createTransaction(storeName, type, requestFunction) {
+			return new Promise(resolve => {
+				const transaction = db.transaction(storeName, type);
+				transaction.onerror = error => console.log(error);
+
+				const store = transaction.objectStore(storeName),
+					request = requestFunction(store);
+
+				request.onsuccess = event => resolve(event.target.result);
 			});
 		}
 	});
-
-	return {
-		getUserProject() {
-		},
-		getUserProject() {
-		},
-		addUserFile(file) {
-			return new Promise(resolve => {
-				const transaction = db.transaction("userFiles", "readwrite");
-				transaction.oncomplete = event => console.log(event);
-				transaction.onerror = error => console.log(error);
-
-				const store = transaction.objectStore("userFiles"),
-					request = store.add(file);
-
-				request.onsuccess = () => resolve();
-				transaction.onerror = error => console.log(error);
-			});
-		},
-	};
 }

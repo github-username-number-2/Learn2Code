@@ -127,6 +127,9 @@ const tutorialData = {
 		},
 		//
 		{
+			action: "saveProgress",
+		},
+		{
 			action: "clearAll",
 		},
 		{

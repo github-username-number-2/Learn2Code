@@ -1,7 +1,9 @@
 import mime from "https://cdn.skypack.dev/pin/mime@v3.0.0-Mgy8KWi04WDrrthUM8WI/mode=imports,min/unoptimized/lite.js";
 
 
-let requiredFileSystem = {}, fileCorrectStates = {}, timeout, resolveFunction;
+window.requiredFileSystem = {}
+
+let fileCorrectStates = {}, timeout, resolveFunction;
 fileSystemManager.editor.onDidChangeModelContent(() => {
 	const activeFile = fileSystemManager.activeFile,
 		activePath = fileSystemManager.activePath;
@@ -51,6 +53,10 @@ function setRequiredFileSystem(fileSystem) {
 			}
 		}
 	}
+}
+
+function getRequiredFileSystem() {
+	return requiredFileSystem;
 }
 
 function checkFileCodeCorrect(path, name) {
