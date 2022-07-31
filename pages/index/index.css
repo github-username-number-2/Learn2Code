@@ -82,3 +82,69 @@
 #info>img {
 	width: 50vw;
 }
+
+#editorHeader {
+	height: 10vh;
+	padding-left: 4vw;
+	padding-top: 4vh;
+}
+
+#editorHeader>h1 {
+	display: inline;
+	padding-left: 2vw;
+	margin: 0;
+	font-size: 6vh;
+}
+
+#newProjectButton {
+	position: absolute;
+	top: 5vh;
+	width: 6vh;
+	height: 6vh;
+	padding: 0;
+	margin-left: 4vh;
+	border: 0.1vh solid #595959;
+	font-size: 5.2vh;
+	cursor: pointer;
+}
+
+#newProjectButton:active {
+	background-color: #cccccc;
+}
+
+#projectsContainer {
+	padding: 1vh 2vw 0 2vw;
+	margin-left: 6vw;
+	margin-right: 6vw;
+	border-top: 0.3vh solid #cccccc;
+}
+
+.project {
+	height: fit-content;
+	padding: 1vh 2vh 1vh 0;
+	cursor: pointer;
+}
+
+.project:hover {
+	background-color: #cccccc;
+}
+
+.project>p {
+	display: inline;
+	padding: 2vh 0 2vh 4vh;
+	margin: 0;
+	font-size: 4vh;
+}
+
+.project>img {
+	position: relative;
+	top: 0.5vh;
+	float: right;
+	height: 4vh;
+	padding-left: 1.5vh;
+	opacity: 0.5;
+}
+
+.project>img:hover {
+	opacity: 1;
+}

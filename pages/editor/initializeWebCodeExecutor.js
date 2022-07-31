@@ -16,7 +16,7 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 						initializationComplete = true;
 
 						runButton.addEventListener("click", () =>
-							webCodeExecutor.executeFileSystem(fileSystemManager.getFilesList())
+							webCodeExecutor.executeFilesList(fileSystemManager.getFilesList())
 						);
 						onready();
 
@@ -37,12 +37,16 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 
 		const webCodeExecutor = {
 			ready: false,
-			executeFileSystem(fileSystem) {
+			executeFilesList(filesList) {
 				if (this.ready) {
 					this.ready = false;
 					runButton.style.backgroundColor = "#cccccc";
 
-					iframe.contentWindow.postMessage(JSON.stringify(fileSystem), executorURL);
+					for (const fileData of filesList) {
+						fileData[0] = "/" + fileData[0].replaceAll(" ", "/");
+					}
+
+					iframe.contentWindow.postMessage(JSON.stringify(filesList), executorURL);
 				}
 			},
 		};

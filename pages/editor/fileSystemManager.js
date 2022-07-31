@@ -1,20 +1,9 @@
 import mime from "https://cdn.skypack.dev/pin/mime@v3.0.0-Mgy8KWi04WDrrthUM8WI/mode=imports,min/unoptimized/lite.js";
-import { elementFromString } from "./functions.js";
+import { elementFromString } from "/js/functions.js";
 
 export default async function createFileSystemManager() {
 	const filesContainer = document.getElementById("filesContainerInner");
-	const observer = new ResizeObserver(() => {
-		let largestWidth = 0, vw = window.innerWidth / 100;
-		for (const file of filesContainer.children) {
-			file.style.width = "fit-content";
-
-			const fileWidth = file.getBoundingClientRect().width;
-			if (fileWidth > largestWidth) largestWidth = fileWidth;
-		}
-		for (const file of filesContainer.children) {
-			file.style.width = largestWidth + vw * 2 + "px";
-		}
-	});
+	const observer = new ResizeObserver(handleResize);
 	observer.observe(filesContainer);
 
 	// initialize new file and folder buttons
@@ -28,6 +17,11 @@ export default async function createFileSystemManager() {
 	});
 	const defaultModel = monaco.editor.createModel("no files currently open", undefined, monaco.Uri.file("root"));
 	editor.setModel(defaultModel);
+
+	// for fileSystemChangeListeners
+	editor.onDidChangeModelContent(() => {
+		for (const listener of fileSystemChangeListeners) listener();
+	});
 
 	// load file extension mappings to icons
 	const iconData = await (await fetch("/data/iconData.json")).json();
@@ -47,6 +41,7 @@ export default async function createFileSystemManager() {
 	}));
 
 	let fileSystem;
+	const fileSystemChangeListeners = [];
 
 	const manager = {
 		editor,
@@ -60,6 +55,8 @@ export default async function createFileSystemManager() {
 		activeDirectory: {},
 
 		loadFileSystem(newFileSystem) {
+			editor.setModel(defaultModel);
+			
 			fileSystem = { "root": {} };
 
 			this.activeItem = "root";
@@ -67,6 +64,10 @@ export default async function createFileSystemManager() {
 			this.activeDirectory = fileSystem.root;
 
 			filesContainer.innerHTML = `<div id="fileSystemRoot" data-path="" data-name="root" data-is-directory="1" data-directory-state="1"></div>`;
+
+			for (const model of monaco.editor.getModels()) {
+				if (model !== defaultModel) model.dispose();
+			}
 
 			for (const item in newFileSystem) {
 				this.addItem(item, newFileSystem[item], "root");
@@ -180,6 +181,8 @@ export default async function createFileSystemManager() {
 					monaco.Uri.file(`${currentPath} ${itemName}`),
 				);
 			}
+
+			for (const listener of fileSystemChangeListeners) listener();
 		},
 		removeItem(targetItemName, targetItemPath) {
 			const deleteFileModel = (fileName, filePath) => {
@@ -215,6 +218,8 @@ export default async function createFileSystemManager() {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
 			delete targetDirectoryObject[targetItemName];
+
+			for (const listener of fileSystemChangeListeners) listener();
 		},
 		changeItemName(newItemName, targetItemName, targetItemPath) {
 			let targetDirectoryObject = fileSystem;
@@ -223,7 +228,7 @@ export default async function createFileSystemManager() {
 			}
 			const contents = targetDirectoryObject[targetItemName]
 				? targetDirectoryObject[targetItemName]
-				: "";
+				: this.getFileContents(targetItemPath, targetItemName);
 
 			this.removeItem(targetItemName, targetItemPath);
 			this.addItem(newItemName, contents, targetItemPath);
@@ -238,6 +243,9 @@ export default async function createFileSystemManager() {
 
 				if (fileSystemManager.getDirectoryState(directoryElement) === "0") fileSystemManager.toggleDirectory(directoryElement);
 			}
+
+			// recompute file option positions
+			handleResize();
 		},
 		moveItem(newItemPath, targetItemName, targetItemPath) {
 			let targetDirectoryObject = fileSystem;
@@ -266,7 +274,7 @@ export default async function createFileSystemManager() {
 				for (const fileElement of document.getElementsByClassName("file")) {
 					fileElement.style.backgroundColor = null;
 				}
-				itemElement.style.backgroundColor = "#cccccc";
+				itemElement.style.backgroundColor = "#dddddd";
 
 				let targetDirectoryObject = fileSystem;
 				for (const directory of targetItemPath.split(" ")) {
@@ -278,6 +286,11 @@ export default async function createFileSystemManager() {
 				this.activeDirectory = targetDirectoryObject;
 
 				if (!itemElement.getAttribute("data-is-directory")) {
+					for (const fileElement of document.getElementsByClassName("file")) {
+						fileElement.children[1].style.fontWeight = null;
+					}
+					itemElement.children[1].style.fontWeight = "600";
+
 					this.activeFile = targetItemName;
 					this.activeFilePath = targetItemPath;
 					this.activeFileDirectory = targetDirectoryObject;
@@ -334,10 +347,11 @@ export default async function createFileSystemManager() {
 			return directoryElement.getAttribute("data-directory-state");
 		},
 		getFileContents(path, name) {
-			return monaco.editor.getModel(monaco.Uri.file(`${path} ${name}`)).getValue();
+			const model = monaco.editor.getModel(monaco.Uri.file(`${path} ${name}`));
+			return model ? model.getValue() : null;
 		},
 		getFileSystem() {
-			function getDirectoryContents(path) {
+			const getDirectoryContents = path => {
 				const directoryContents = {};
 				let targetDirectory = fileSystem;
 
@@ -345,7 +359,7 @@ export default async function createFileSystemManager() {
 
 				for (const item in targetDirectory) {
 					if (typeof targetDirectory[item] === "string") {
-						directoryContents[item] = monaco.editor.getModel(monaco.Uri.file(`${path} ${item}`)).getValue();
+						directoryContents[item] = this.getFileContents(path, item);
 					} else {
 						directoryContents[item] = getDirectoryContents(`${path} ${item}`);
 					}
@@ -366,12 +380,12 @@ export default async function createFileSystemManager() {
 
 					if (typeof content === "string") {
 						files.push([
-							`${path}/${item}`,
+							`${path} ${item}`.trim(),
 							content,
 							mime.getType(item) || "text/plain",
 						]);
 					} else {
-						files.push(...getFileListFromDirectory(content, `${path}/${item}`));
+						files.push(...getFileListFromDirectory(content, `${path} ${item}`.trim()));
 					}
 				}
 				return files;
@@ -386,13 +400,15 @@ export default async function createFileSystemManager() {
 				editor.updateOptions({ readOnly: true });
 			}
 		},
+		addFileSystemChangeListener(listener) {
+			fileSystemChangeListeners.push(listener);
+		},
 
 		// tutorial specific
 		setFileCorrectState(filePath, fileName, state) {
 			this.selectItem(fileName, filePath).children[1].style.color = state ? "#00aa00" : "#000000";
 		},
 	};
-
 	return manager;
 
 
@@ -479,5 +495,18 @@ export default async function createFileSystemManager() {
 		if (["_L2C_RESERVED_INDEX_.html", "_L2C_RESERVED_WORKER_.js"].includes(name)) return void alertCustom(`"_L2C_RESERVED_INDEX_.html" and "_L2C_RESERVED_WORKER_.js" are reserved file names used by the code executor`) || false;
 
 		return true;
+	}
+
+	function handleResize() {
+		let largestWidth = 0, vw = window.innerWidth / 100;
+		for (const file of filesContainer.children) {
+			file.style.width = "fit-content";
+
+			const fileWidth = file.getBoundingClientRect().width;
+			if (fileWidth > largestWidth) largestWidth = fileWidth;
+		}
+		for (const file of filesContainer.children) {
+			file.style.width = largestWidth + vw * 2 + "px";
+		}
 	}
 }

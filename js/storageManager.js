@@ -4,14 +4,23 @@ export default function initializeStorageManager() {
 			getTutorialData(tutorialID) {
 				return createTransaction("TutorialData", "readonly", store => store.get(tutorialID));
 			},
+			getAllTutorialData() {
+				return createTransaction("TutorialData", "readonly", store => store.getAll());
+			},
 			setTutorialData(tutorialData) {
 				return createTransaction("TutorialData", "readwrite", store => store.put(tutorialData));
 			},
 			getProjectData(projectName) {
 				return createTransaction("ProjectData", "readonly", store => store.get(projectName));
 			},
+			getAllProjectKeys() {
+				return createTransaction("ProjectData", "readonly", store => store.getAllKeys());
+			},
 			setProjectData(projectData) {
 				return createTransaction("ProjectData", "readwrite", store => store.put(projectData));
+			},
+			deleteProjectData(projectName) {
+				return createTransaction("ProjectData", "readwrite", store => store.delete(projectName));
 			},
 		};
 

@@ -6,22 +6,31 @@ export default async function initializeEditor() {
 
 	if (hash.startsWith("tutorial")) {
 		const tutorialID = hash.split("-")[1];
-		const tutorialData = await (import(`/data/tutorials/${tutorialID}.js`).catch(error => {
-			console.log(error);
-
+		const tutorialData = await (import(`/data/tutorials/${tutorialID}.js`).catch(() => {
 			alertCustom("Error: Could not load tutorial<br><br>Tutorials can be accessed from the main page under the tutorials tab<br><br>You will be redirected automatically in 15 seconds");
 			setTimeout(() => window.location.href = "//" + window.location.host, 15000);
 		}));
 
 		runTutorial(tutorialData.default);
 	} else if (hash.startsWith("editor")) {
-		runEditor();
+		const projectName = hash.split("-")[1],
+			projectData = await storageManager.getProjectData(projectName);
+
+		if (projectData === undefined) {
+			alertCustom("Error: Could not load project<br><br>Projects can be accessed from the main page under the projects tab<br><br>You will be redirected automatically in 15 seconds");
+			setTimeout(() => window.location.href = "//" + window.location.host, 15000);
+			return;
+		}
+
+		runEditor(projectData);
 	} else {
 		window.location.href = "//" + window.location.host;
 	}
 
 	async function runTutorial(tutorialJSON) {
 		window.tutorialFunctions = initializeTutorialFunctions(tutorialJSON);
+
+		initializeUI("tutorial");
 
 		// load stored progress
 		let actionIndex = 0;
@@ -35,8 +44,6 @@ export default async function initializeEditor() {
 			tutorialFunctions.setRequiredFileSystem(requiredFileSystem);
 		}
 
-		initializeUI("tutorial");
-
 		const actionList = tutorialJSON.actionList;
 		for (; actionIndex < actionList.length; actionIndex++) {
 			const instruction = tutorialJSON.actionList[actionIndex];
@@ -44,9 +51,26 @@ export default async function initializeEditor() {
 		}
 	}
 
-	function runEditor(projectName) {
+	function runEditor(projectData) {
 		initializeUI("main");
 
-		fileSystemManager.loadFileSystem({});
+		const { name, fileSystem } = projectData;
+
+		document.getElementById("headerText").innerText = "Project: " + name;
+		fileSystemManager.loadFileSystem(fileSystem);
+
+		// initialize autosave
+		const saveIcon = document.getElementById("saveIcon");
+
+		let timeout;
+		fileSystemManager.addFileSystemChangeListener(() => {
+			saveIcon.style.animationName = "fade";
+			clearTimeout(timeout);
+			timeout = setTimeout(async () => {
+				await storageManager.setProjectData({ name, fileSystem: fileSystemManager.getFileSystem() });
+				
+				saveIcon.style.animationName = null;
+			}, 600);
+		});
 	}
 }

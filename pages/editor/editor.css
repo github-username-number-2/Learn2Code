@@ -20,6 +20,10 @@
 	border: 0.5vh solid #595959;
 	border-radius: 1vh;
 	margin: 1.5vh;
+	opacity: 1;
+	animation-duration: 0.7s;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
 }
 
 #saveIcon:hover {
@@ -178,7 +182,7 @@
 }
 
 .file:hover {
-	background-color: #cccccc;
+	background-color: #eeeeee;
 }
 
 .fileIcon {
@@ -236,10 +240,36 @@ pre[data-lang] {
 }
 
 #tutorialPanelContent {
-	box-sizing: border-box;
-	padding: 1vh;
-	text-align: center;
 	overflow: auto;
+	text-align: center;
+}
+
+#revertFileSystemButton {
+	position: relative;
+	top: 2vh;
+	padding: 1vh;
+	border: 0.1vh solid #eeeeee;
+	border-radius: 1vh;
+	font-size: 2vh;
+	white-space: nowrap;
+	background-color: #ffffff;
+	cursor: pointer;
+}
+
+#tutorialPanelText {
+	position: absolute;
+	left: 0;
+	top: 8.5vh;
+	width: 100%;
+	padding: 1vh;
+	border-top: 0.2vh solid #eeeeee;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+#revertFileSystemButton:hover {
+	border: 0.2vh solid #dddddd;
+	background-color: #eeeeee;
 }
 
 .tutorialHighlighter {
@@ -310,4 +340,15 @@ pre[data-lang] {
 .tutorialPopupText {
 	font-size: 3vh;
 	word-wrap: break-word;
+}
+
+
+@keyframes fade {
+	0% {
+		opacity: 0.5;
+	}
+
+	100% {
+		opacity: 0.8;
+	}
 }

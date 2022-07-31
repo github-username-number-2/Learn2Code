@@ -1,11 +1,11 @@
+import { elementFromString } from "/js/functions.js"
+
 // register service worker
 navigator.serviceWorker.register("/js/sw.js");
-
 
 // prevents dragging of images and text selection
 document.addEventListener("dragstart", event => event.preventDefault());
 document.addEventListener("selectstart", event => event.preventDefault());
-
 
 const mask = document.createElement("div");
 mask.id = "mask";
@@ -92,12 +92,9 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 	};
 
 	function createPopupElement(popupHTML, { left, right, top, bottom, width, height }) {
-		const template = document.createElement("template");
-		template.innerHTML = popupHTML;
-
 		for (const element of mask.children) element.style.display = "none";
 
-		const popupElement = template.content.firstChild;
+		const popupElement = elementFromString(popupHTML);
 		const vw = window.innerWidth / 100,
 			vh = window.innerHeight / 100;
 		const parameterList = ["left", "right", "top", "bottom", "width", "height"],

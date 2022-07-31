@@ -1,5 +1,3 @@
-import { selectTab } from "./functions.js";
-
 export default function initializeUI(defaultTab) {
 	const resizeContainers = (function () {
 		let intervals = [], mouseX;
@@ -63,4 +61,19 @@ export default function initializeUI(defaultTab) {
 	}
 
 	selectTab(defaultTab);
+}
+
+export function selectTab(tabName) {
+	const tabs = document.getElementsByClassName("panelTab");
+	for (const tab of tabs) {
+		tab.style.backgroundColor = "#eeeeee";
+	}
+
+	const contentContainers = document.getElementsByClassName("panelContent");
+	for (const container of contentContainers) {
+		container.style.display = "none";
+	}
+
+	document.getElementById(tabName + "PanelTab").style.backgroundColor = "#cccccc";
+	document.getElementById(tabName + "PanelContent").style.display = "block";
 }

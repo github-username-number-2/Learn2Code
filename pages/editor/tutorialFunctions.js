@@ -1,11 +1,11 @@
 import mime from "https://cdn.skypack.dev/pin/mime@v3.0.0-Mgy8KWi04WDrrthUM8WI/mode=imports,min/unoptimized/lite.js";
-import { elementFromString } from "./functions.js";
+import { elementFromString } from "/js/functions.js";
 
 export default function initializeTutorialFunctions(tutorialJSON) {
 	const { id, display } = tutorialJSON.info;
 
 	const tutorialTabElement = elementFromString(`<td id="tutorialPanelTab" class="panelTab">Tutorial</td>`),
-		tutorialContentElement = elementFromString(`<div id="tutorialPanelContent" class="panelContent"></div>`),
+		tutorialContentElement = elementFromString(`<div id="tutorialPanelContent" class="panelContent"><button id="revertFileSystemButton" disabled>Revert File System</button><div id="tutorialPanelText"></div></div>`),
 		tutorialMaskElement = elementFromString(`<div id="tutorialMask"></div>`),
 		tutorialNextElement = elementFromString(`<button id="tutorialNextButton" class="tutorialButton">Next</button>`),
 		tutorialStartElement = elementFromString(`<button id="tutorialStartButton" class="tutorialButton">Start</button>`);
@@ -22,18 +22,24 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 	const headerTextElement = document.getElementById("headerText");
 	headerTextElement.innerText = "Tutorial: " + display;
 
+	const revertFileSystemButton = document.getElementById("revertFileSystemButton");
+	revertFileSystemButton.addEventListener("click", async () => {
+		if (await confirmCustom("Are you sure you would like to revert the file system back the the last checkpoint?")) {
+			tutorialFunctions.revertFileSystem();
+		}
+	});
 
-	// initialize file correct state updater
-	let requiredFileSystem, requiredFileSystemObject, fileCorrectStates = {}, timeout, resolveFunction;
+
+	// initialize file correct checker
+	let lastCheckPointFileSystem, requiredFileSystem, requiredFileSystemObject, timeout, resolveFunction = () => { };
 	fileSystemManager.editor.onDidChangeModelContent(() => {
 		const activeFile = fileSystemManager.activeFile,
 			activePath = fileSystemManager.activePath;
 
 		clearTimeout(timeout);
 		timeout = setTimeout(() => {
-			fileCorrectStates[`${activePath} ${activeFile}`] = checkFileCodeCorrect(activePath, activeFile);
-
-			if (!Object.values(fileCorrectStates).includes(false)) resolveFunction();
+			if (!checkFileCodeCorrect(activePath, activeFile)) return;
+			if (checkFileSystemCorrect()) resolveFunction();
 		}, 600);
 	});
 
@@ -67,7 +73,6 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		setRequiredFileSystem(fileSystem) {
 			requiredFileSystemObject = fileSystem;
 			requiredFileSystem = {};
-			fileCorrectStates = {};
 
 			addDirectoryFiles(fileSystem, "root");
 
@@ -78,12 +83,13 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 						const code = formatCode(itemValue, mime.getType(item))
 
 						requiredFileSystem[`${path} ${item}`] = code;
-						fileCorrectStates[`${path} ${item}`] = checkFileCodeCorrect(path, item);
 					} else if (typeof itemValue === "object") {
 						addDirectoryFiles(itemValue, `${path} ${item}`);
 					}
 				}
 			}
+
+			checkFileSystemCorrect();
 		},
 		getRequiredFileSystem() {
 			return requiredFileSystemObject;
@@ -93,7 +99,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				resolveFunction = () => resolve();
 			});
 		},
-		beginTutorial: () => {
+		beginTutorial() {
 			return new Promise(resolve => {
 				const startButton = document.getElementById("tutorialStartButton");
 				startButton.style.display = "block";
@@ -105,17 +111,25 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				});
 			});
 		},
-		endTutorial: async () => {
+		async endTutorial() {
 			await tutorialFunctions.clearAll();
 			await tutorialFunctions.displayText(`You have completed the ${display} tutorial. Click the next button to be redirected back to the home page.`);
 			await tutorialFunctions.displayNextButton();
 
 			window.location.href = "//" + window.location.host;
 		},
-		loadFileSystem: async (fileSystem) => {
+		loadFileSystem(fileSystem) {
 			fileSystemManager.loadFileSystem(fileSystem);
+			checkFileSystemCorrect();
+
+			// clone file system object
+			lastCheckPointFileSystem = JSON.parse(JSON.stringify(fileSystem));
+			revertFileSystemButton.disabled = false;
 		},
-		displayText: async (text) => {
+		revertFileSystem() {
+			tutorialFunctions.loadFileSystem(lastCheckPointFileSystem);
+		},
+		displayText(text) {
 			const popupElement = elementFromString(`
 				<div class="tutorialPopup">
 					<div class="tutorialPopupHeader"></div>
@@ -124,12 +138,12 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			`);
 			document.body.appendChild(popupElement);
 		},
-		clearText: async () => {
+		clearText() {
 			for (const element of document.getElementsByClassName("tutorialPopup")) {
 				element.remove();
 			}
 		},
-		highlightElement: async (selector) => {
+		highlightElement(selector) {
 			const element = document.querySelector(selector);
 
 			const highlighter = document.createElement("div");
@@ -147,18 +161,18 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			document.body.appendChild(highlighter);
 		},
-		clearHighlighters: async () => {
+		clearHighlighters() {
 			for (const element of document.getElementsByClassName("tutorialHighlighter")) {
 				element.remove();
 			}
 		},
-		setPanelText: async (text) => {
-			document.getElementById("tutorialPanelContent").innerHTML = text;
+		setPanelText(text) {
+			document.getElementById("tutorialPanelText").innerHTML = text;
 		},
-		awaitEvent: async (eventListener) => {
+		awaitEvent: async eventListener => {
 			await eventListener();
 		},
-		displayNextButton: () => {
+		displayNextButton() {
 			return new Promise(resolve => {
 				const nextButton = document.getElementById("tutorialNextButton");
 				nextButton.style.display = "block";
@@ -170,32 +184,36 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				});
 			});
 		},
-		clearAll: async () => {
-			await tutorialFunctions.clearHighlighters();
-			await tutorialFunctions.clearText();
-			await tutorialFunctions.setPanelText("");
+		async clearAll() {
+			tutorialFunctions.clearHighlighters();
+			tutorialFunctions.clearText();
+			tutorialFunctions.setPanelText("");
 		},
-		enableInteraction: async () => {
+		enableInteraction() {
 			tutorialMaskElement.style.display = "none";
 		},
-		disableInteraction: async () => {
+		disableInteraction() {
 			tutorialMaskElement.style.display = "block";
 		},
-		runFunction: async (func) => {
+		runFunction(func) {
 			func();
 		},
-		highlightCode: async (types) => {
+		highlightCode(types) {
 			for (const type of types) {
 				for (const element of document.querySelectorAll(`[data-lang="${type}"]`)) {
 					monaco.editor.colorizeElement(element);
 				}
 			}
 		},
-		saveProgress: async (actionIndex) => {
+		// progress should only be saved when code is correct
+		saveProgress(actionIndex) {
+			lastCheckPointFileSystem = fileSystemManager.getFileSystem();
+			revertFileSystemButton.disabled = false;
+
 			storageManager.setTutorialData({
 				id,
 				actionIndex,
-				lastCheckPointFileSystem: fileSystemManager.getFileSystem(),
+				lastCheckPointFileSystem,
 				requiredFileSystem: tutorialFunctions.getRequiredFileSystem(),
 			});
 		},
@@ -217,10 +235,26 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 	}
 
 	function checkFileCodeCorrect(path, name) {
-		const code = formatCode(fileSystemManager.getFileContents(path, name), mime.getType(name));
+		const fileContents = fileSystemManager.getFileContents(path, name);
+		// file doesn't exist
+		if (fileContents === null) return false;
+
+		const code = formatCode(fileContents, mime.getType(name));
 		const correct = code === requiredFileSystem[`${path} ${name}`];
 
 		fileSystemManager.setFileCorrectState(path, name, correct);
+
+		return correct;
+	}
+
+	function checkFileSystemCorrect() {
+		let correct = true;
+		for (const filePath in requiredFileSystem) {
+			const pathList = filePath.split(" ");
+			const [path, name] = [pathList.slice(0, -1).join(" "), pathList.slice(-1)[0]];
+
+			if (checkFileCodeCorrect(path, name)) correct = true;
+		}
 
 		return correct;
 	}
