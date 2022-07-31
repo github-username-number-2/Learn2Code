@@ -102,11 +102,11 @@ const tutorialData = {
 		],
 		[
 			"setPanelText",
-			"Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+			"Open the folder named js. In the main.js file write the following code: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
 		],
 		[
 			"displayText",
-			"Write the following code into the main.js file under the js folder: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+			"Open the folder named js. In the main.js file write the following code: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
 		],
 		[
 			"highlightCode",

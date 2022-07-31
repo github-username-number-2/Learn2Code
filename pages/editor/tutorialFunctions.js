@@ -253,7 +253,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			const pathList = filePath.split(" ");
 			const [path, name] = [pathList.slice(0, -1).join(" "), pathList.slice(-1)[0]];
 
-			if (checkFileCodeCorrect(path, name)) correct = true;
+			if (!checkFileCodeCorrect(path, name)) correct = false;
 		}
 
 		return correct;
