@@ -66,26 +66,30 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 				`<div class="popup prompt">
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
-					<input class="popupInput" value="${options.defaultInputValue}" maxlength="${options.maxLength} type="text">
-					<button class="popupButton">Confirm</button>
+					<div class="inputContainer">
+						<input class="popupInput" value="${options.defaultInputValue}" maxlength="${options.maxLength} type="text">
+						<button class="popupButton">Confirm</button>
+						<button class="popupButton">Cancel</button>
+					</div>
 				</div>`,
 				options,
 			);
 
 			setTimeout(() => {
-				promptElement.children[2].addEventListener("keydown", event => {
+				const inputContainer = promptElement.children[2];
+				inputContainer.children[0].addEventListener("keydown", event => {
 					if (event.key === "Enter") {
-						const response = promptElement.children[2].value;
-
 						deletePopupElement(promptElement);
-						resolve(response);
+						resolve(inputContainer.value);
 					}
 				});
-				promptElement.lastElementChild.addEventListener("click", () => {
-					const response = promptElement.children[2].value;
-
+				inputContainer.children[1].addEventListener("click", () => {
 					deletePopupElement(promptElement);
-					resolve(response);
+					resolve(inputContainer.children[2].value);
+				});
+				inputContainer.children[2].addEventListener("click", () => {
+					deletePopupElement(promptElement);
+					resolve(null);
 				});
 			}, 100);
 		});

@@ -87,20 +87,28 @@ body {
 	margin-right: 2vw;
 }
 
-.prompt>.popupButton {
-	width: 4vw;
-	margin-right: 2vw;
+.prompt>.inputContainer {
+	vertical-align: middle;
+	width: fit-content;
+	height: 4vh;
+	margin: 0 2vw 2vh 2vw;
 }
 
-.prompt>.popupInput {
+.prompt>.inputContainer>.popupButton {
+	display: inline-block;
+	vertical-align: middle;
+	width: 4vw;
+}
+
+.prompt>.inputContainer>.popupInput {
+	display: inline-block;
 	vertical-align: middle;
 	box-sizing: border-box;
 	width: 15vw;
 	height: 4vh;
 	padding: 0.6vh;
+	margin-top: -2vh;
 	border: 0.1vw solid #cccccc;
-	margin-left: 2vw;
-	margin-bottom: 2vh;
 	font-size: 1.5vh;
 	border-radius: 0;
 }

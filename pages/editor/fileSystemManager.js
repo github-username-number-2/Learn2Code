@@ -11,7 +11,7 @@ export default async function createFileSystemManager() {
 	document.getElementById("newFolderButton").addEventListener("click", () => addNewItem("folder"));
 
 	// initialize editor
-	const editor = monaco.editor.create(document.getElementById("editorContainer"), {
+	const editor = monaco.editor.create(document.getElementById("codeContainer"), {
 		automaticLayout: true,
 		readOnly: true,
 	});
@@ -19,9 +19,9 @@ export default async function createFileSystemManager() {
 	editor.setModel(defaultModel);
 
 	// for fileSystemChangeListeners
-	editor.onDidChangeModelContent(() => {
-		for (const listener of fileSystemChangeListeners) listener();
-	});
+	editor.onDidChangeModelContent(() =>
+		Object.values(manager.fileSystemChangeListeners).forEach(listener => listener())
+	);
 
 	// load file extension mappings to icons
 	const iconData = await (await fetch("/data/iconData.json")).json();
@@ -41,7 +41,6 @@ export default async function createFileSystemManager() {
 	}));
 
 	let fileSystem;
-	const fileSystemChangeListeners = [];
 
 	const manager = {
 		editor,
@@ -54,9 +53,11 @@ export default async function createFileSystemManager() {
 		activePath: "",
 		activeDirectory: {},
 
+		fileSystemChangeListeners: {},
+
 		loadFileSystem(newFileSystem) {
 			editor.setModel(defaultModel);
-			
+
 			fileSystem = { "root": {} };
 
 			this.activeItem = "root";
@@ -131,7 +132,10 @@ export default async function createFileSystemManager() {
 				event.stopPropagation();
 
 				const newName = await promptCustom(`Enter new name:`);
-				if (checkItemValid(newName, currentPath, isDirectory ? "folder" : "file")) manager.changeItemName(newName, itemName, currentPath);
+				if (
+					newName !== null // prompt was canceled
+					&& checkItemValid(newName, currentPath, isDirectory ? "folder" : "file")
+				) manager.changeItemName(newName, itemName, currentPath);
 			});
 
 			const context = icon.getContext("2d");
@@ -182,7 +186,7 @@ export default async function createFileSystemManager() {
 				);
 			}
 
-			for (const listener of fileSystemChangeListeners) listener();
+			for (const listener of Object.values(this.fileSystemChangeListeners)) listener();
 		},
 		removeItem(targetItemName, targetItemPath) {
 			const deleteFileModel = (fileName, filePath) => {
@@ -219,7 +223,7 @@ export default async function createFileSystemManager() {
 			}
 			delete targetDirectoryObject[targetItemName];
 
-			for (const listener of fileSystemChangeListeners) listener();
+			for (const listener of Object.values(this.fileSystemChangeListeners)) listener();
 		},
 		changeItemName(newItemName, targetItemName, targetItemPath) {
 			let targetDirectoryObject = fileSystem;
@@ -400,9 +404,6 @@ export default async function createFileSystemManager() {
 				editor.updateOptions({ readOnly: true });
 			}
 		},
-		addFileSystemChangeListener(listener) {
-			fileSystemChangeListeners.push(listener);
-		},
 
 		// tutorial specific
 		setFileCorrectState(filePath, fileName, state) {
@@ -461,7 +462,10 @@ export default async function createFileSystemManager() {
 		if (isCurrentItemDirectory) path = `${path} ${activeItem}`.trim();
 
 		const name = await promptCustom(`New ${type} name:`);
-		if (checkItemValid(name, path, type)) {
+		if (
+			name !== null // prompt was canceled
+			&& checkItemValid(name, path, type)
+		) {
 			fileSystemManager.addItem(
 				name,
 				{ file: "", folder: {} }[type],

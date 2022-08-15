@@ -35,11 +35,12 @@ window.addEventListener("load", async () => {
 		newProjectButton.addEventListener("click", async () => {
 			const name = await promptCustom("Project name:");
 
+			if (name === null) return; // prompt was canceled
 			if (!name) return alertCustom(`Project names cannot be blank`);
 			if (!/^[0-9a-zA-Z._-]+$/.test(name)) return alertCustom(`Project names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`);
-			if (await storageManager.getProjectData(name)) return alertCustom(`A project with this naem already exists`);
+			if (await storageManager.getProjectData(name)) return alertCustom(`A project with this name already exists`);
 
-			storageManager.setProjectData({ name, fileSystem: {} });
+			storageManager.setProjectData({ name, fileSystem: { "index.html": "" } });
 
 			window.location = `//${window.location.host}/pages/editor.html#editor-${name}`;
 		});
@@ -49,8 +50,8 @@ window.addEventListener("load", async () => {
 			const projectElement = elementFromString(`
 				<div class="project">
 					<p>${key}</p>
-					<img src="/images/icons/deleteIcon.png">
-					<img src="/images/icons/renameIcon.png">
+					<img title="Delete Project" src="/images/icons/deleteIcon.png">
+					<img title="Rename Project" src="/images/icons/renameIcon.png">
 				</div>
 			`);
 			projectElement.addEventListener("click", () =>
@@ -60,12 +61,13 @@ window.addEventListener("load", async () => {
 				event.stopPropagation();
 
 				if (await confirmCustom("Are you sure you want to delete this project? This can not be undone.")) {
-					if (await promptCustom("Please type the name of this project to verify this action:") === key) {
+					const name = await promptCustom("Please type the name of this project to verify this action:");
+					if (name === key) {
 						storageManager.deleteProjectData(key);
 
 						projectsContainer.innerHTML = "";
 						loadEditorTab();
-					} else {
+					} else if (name !== null /* prompt was canceled */) {
 						alertCustom("Name did not match");
 					}
 				}
@@ -74,11 +76,12 @@ window.addEventListener("load", async () => {
 				event.stopPropagation();
 
 				const newName = await promptCustom("Enter new project name:");
-
+				
+				if (newName === null) return; // prompt was canceled
 				if (!newName) return alertCustom(`Project names cannot be blank`);
 				if (!/^[0-9a-zA-Z._-]+$/.test(newName)) return alertCustom(`Project names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`);
 				if (newName === key) return alertCustom("The name must be different then the current.");
-				if (await storageManager.getProjectData(newName)) return alertCustom(`A project with this naem already exists`);
+				if (await storageManager.getProjectData(newName)) return alertCustom(`A project with this name already exists`);
 
 				const projectData = await storageManager.getProjectData(key);
 				await storageManager.setProjectData({ ...projectData, name: newName });

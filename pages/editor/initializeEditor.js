@@ -40,7 +40,7 @@ export default async function initializeEditor() {
 			({ actionIndex } = savedData);
 			const { lastCheckPointFileSystem, requiredFileSystem } = savedData;
 
-			tutorialFunctions.loadFileSystem(lastCheckPointFileSystem);
+			await tutorialFunctions.loadFileSystem(lastCheckPointFileSystem);
 			tutorialFunctions.setRequiredFileSystem(requiredFileSystem);
 		}
 
@@ -56,21 +56,24 @@ export default async function initializeEditor() {
 
 		const { name, fileSystem } = projectData;
 
-		document.getElementById("headerText").innerText = "Project: " + name;
+		document.getElementById("headerText").innerText =
+			document.title =
+			"Project: " + name;
+
 		fileSystemManager.loadFileSystem(fileSystem);
 
 		// initialize autosave
 		const saveIcon = document.getElementById("saveIcon");
 
 		let timeout;
-		fileSystemManager.addFileSystemChangeListener(() => {
+		fileSystemManager.fileSystemChangeListeners.saveListener = () => {
 			saveIcon.style.animationName = "fade";
 			clearTimeout(timeout);
 			timeout = setTimeout(async () => {
 				await storageManager.setProjectData({ name, fileSystem: fileSystemManager.getFileSystem() });
-				
+
 				saveIcon.style.animationName = null;
 			}, 600);
-		});
+		};
 	}
 }

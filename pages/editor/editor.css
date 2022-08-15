@@ -52,6 +52,8 @@
 }
 
 #editorContainer {
+	display: flex;
+	flex-flow: column;
 	right: 0;
 	width: 80vw;
 }
@@ -215,16 +217,28 @@
 	opacity: 1;
 }
 
-/* tutorial specific */
-.prettify {
-	min-width: fit-content;
+#editorTabContainer {
+	height: 4vh;
 }
+
+#codeContainer {
+	flex-grow: 1;
+}
+
+#fileInfoContainer {
+	height: 2vh;
+}
+
+/* tutorial specific */
 
 pre[data-lang] {
 	min-width: fit-content;
+	max-height: 15vh;
 	padding: 1.5vh;
 	border-radius: 1vh;
 	font-size: 2vh;
+	text-align: left;
+	overflow-y: auto;
 	background-color: #eeeeee;
 }
 

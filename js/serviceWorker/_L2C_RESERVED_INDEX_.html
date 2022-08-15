@@ -19,7 +19,9 @@
 
 				const promiseList = [];
 				for (const file of fileList)
-					promiseList.push(cache.put(file[0], new Response(
+					promiseList.push(cache.put(
+						file[0],
+						new Response(
 						file[1],
 						{
 							status: 200,

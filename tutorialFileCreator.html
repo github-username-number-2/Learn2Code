@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tutorial Creator</title>
+</head>
+
+<body>
+	<textarea id="input"></textarea>
+	<textarea id="output"></textarea>
+	<button onclick="output.value = (e => (e.innerText = input.value || '!') && e.innerHTML)(document.createElement('p'))">convert</button>
+
+	<input type="file" id="temp">
+
+	<script>
+		instructionString = `
+0|<!DOCTYPE html>
+0|<html>
+0|  <head>
+1,5|    <title>title</title>
+4|    <title>title2</title>
+0|  </head>
+3|  <body>
+3|    fffff
+3|  </ body>
+0|</html>
+0,2|ssss
+
+|Add this code idk example text
++0|Write it<<<*text/javascript*code goes here*>>>
++1,-2|add this line and delete these lines
++3|add this
++4,-5|delete line and add line
+		`;
+
+		const [actionString, fileString] = instructionString.split("\n\n");
+
+		temp.onchange = function (event) {
+			window.s = event.target
+			console.log(s);
+		};
+	</script>
+</body>
+
+</html>
+
+<!--
+	info
+		text
+
+		clearAll
+		enableInteraction
+		displayText
+		highlightAllCode
+		displayNextButton
+
+	infoWithHighlight
+		text
+		selector
+
+		clearAll
+		disableInteraction
+		highlightElement
+		displayText
+		highlightAllCode
+		displayNextButton
+
+	instructEventAction
+		text
+		event
+		element
+
+		clearAll
+		enableInteraction
+		displayTextAndSetPanel
+		highlightAllCode
+		resolveOnEvent
+
+	instructCodeAction
+		text
+		requiredCodeMethod
+		...requiredCodeMethodParams
+
+		{requiredCodeMethod}
+		clearAll
+		enableInteraction
+		displayTextAndSetPanel
+		highlightAllCode
+		resolveOnCodeCorrect
+
+0|<!DOCTYPE html>
+0|<html>
+0|  <head>
+1,5|    <title>title</title>
+4|    <title>title2</title>
+0|  </head>
+3|  <body>
+3|    fffff
+3|  </body>
+0|</html>
+0,2|ssss
+
+|Add this code idk example text
++0|Write it<<<*text/javascript*code goes here*>>>
++1,-2|add this line and delete these lines
++3|add this
++4,-5|delete line and add line
+
+-->

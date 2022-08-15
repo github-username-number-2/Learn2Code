@@ -19,8 +19,9 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 	document.body.appendChild(tutorialNextElement);
 	document.body.appendChild(tutorialStartElement);
 
-	const headerTextElement = document.getElementById("headerText");
-	headerTextElement.innerText = "Tutorial: " + display;
+	document.getElementById("headerText").innerText =
+		document.title =
+		"Tutorial: " + display;
 
 	const revertFileSystemButton = document.getElementById("revertFileSystemButton");
 	revertFileSystemButton.addEventListener("click", async () => {
@@ -32,7 +33,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 	// initialize file correct checker
 	let lastCheckPointFileSystem, requiredFileSystem, requiredFileSystemObject, timeout, resolveFunction = () => { };
-	fileSystemManager.editor.onDidChangeModelContent(() => {
+	fileSystemManager.fileSystemChangeListeners.tutorialChangeListener = () => {
 		const activeFile = fileSystemManager.activeFile,
 			activePath = fileSystemManager.activePath;
 
@@ -41,7 +42,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			if (!checkFileCodeCorrect(activePath, activeFile)) return;
 			if (checkFileSystemCorrect()) resolveFunction();
 		}, 600);
-	});
+	};
 
 	const tutorialFunctions = {
 		resolveOnEvent(event, element) {
@@ -54,12 +55,33 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			});
 		},
 		appendRequiredFileCode(filePath, requiredCode) {
-			requiredFileSystem["root " + filePath] += requiredCode;
+			const newFileCode =
+				requiredFileSystem["root " + filePath] =
+				formatCode(requiredFileSystem["root " + filePath] + requiredCode);
 
 			let currentItem = requiredFileSystemObject;
 			for (const item of filePath.split(" ")) {
 				if (typeof currentItem[item] === "string") {
-					currentItem[item] += requiredCode;
+					currentItem[item] = newFileCode;
+					break;
+				} else {
+					currentItem = requiredFileSystemObject[item];
+				}
+			}
+
+			const path = ["root", ...filePath.split(" ")],
+				name = path.pop();
+			checkFileCodeCorrect(path.join(" "), name);
+		},
+		insertRequiredFileCode(filePath, requiredCode, lineNumber) {
+			requiredFileSystem["root " + filePath] = requiredFileSystem["root " + filePath].split("\n");
+			requiredFileSystem["root " + filePath].splice(lineNumber, 0, requiredCode);
+			const newFileCode = requiredFileSystem["root " + filePath] = formatCode(requiredFileSystem["root " + filePath].join("\n"));
+
+			let currentItem = requiredFileSystemObject;
+			for (const item of filePath.split(" ")) {
+				if (typeof currentItem[item] === "string") {
+					currentItem[item] = newFileCode;
 					break;
 				} else {
 					currentItem = requiredFileSystemObject[item];
@@ -101,6 +123,8 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		},
 		beginTutorial() {
 			return new Promise(resolve => {
+				tutorialFunctions.disableInteraction();
+
 				const startButton = document.getElementById("tutorialStartButton");
 				startButton.style.display = "block";
 				startButton.addEventListener("click", function handler() {
@@ -112,22 +136,38 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			});
 		},
 		async endTutorial() {
-			await tutorialFunctions.clearAll();
-			await tutorialFunctions.displayText(`You have completed the ${display} tutorial. Click the next button to be redirected back to the home page.`);
-			await tutorialFunctions.displayNextButton();
+			this.clearAll();
+			this.displayText(`You have completed the ${display} tutorial. Click the next button to be redirected back to the home page.`);
+			await this.displayNextButton();
 
 			window.location.href = "//" + window.location.host;
 		},
-		loadFileSystem(fileSystem) {
+		async loadFileSystem(fileSystem) {
+			// await all fetch requests
+			fileSystem = await iterate(fileSystem);
+
 			fileSystemManager.loadFileSystem(fileSystem);
 			checkFileSystemCorrect();
 
 			// clone file system object
 			lastCheckPointFileSystem = JSON.parse(JSON.stringify(fileSystem));
 			revertFileSystemButton.disabled = false;
+
+			async function iterate(object) {
+				for (const key in object) {
+					const value = object[key];
+					if (typeof value === "object") {
+						object[key] = await iterate(value);
+					} else {
+						object[key] = await value;
+					}
+				}
+
+				return object;
+			}
 		},
-		revertFileSystem() {
-			tutorialFunctions.loadFileSystem(lastCheckPointFileSystem);
+		async revertFileSystem() {
+			await this.loadFileSystem(lastCheckPointFileSystem);
 		},
 		displayText(text) {
 			const popupElement = elementFromString(`
@@ -137,6 +177,8 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				</div>
 			`);
 			document.body.appendChild(popupElement);
+
+
 		},
 		clearText() {
 			for (const element of document.getElementsByClassName("tutorialPopup")) {
@@ -169,6 +211,10 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		setPanelText(text) {
 			document.getElementById("tutorialPanelText").innerHTML = text;
 		},
+		displayTextAndSetPanel(text) {
+			this.displayText(text);
+			this.setPanelText(text);
+		},
 		awaitEvent: async eventListener => {
 			await eventListener();
 		},
@@ -184,10 +230,10 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				});
 			});
 		},
-		async clearAll() {
-			tutorialFunctions.clearHighlighters();
-			tutorialFunctions.clearText();
-			tutorialFunctions.setPanelText("");
+		clearAll() {
+			this.clearHighlighters();
+			this.clearText();
+			this.setPanelText("");
 		},
 		enableInteraction() {
 			tutorialMaskElement.style.display = "none";
@@ -198,11 +244,9 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		runFunction(func) {
 			func();
 		},
-		highlightCode(types) {
-			for (const type of types) {
-				for (const element of document.querySelectorAll(`[data-lang="${type}"]`)) {
-					monaco.editor.colorizeElement(element);
-				}
+		highlightAllCode() {
+			for (const element of document.querySelectorAll("[data-lang]")) {
+				monaco.editor.colorizeElement(element, element.getAttribute("data-lang"));
 			}
 		},
 		// progress should only be saved when code is correct
@@ -214,27 +258,71 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				id,
 				actionIndex,
 				lastCheckPointFileSystem,
-				requiredFileSystem: tutorialFunctions.getRequiredFileSystem(),
+				requiredFileSystem: this.getRequiredFileSystem(),
 			});
+		},
+
+		// higher level actions
+		async info(text) {
+			this.clearAll();
+			this.enableInteraction();
+			this.displayText(text);
+			this.highlightAllCode();
+			await this.displayNextButton();
+		},
+		async infoWithHighlight(text, selector) {
+			this.clearAll();
+			this.disableInteraction();
+			this.highlightElement(selector);
+			this.displayText(text);
+			this.highlightAllCode();
+			await this.displayNextButton();
+		},
+		async instructEventAction(text, event, element) {
+			this.clearAll();
+			this.enableInteraction();
+			this.displayTextAndSetPanel(text);
+			this.highlightAllCode();
+			await this.resolveOnEvent(event, element);
+		},
+		async instructCodeAction(text, requiredCodeMethod, ...requiredCodeMethodParams) {
+			this[requiredCodeMethod](...requiredCodeMethodParams);
+			this.clearAll();
+			this.enableInteraction();
+			this.displayTextAndSetPanel(text);
+			this.highlightAllCode();
+			await this.resolveOnCodeCorrect();
 		},
 	};
 	return tutorialFunctions;
 
 
 	function formatCode(code, type) {
-		code = code.split("\n").filter(line => line).join("\n");
-
 		switch (type) {
 			case "text/html":
-				return html_beautify(code);
+				code = html_beautify(code);
+				break;
 			case "text/css":
-				return css_beautify(code);
+				code = css_beautify(code);
+				break;
 			case "application/javascript":
-				return js_beautify(code);
+				code = js_beautify(code);
+				break;
 		}
+
+		// remove new lines, carriage returns and trim white space
+		return code
+			.replaceAll("\r", "")
+			.split("\n")
+			.filter(line => line)
+			.map(line => line.trim())
+			.join("\n");
 	}
 
 	function checkFileCodeCorrect(path, name) {
+		// no file open
+		if (!path && !name) return true;
+
 		const fileContents = fileSystemManager.getFileContents(path, name);
 		// file doesn't exist
 		if (fileContents === null) return false;

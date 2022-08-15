@@ -10,9 +10,7 @@ export default function initializeUI(defaultTab) {
 			resizeOnce() {
 				const separatorStyle = getComputedStyle(separator),
 					separatorWidth =
-						parseInt(separatorStyle.width.slice(0, -2)) +
-						parseInt(separatorStyle.borderLeft.slice(0, -2)) +
-						parseInt(separatorStyle.borderRight.slice(0, -2));
+						parseInt(separatorStyle.width.slice(0, -2));
 
 				const xOffset = separator.getBoundingClientRect().x;
 
@@ -23,9 +21,7 @@ export default function initializeUI(defaultTab) {
 
 				const separatorStyle = getComputedStyle(separator),
 					separatorWidth =
-						parseInt(separatorStyle.width.slice(0, -2)) +
-						parseInt(separatorStyle.borderLeft.slice(0, -2)) +
-						parseInt(separatorStyle.borderRight.slice(0, -2));
+						parseInt(separatorStyle.width.slice(0, -2));
 
 				let xOffset = event.pageX - separator.getBoundingClientRect().x;
 				intervals.push(setInterval(() => {

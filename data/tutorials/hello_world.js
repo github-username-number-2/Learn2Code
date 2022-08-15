@@ -1,9 +1,9 @@
 const actionData = {
 	fileSystem: {
 		"js": {
-			"main.js": "",
+			"main.js": ``,
 		},
-		"index.html": "<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src=\"/js/main.js\"></script>\n\t</body>\n</html>",
+		"index.html": `<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src="/js/main.js"></script>\n\t</body>\n</html>`,
 	},
 };
 
@@ -13,9 +13,6 @@ const tutorialData = {
 		display: "Hello World",
 	},
 	actionList: [
-		[
-			"disableInteraction",
-		],
 		[
 			"beginTutorial",
 		],
@@ -29,11 +26,11 @@ const tutorialData = {
 		],
 		[
 			"highlightElement",
-			"#panelContainer",
+			`#panelContainer`,
 		],
 		[
 			"displayText",
-			"This is the panel container. Here, you can access information about the current tutorial, access files, settings, and more.",
+			`This is the panel container. Here, you can access information about the current tutorial, access files, settings, and more.`,
 		],
 		[
 			"displayNextButton",
@@ -44,11 +41,11 @@ const tutorialData = {
 		],
 		[
 			"highlightElement",
-			"#panelTabContainer",
+			`#panelTabContainer`,
 		],
 		[
 			"displayText",
-			"These tabs let you switch between different panels.",
+			`These tabs let you switch between different panels.`,
 		],
 		[
 			"displayNextButton",
@@ -59,18 +56,18 @@ const tutorialData = {
 		],
 		[
 			"displayText",
-			"The main panel is where you can access files, and run your code. Click the tab titled \"main\" to swich to the main panel.",
+			`The main panel is where you can access files, and run your code. Click the tab titled \"main\" to swich to the main panel.`,
 		],
 		[
 			"setPanelText",
-			"Switch to the main panel.",
+			`Switch to the main panel.`,
 		],
 		[
 			"enableInteraction",
 		],
 		[
 			"resolveOnEvent",
-			"click",
+			`click`,
 			document.getElementById("mainPanelTab"),
 		],
 		//
@@ -81,17 +78,12 @@ const tutorialData = {
 			"clearAll",
 		],
 		[
-			"appendRequiredFileCode",
-			"js main.js",
-			"alert(\"Hello World\");",
-		],
-		[
 			"highlightElement",
-			"#filesContainerOuter",
+			`#filesContainerOuter`,
 		],
 		[
 			"displayText",
-			"These are all of your files. Throughout these tutorials, you will be asked to write code into these files. Once you have written the required code, the file names will turn green. As you can see, the index.html file is already complete.",
+			`These are all of your files. Throughout these tutorials, you will be asked to write code into these files. Once you have written the required code, the file names will turn green. As you can see, the index.html file is already complete.`,
 		],
 		[
 			"displayNextButton",
@@ -101,16 +93,31 @@ const tutorialData = {
 			"clearAll",
 		],
 		[
-			"setPanelText",
-			"Open the folder named js. In the main.js file write the following code: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+			"highlightElement",
+			`#codeContainer`,
 		],
 		[
 			"displayText",
-			"Open the folder named js. In the main.js file write the following code: <pre data-lang=\"text/javascript\">alert(\"Hello World\");</pre>",
+			`This is the code editor. When you click on a file you will be able to edit its text here.`,
 		],
 		[
-			"highlightCode",
-			["text/javascript"],
+			"displayNextButton",
+		],
+		//
+		[
+			"clearAll",
+		],
+		[
+			"appendRequiredFileCode",
+			`js main.js`,
+			`alert("Hello World");`,
+		],
+		[
+			"displayTextAndSetPanel",
+			`Open the folder named js. In the main.js file write the following code: <pre data-lang="text/javascript">alert("Hello World");</pre>`,
+		],
+		[
+			"highlightAllCode",
 		],
 		[
 			"enableInteraction",
@@ -127,7 +134,7 @@ const tutorialData = {
 		],
 		[
 			"displayText",
-			"Each time you finish writing the required code, a checkpoint is created. For example, if you were to reload the page right now, you would continue from here instead of back at the start.",
+			`Each time you finish writing the required code, a checkpoint is created. For example, if you were to reload the page right now, you would continue from here instead of back at the start.`,
 		],
 		[
 			"displayNextButton",
@@ -137,19 +144,18 @@ const tutorialData = {
 			"clearAll",
 		],
 		[
-			"displayText",
-			"Click the run button to execute your code.",
-		],
-		[
-			"setPanelText",
-			"Click the run button in the main tab to execute your code.",
+			"displayTextAndSetPanel",
+			`Click the run button in the main tab to execute your code.`,
 		],
 		[
 			"resolveOnEvent",
-			"click",
+			`click`,
 			document.getElementById("runCode"),
 		],
 		//
+		[
+			"saveProgress",
+		],
 		[
 			"endTutorial",
 		],
