@@ -1,5 +1,5 @@
 import mime from "https://cdn.skypack.dev/pin/mime@v3.0.0-Mgy8KWi04WDrrthUM8WI/mode=imports,min/unoptimized/lite.js";
-import { elementFromString } from "/js/functions.js";
+import { elementFromString, isUTF8, stringToArrayBuffer } from "/js/functions.js";
 
 export default async function createFileSystemManager() {
 	const filesContainer = document.getElementById("filesContainerInner");
@@ -70,6 +70,7 @@ export default async function createFileSystemManager() {
 				if (model !== defaultModel) model.dispose();
 			}
 
+			// add top level items, addItem will add sub items within folders recursively
 			for (const item in newFileSystem) {
 				this.addItem(item, newFileSystem[item], "root");
 			}
@@ -86,14 +87,16 @@ export default async function createFileSystemManager() {
 		getItemName(itemElement) {
 			return itemElement.getAttribute("data-name");
 		},
-		addItem(itemName, itemContents, targetDirectoryPath) {
+		addItem(itemName, itemValue, targetDirectoryPath) {
+			const isDirectory = !Array.isArray(itemValue);
+			const [itemContents, encodingScheme] = isDirectory ? [itemValue] : itemValue;
+
 			targetDirectoryPath = targetDirectoryPath.split(" ");
 			const targetDirectoryName = targetDirectoryPath.pop(),
 				targetDirectory = this.selectItem(targetDirectoryName, targetDirectoryPath.join(" "));
 
 			const currentPath = targetDirectoryPath.length ? `${targetDirectoryPath.join(" ")} ${targetDirectoryName}` : targetDirectoryName,
-				itemDepth = targetDirectoryPath.length + 1,
-				isDirectory = typeof itemContents === "object";
+				itemDepth = targetDirectoryPath.length + 1;
 
 			const itemElement = elementFromString(`
 				<div class="file" data-path="${currentPath}">
@@ -131,7 +134,7 @@ export default async function createFileSystemManager() {
 			renameButton.addEventListener("click", async event => {
 				event.stopPropagation();
 
-				const newName = await promptCustom(`Enter new name:`);
+				const newName = await promptCustom("Enter new name:", { defaultInput: itemName });
 				if (
 					newName !== null // prompt was canceled
 					&& checkItemValid(newName, currentPath, isDirectory ? "folder" : "file")
@@ -144,7 +147,7 @@ export default async function createFileSystemManager() {
 			for (const directory of currentPath.split(" ")) {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
-			targetDirectoryObject[itemName] = isDirectory ? {} : "";
+			targetDirectoryObject[itemName] = isDirectory ? {} : encodingScheme;
 
 			const itemPlacementIndex = sortDirectoryToArray(targetDirectoryObject).findIndex(name => name[0] === itemName);
 			const itemPrevious = [
@@ -230,9 +233,13 @@ export default async function createFileSystemManager() {
 			for (const directory of targetItemPath.split(" ")) {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
-			const contents = targetDirectoryObject[targetItemName]
-				? targetDirectoryObject[targetItemName]
-				: this.getFileContents(targetItemPath, targetItemName);
+			const itemValue = targetDirectoryObject[targetItemName];
+			const contents = typeof itemValue === "string"
+				? [
+					this.getFileContents(targetItemPath, targetItemName),
+					itemValue,
+				]
+				: formatFileSystemDirectory(itemValue, `${targetItemPath} ${targetItemName}`);
 
 			this.removeItem(targetItemName, targetItemPath);
 			this.addItem(newItemName, contents, targetItemPath);
@@ -256,9 +263,14 @@ export default async function createFileSystemManager() {
 			for (const directory of targetItemPath.split(" ")) {
 				targetDirectoryObject = targetDirectoryObject[directory];
 			}
-			const contents = targetDirectoryObject[targetItemName]
-				? targetDirectoryObject[targetItemName]
-				: "";
+
+			const itemValue = targetDirectoryObject[targetItemName];
+			const contents = typeof itemValue === "string"
+				? [
+					this.getFileContents(targetItemPath, targetItemName),
+					itemValue,
+				]
+				: formatFileSystemDirectory(itemValue, `${targetItemPath} ${targetItemName}`);
 
 			this.removeItem(targetItemName, targetItemPath);
 			this.addItem(targetItemName, contents, newItemPath);
@@ -354,6 +366,13 @@ export default async function createFileSystemManager() {
 			const model = monaco.editor.getModel(monaco.Uri.file(`${path} ${name}`));
 			return model ? model.getValue() : null;
 		},
+		getFileEncodingScheme(path, name) {
+			let targetDirectoryObject = fileSystem;
+			for (const directory of path.split(" ")) {
+				targetDirectoryObject = targetDirectoryObject[directory];
+			}
+			return targetDirectoryObject[name];
+		},
 		getFileSystem() {
 			const getDirectoryContents = path => {
 				const directoryContents = {};
@@ -363,7 +382,10 @@ export default async function createFileSystemManager() {
 
 				for (const item in targetDirectory) {
 					if (typeof targetDirectory[item] === "string") {
-						directoryContents[item] = this.getFileContents(path, item);
+						directoryContents[item] = [
+							this.getFileContents(path, item),
+							this.getFileEncodingScheme(path, item),
+						];
 					} else {
 						directoryContents[item] = getDirectoryContents(`${path} ${item}`);
 					}
@@ -374,7 +396,7 @@ export default async function createFileSystemManager() {
 
 			return getDirectoryContents("root");
 		},
-		getFilesList() {
+		getBinaryFilesList() {
 			return getFileListFromDirectory(this.getFileSystem());
 
 			function getFileListFromDirectory(directory, path = "") {
@@ -382,10 +404,10 @@ export default async function createFileSystemManager() {
 				for (const item in directory) {
 					const content = directory[item];
 
-					if (typeof content === "string") {
+					if (Array.isArray(content)) {
 						files.push([
 							`${path} ${item}`.trim(),
-							content,
+							stringToArrayBuffer(...content),
 							mime.getType(item) || "text/plain",
 						]);
 					} else {
@@ -402,6 +424,10 @@ export default async function createFileSystemManager() {
 
 			if (this.activeFile === fileName && this.activeFilePath === filePath) {
 				editor.updateOptions({ readOnly: true });
+			}
+		},
+		changeFileEncoding(filePath, fileName, encodingScheme) {
+			switch (encodingScheme) {
 			}
 		},
 
@@ -468,7 +494,7 @@ export default async function createFileSystemManager() {
 		) {
 			fileSystemManager.addItem(
 				name,
-				{ file: "", folder: {} }[type],
+				{ file: ["", "UTF-8"], folder: {} }[type],
 				path,
 			);
 
@@ -482,6 +508,29 @@ export default async function createFileSystemManager() {
 
 				if (fileSystemManager.getDirectoryState(directoryElement) === "0") fileSystemManager.toggleDirectory(directoryElement);
 			}
+		}
+	}
+
+	function formatFileSystemDirectory(contents, path) {
+		const [itemName, itemPath] = (() => {
+			const pathArray = path.split(" ");
+			return [
+				pathArray.pop(),
+				pathArray.join(" "),
+			];
+		})();
+
+		if (typeof contents === "string") {
+			return [
+				manager.getFileContents(itemPath, itemName),
+				manager.getFileEncodingScheme(itemPath, itemName),
+			];
+		} else {
+			for (const item in contents) {
+				contents[item] = formatFileSystemDirectory(contents[item], `${path} ${item}`);
+			}
+
+			return contents;
 		}
 	}
 

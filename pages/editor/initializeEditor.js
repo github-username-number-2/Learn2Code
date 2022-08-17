@@ -6,10 +6,15 @@ export default async function initializeEditor() {
 
 	if (hash.startsWith("tutorial")) {
 		const tutorialID = hash.split("-")[1];
-		const tutorialData = await (import(`/data/tutorials/${tutorialID}.js`).catch(() => {
+		let tutorialData;
+		try {
+			tutorialData = await (import(`/data/tutorials/${tutorialID}.js`));
+		} catch {
 			alertCustom("Error: Could not load tutorial<br><br>Tutorials can be accessed from the main page under the tutorials tab<br><br>You will be redirected automatically in 15 seconds");
 			setTimeout(() => window.location.href = "//" + window.location.host, 15000);
-		}));
+
+			return;
+		}
 
 		runTutorial(tutorialData.default);
 	} else if (hash.startsWith("editor")) {

@@ -156,10 +156,10 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			async function iterate(object) {
 				for (const key in object) {
 					const value = object[key];
-					if (typeof value === "object") {
+					if (Array.isArray(object)) {
 						object[key] = await iterate(value);
 					} else {
-						object[key] = await value;
+						object[key][0] = await value[0];
 					}
 				}
 
@@ -177,8 +177,6 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				</div>
 			`);
 			document.body.appendChild(popupElement);
-
-
 		},
 		clearText() {
 			for (const element of document.getElementsByClassName("tutorialPopup")) {

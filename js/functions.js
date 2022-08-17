@@ -17,4 +17,31 @@ export async function isUTF8(blob) {
 		throw error;
 	}
 	return true;
-}  
+}
+
+export function stringToArrayBuffer(string, encodingScheme) {
+	switch (encodingScheme) {
+		case "UTF-8":
+			return new TextEncoder("utf-8").encode(string).buffer;
+		case "Base64":
+			return Uint8Array.from(atob(string), c => c.charCodeAt(0)).buffer;
+		case "binary":
+			break;
+	}
+}
+
+export function arrayBufferToBinary(arrayBuffer) {
+	return new Uint8Array(arrayBuffer).reduce((str, byte) => str + byte.toString(2).padStart(8, "0"), "");
+}
+
+export function arrayBufferToBase64(arrayBuffer) {
+	let binary = "";
+
+	const bytes = new Uint8Array(arrayBuffer),
+		len = bytes.byteLength;
+	for (let i = 0; i < len; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+
+	return btoa(binary);
+}

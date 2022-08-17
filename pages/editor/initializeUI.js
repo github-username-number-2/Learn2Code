@@ -9,8 +9,7 @@ export default function initializeUI(defaultTab) {
 		return {
 			resizeOnce() {
 				const separatorStyle = getComputedStyle(separator),
-					separatorWidth =
-						parseInt(separatorStyle.width.slice(0, -2));
+					separatorWidth = parseInt(separatorStyle.width.slice(0, -2));
 
 				const xOffset = separator.getBoundingClientRect().x;
 
@@ -20,8 +19,7 @@ export default function initializeUI(defaultTab) {
 				separator.children[0].style.backgroundColor = "#595959";
 
 				const separatorStyle = getComputedStyle(separator),
-					separatorWidth =
-						parseInt(separatorStyle.width.slice(0, -2));
+					separatorWidth = parseInt(separatorStyle.width.slice(0, -2));
 
 				let xOffset = event.pageX - separator.getBoundingClientRect().x;
 				intervals.push(setInterval(() => {

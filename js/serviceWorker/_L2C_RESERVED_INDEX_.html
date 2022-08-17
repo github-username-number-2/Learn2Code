@@ -12,7 +12,7 @@
 			await navigator.serviceWorker.register("_L2C_RESERVED_WORKER_.js");
 
 			self.addEventListener("message", async event => {
-				const fileList = JSON.parse(event.data);
+				const fileList = event.data;
 
 				await caches.delete(cacheName);
 				const cache = await caches.open(cacheName);
@@ -22,11 +22,11 @@
 					promiseList.push(cache.put(
 						file[0],
 						new Response(
-						file[1],
+						new Blob([file[1]]),
 						{
 							status: 200,
 							headers: new Headers({
-								"content-type": file[2] + "; charset=utf-8",
+								"content-type": file[2],
 							}),
 						},
 					)));

@@ -31,7 +31,7 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 				alertElement.lastElementChild.addEventListener("click", () => {
 					deletePopupElement(alertElement);
 					resolve();
-				}), 100);
+				}), 10);
 		});
 	};
 
@@ -56,7 +56,7 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 					deletePopupElement(confirmElement);
 					resolve(false);
 				});
-			}, 100);
+			}, 10);
 		});
 	};
 
@@ -80,18 +80,20 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 				inputContainer.children[0].addEventListener("keydown", event => {
 					if (event.key === "Enter") {
 						deletePopupElement(promptElement);
-						resolve(inputContainer.value);
+						resolve(inputContainer.children[0].value);
 					}
 				});
 				inputContainer.children[1].addEventListener("click", () => {
 					deletePopupElement(promptElement);
-					resolve(inputContainer.children[2].value);
+					resolve(inputContainer.children[0].value);
 				});
 				inputContainer.children[2].addEventListener("click", () => {
 					deletePopupElement(promptElement);
 					resolve(null);
 				});
-			}, 100);
+
+				inputContainer.children[0].focus();
+			}, 10);
 		});
 	};
 

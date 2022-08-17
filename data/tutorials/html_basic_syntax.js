@@ -1,7 +1,9 @@
+import { arrayBufferToBase64 } from "/js/functions.js";
+
 const actionData = {
 	fileSystem: {
-		"index.html": `<!DOCTYPE html>\n<html>\n  <head>\n  </head>\n\n  <body>\n  <img src="image.png">\n  </body>\n</html>`,
-		"image.png": fetch("/data/tutorials/resources/html_basic_syntax/image.png").then(res => res.text()),
+		"index.html": [`<!DOCTYPE html>\n<html>\n  <head>\n  </head>\n\n  <body>\n  <img src="image.png">\n  </body>\n</html>`, "UTF-8"],
+		"image.png": [fetch("/data/tutorials/resources/html_basic_syntax/image.png").then(response => response.arrayBuffer()).then(arrayBufferToBase64), "Base64"],
 	},
 };
 

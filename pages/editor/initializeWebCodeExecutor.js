@@ -16,7 +16,7 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 						initializationComplete = true;
 
 						runButton.addEventListener("click", () =>
-							webCodeExecutor.executeFilesList(fileSystemManager.getFilesList())
+							webCodeExecutor.executeFilesList(fileSystemManager.getBinaryFilesList())
 						);
 						onready();
 
@@ -46,7 +46,7 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 						fileData[0] = "/" + fileData[0].replaceAll(" ", "/");
 					}
 
-					iframe.contentWindow.postMessage(JSON.stringify(filesList), executorURL);
+					iframe.contentWindow.postMessage(filesList, executorURL);
 				}
 			},
 		};

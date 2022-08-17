@@ -1,9 +1,9 @@
 const actionData = {
 	fileSystem: {
 		"js": {
-			"main.js": ``,
+			"main.js": [``, "UTF-8"],
 		},
-		"index.html": `<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src="/js/main.js"></script>\n\t</body>\n</html>`,
+		"index.html": [`<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src="/js/main.js"></script>\n\t</body>\n</html>`, "UTF-8"],
 	},
 };
 
