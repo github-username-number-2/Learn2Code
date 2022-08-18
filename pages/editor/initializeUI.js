@@ -55,6 +55,28 @@ export default function initializeUI(defaultTab) {
 	}
 
 	selectTab(defaultTab);
+
+
+	const encodingOptionContainer = document.getElementById("fileOptionEncodingContainer");
+	encodingOptionContainer.addEventListener("click", event => {
+		event.stopPropagation();
+
+		encodingOptionContainer.style.height = encodingOptionContainer.style.height === "fit-content"
+			? "100%"
+			: "fit-content";
+	});
+	document.body.addEventListener("click", () =>
+		encodingOptionContainer.style.height = "100%"
+	);
+	for (const encodingOption of document.getElementsByClassName("fileEncodingOption")) {
+		encodingOption.addEventListener("click", () =>
+			fileSystemManager.changeFileEncodingScheme(
+				fileSystemManager.activeFilePath,
+				fileSystemManager.activeFile,
+				encodingOption.getAttribute("data-value"),
+			)
+		);
+	}
 }
 
 export function selectTab(tabName) {

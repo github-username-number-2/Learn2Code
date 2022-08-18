@@ -2,8 +2,8 @@ import { arrayBufferToBase64 } from "/js/functions.js";
 
 const actionData = {
 	fileSystem: {
-		"index.html": [`<!DOCTYPE html>\n<html>\n  <head>\n  </head>\n\n  <body>\n  <img src="image.png">\n  </body>\n</html>`, "UTF-8"],
-		"image.png": [fetch("/data/tutorials/resources/html_basic_syntax/image.png").then(response => response.arrayBuffer()).then(arrayBufferToBase64), "Base64"],
+		"index.html": [`<!DOCTYPE html>\n<html>\n  <head>\n  </head>\n\n  <body>\n  <img src="image.png">\n  </body>\n</html>`, "utf-8"],
+		"image.png": [fetch("/data/tutorials/resources/html_basic_syntax/image.png").then(response => response.arrayBuffer()).then(arrayBufferToBase64), "base64"],
 	},
 };
 

@@ -60,14 +60,14 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 		});
 	};
 
-	window.promptCustom = function (message, options = { defaultInputValue: "", maxLength: "" }) {
+	window.promptCustom = function (message, options = {}) {
 		return new Promise(resolve => {
 			const promptElement = createPopupElement(
 				`<div class="popup prompt">
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
 					<div class="inputContainer">
-						<input class="popupInput" value="${options.defaultInputValue}" maxlength="${options.maxLength} type="text">
+						<input class="popupInput" value="${options.defaultInputValue || ""}" maxlength="${options.maxLength || ""}" type="text">
 						<button class="popupButton">Confirm</button>
 						<button class="popupButton">Cancel</button>
 					</div>
@@ -76,23 +76,25 @@ window.addEventListener("load", () => document.getElementById("mask").style.disp
 			);
 
 			setTimeout(() => {
-				const inputContainer = promptElement.children[2];
-				inputContainer.children[0].addEventListener("keydown", event => {
+				const inputContainer = promptElement.children[2],
+					inputElement = inputContainer.children[0];
+				inputElement.addEventListener("keydown", event => {
 					if (event.key === "Enter") {
 						deletePopupElement(promptElement);
-						resolve(inputContainer.children[0].value);
+						resolve(inputElement.value);
 					}
 				});
 				inputContainer.children[1].addEventListener("click", () => {
 					deletePopupElement(promptElement);
-					resolve(inputContainer.children[0].value);
+					resolve(inputElement.value);
 				});
 				inputContainer.children[2].addEventListener("click", () => {
 					deletePopupElement(promptElement);
 					resolve(null);
 				});
 
-				inputContainer.children[0].focus();
+				inputElement.focus();
+				inputElement.select();
 			}, 10);
 		});
 	};

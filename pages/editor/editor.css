@@ -243,20 +243,35 @@
 	border-top: 0.07vw solid #cccccc;
 }
 
+.fileInfoElement {
+	display: none;
+}
+
 #fileOptionEncodingContainer {
 	position: absolute;
 	right: 0;
 	bottom: 0;
 	width: fit-content;
 	height: 100%;
-	padding: 0 1.5vh 0 1.5vh;
 	line-height: 3vh;
 	font-size: 1.7vh;
 	text-align: center;
+	overflow: hidden;
 	background-color: #eeeeee;
 }
 
-#fileOptionEncodingContainer:hover {
+#fileOptionEncodingContainer>p {
+	padding: 0 1.5vh 0 1.5vh;
+	margin: 0;
+	cursor: pointer;
+}
+
+.fileEncodingOption {
+	padding: 0 1.5vh 0 1.5vh;
+	cursor: pointer;
+}
+
+.fileEncodingOption:hover, #fileOptionEncodingContainer>p:hover {
 	background-color: #cccccc;
 }
 

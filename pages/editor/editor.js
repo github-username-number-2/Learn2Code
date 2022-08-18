@@ -7,33 +7,33 @@ window.addEventListener("load", async () => {
 	window.storageManager = await initializeStorageManager();
 	const fileSystem = {
 		"testFolder": {
-			"main.js": ["console.log(mmm);", "UTF-8"],
+			"main.js": ["console.log(mmm);", "utf-8"],
 			"testFolder": {
-				"file": ["", "UTF-8"],
+				"file": ["", "utf-8"],
 				"testFolder": {
-					"readme.md": ["", "UTF-8"],
+					"readme.md": ["", "utf-8"],
 					"testFolder": {
-						"file.php": ["", "UTF-8"],
-						"1.s": ["", "UTF-8"],
-						"2.s": ["", "UTF-8"],
-						"3.s": ["", "UTF-8"],
+						"file.php": ["", "utf-8"],
+						"1.s": ["", "utf-8"],
+						"2.s": ["", "utf-8"],
+						"3.s": ["", "utf-8"],
 					},
 				},
 			},
 		},
 		"testFolsder": {
-			"main.js": ["console.log(mmm);", "UTF-8"],
+			"main.js": ["console.log(mmm);", "utf-8"],
 			"testFolder": {
-				"file": ["", "UTF-8"],
+				"file": ["", "utf-8"],
 				"testFolder": {
-					"readme.md": ["", "UTF-8"],
+					"readme.md": ["", "utf-8"],
 					"testFolder": {
-						"file.php": ["", "UTF-8"],
+						"file.php": ["", "utf-8"],
 					},
 				},
 			},
 		},
-		"index.html": ["<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src=\"main/js\"></script>\n\t</body>\n</html>", "UTF-8"],
+		"index.html": ["<!DOCTYPE html>\n<html>\n\t<body>\n\t\t<script src=\"main/js\"></script>\n\t</body>\n</html>", "utf-8"],
 	};
 
 	// loads in file system and editor
@@ -44,7 +44,7 @@ window.addEventListener("load", async () => {
 	fileSystemManager.removeItem("testFolder", "root testFolsder");
 	fileSystemManager.removeItem("main.js", "root testFolsder");
 	fileSystemManager.changeItemName("0.s", "3.s", "root testFolder testFoldersssss testFolder testFolder");
-	fileSystemManager.addItem("4.s", ["", "Base64"], "root testFolder testFoldersssss testFolder testFolder");
+	fileSystemManager.addItem("4.s", ["", "base64"], "root testFolder testFoldersssss testFolder testFolder");
 	fileSystemManager.moveItem("root testFolsder", "testFolder", "root testFolder testFoldersssss");
 
 	/*
