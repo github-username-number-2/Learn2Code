@@ -188,6 +188,8 @@ export default async function createFileSystemManager() {
 				);
 			}
 
+			handleResize();
+
 			for (const listener of Object.values(this.fileSystemChangeListeners)) listener();
 		},
 		removeItem(targetItemName, targetItemPath) {
