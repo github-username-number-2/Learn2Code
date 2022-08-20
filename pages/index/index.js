@@ -40,7 +40,7 @@ window.addEventListener("load", async () => {
 			if (!/^[0-9a-zA-Z._-]+$/.test(name)) return alertCustom(`Project names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`);
 			if (await storageManager.getProjectData(name)) return alertCustom(`A project with this name already exists`);
 
-			storageManager.setProjectData({ name, fileSystem: { "index.html": "" } });
+			storageManager.setProjectData({ name, fileSystem: { "index.html": ["", "utf-8"] } });
 
 			window.location = `//${window.location.host}/pages/editor.html#editor-${name}`;
 		});
