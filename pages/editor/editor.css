@@ -27,7 +27,7 @@
 }
 
 #saveIcon:hover {
-	background-color: #ffffff77;
+	background-color: #fffffe77;
 	cursor: pointer;
 }
 
@@ -44,7 +44,6 @@
 	top: 9.7vh;
 	height: 90.3vh;
 	background-color: #eeeeee;
-	overflow: hidden;
 }
 
 #panelContainer {
@@ -271,20 +270,28 @@
 	cursor: pointer;
 }
 
-.fileEncodingOption:hover, #fileOptionEncodingContainer>p:hover {
+.fileEncodingOption:hover,
+#fileOptionEncodingContainer>p:hover {
 	background-color: #cccccc;
 }
 
 /* tutorial specific */
 
 pre[data-lang] {
-	min-width: fit-content;
-	max-height: 15vh;
+	width: calc(100% - 3vh);
 	padding: 1.5vh;
 	border-radius: 1vh;
 	font-size: 2vh;
 	text-align: left;
-	overflow-y: auto;
+	overflow-x: auto;
+	background-color: #eeeeee;
+}
+
+code.highlightInline {
+	padding: 0.3vh 0.6vh 0.3vh 0.6vh;
+	border-radius: 1vh;
+	font-size: 1.8vh;
+	overflow-x: auto;
 	background-color: #eeeeee;
 }
 
@@ -312,7 +319,7 @@ pre[data-lang] {
 	border-radius: 1vh;
 	font-size: 2vh;
 	white-space: nowrap;
-	background-color: #ffffff;
+	background-color: #fffffe;
 	cursor: pointer;
 }
 
@@ -321,10 +328,10 @@ pre[data-lang] {
 	left: 0;
 	top: 8.5vh;
 	width: 100%;
-	padding: 1vh;
+	padding: 2vh;
 	border-top: 0.2vh solid #eeeeee;
 	box-sizing: border-box;
-	text-align: center;
+	text-align: left;
 }
 
 #revertFileSystemButton:hover {
@@ -376,12 +383,29 @@ pre[data-lang] {
 	transform: translate(-50%);
 	width: fit-content;
 	min-width: 16vw;
-	max-width: 60vw;
-	padding: 2vh 2vw 0 2vw;
+	max-width: 50vw;
+	height: fit-content;
+	max-height: 80vh;
+	padding-top: 3.3vh;
+	padding-bottom: 3.3;
 	border-radius: 2vh;
 	background-color: #fffffe;
 	text-align: center;
 	box-shadow: 0 0 10vh 0.1vh #bbbbbb;
+}
+
+.tutorialPopupCollapsed {
+	bottom: 7vh;
+	width: 2vh;
+	min-width: 0;
+	padding: 3.3vh 3vh 0 3.3vh;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	opacity: 0.3;
+}
+
+.tutorialPopupCollapsed:hover {
+	opacity: 1;
 }
 
 .tutorialPopupHeader {
@@ -390,16 +414,43 @@ pre[data-lang] {
 	left: 0;
 	top: 0;
 	width: 100%;
+	min-width: fit-content;
 	height: 3vh;
 	border-bottom: 0.3vh solid #595959;
 	border-top-left-radius: 2vh;
 	border-top-right-radius: 2vh;
 	background-color: #00ee00;
+	cursor: pointer;
 }
 
-.tutorialPopupText {
-	font-size: 3vh;
+.tutorialPopupHeader:hover {
+	background-color: #00ee00cc;
+}
+
+.tutorialPopupHeader:hover .tutorialCollapseButton {
+	opacity: 1;
+}
+
+.tutorialCollapseButton {
+	height: 2vh;
+	padding: 0.5vh;
+	opacity: 0.4;
+}
+
+.tutorialCollapseButtonCollapsed {
+	transform: scale(-1, -1);
+}
+
+.tutorialPopupContent {
+	max-height: 70vh;
+	padding: 0 3vh 0 3vh;
+	overflow-y: auto;
+}
+
+.tutorialPopupContent>p {
+	font-size: 2.2vh;
 	word-wrap: break-word;
+	text-align: left;
 }
 
 

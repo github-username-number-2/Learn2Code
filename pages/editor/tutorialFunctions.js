@@ -32,15 +32,23 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 
 	// initialize file correct checker
-	let lastCheckPointFileSystem, requiredFileSystem, requiredFileSystemObject, timeout, resolveFunction = () => { };
-	fileSystemManager.fileSystemChangeListeners.tutorialChangeListener = () => {
+	let lastCheckPointFileSystem, requiredFileSystem, timeout, resolveFunction = () => { };
+	fileSystemManager.fileSystemChangeListeners.tutorialChangeListener = type => {
 		const activeFile = fileSystemManager.activeFile,
 			activePath = fileSystemManager.activePath;
 
 		clearTimeout(timeout);
 		timeout = setTimeout(() => {
-			if (!checkFileCodeCorrect(activePath, activeFile)) return;
-			if (checkFileSystemCorrect()) resolveFunction();
+			switch (type) {
+				case "edit":
+					if (!checkFileCodeCorrect(activePath, activeFile)) break;
+					if (checkFileSystemCorrect()) resolveFunction();
+					break;
+				case "addItem":
+				case "removeItem":
+					if (checkFileSystemCorrect()) resolveFunction();
+					break;
+			}
 		}, 600);
 	};
 
@@ -54,46 +62,38 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				});
 			});
 		},
-		appendRequiredFileCode(filePath, requiredCode) {
-			const newFileCode =
-				requiredFileSystem["root " + filePath] =
-				formatCode(requiredFileSystem["root " + filePath] + requiredCode);
-
-			let currentItem = requiredFileSystemObject;
-			for (const item of filePath.split(" ")) {
-				if (typeof currentItem[item] === "string") {
-					currentItem[item] = newFileCode;
-					break;
-				} else {
-					currentItem = requiredFileSystemObject[item];
-				}
-			}
-
+		addRequiredFile(fullPath) {
+			requiredFileSystem["root " + fullPath.replaceAll("/", " ")] = ["", "utf-8"];
+		},
+		setRequiredFileCode(filePath, requiredCode) {
 			const path = ["root", ...filePath.split(" ")],
 				name = path.pop();
+
+			requiredFileSystem["root " + filePath] = [formatCode(requiredCode[0], mime.getType(name)), requiredCode[1]];
+
 			checkFileCodeCorrect(path.join(" "), name);
 		},
-		insertRequiredFileCode(filePath, requiredCode, lineNumber) {
-			requiredFileSystem["root " + filePath] = requiredFileSystem["root " + filePath].split("\n");
-			requiredFileSystem["root " + filePath].splice(lineNumber, 0, requiredCode);
-			const newFileCode = requiredFileSystem["root " + filePath] = formatCode(requiredFileSystem["root " + filePath].join("\n"));
-
-			let currentItem = requiredFileSystemObject;
-			for (const item of filePath.split(" ")) {
-				if (typeof currentItem[item] === "string") {
-					currentItem[item] = newFileCode;
-					break;
-				} else {
-					currentItem = requiredFileSystemObject[item];
-				}
-			}
-
+		appendRequiredFileCode(filePath, requiredCode) {
 			const path = ["root", ...filePath.split(" ")],
 				name = path.pop();
+			const currentCode = requiredFileSystem["root " + filePath][0];
+
+			requiredFileSystem["root " + filePath][0] = formatCode(currentCode + requiredCode, mime.getType(name));
+
+			checkFileCodeCorrect(path.join(" "), name);
+		},
+		insertRequiredFileCode(filePath, requiredCode, lineNumber, deleteCount) {
+			const path = ["root", ...filePath.split(" ")],
+				name = path.pop();
+
+			const requiredFileObject = requiredFileSystem["root " + filePath];
+			requiredFileObject[0] = requiredFileObject[0].split("\n");
+			requiredFileObject[0].splice(lineNumber, deleteCount, requiredCode);
+			requiredFileObject[0] = formatCode(requiredFileObject[0].join("\n"), mime.getType(name));
+
 			checkFileCodeCorrect(path.join(" "), name);
 		},
 		setRequiredFileSystem(fileSystem) {
-			requiredFileSystemObject = fileSystem;
 			requiredFileSystem = {};
 
 			addDirectoryFiles(fileSystem, "root");
@@ -101,11 +101,11 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			function addDirectoryFiles(directory, path) {
 				for (const item in directory) {
 					const itemValue = directory[item];
-					if (typeof itemValue === "string") {
-						const code = formatCode(itemValue, mime.getType(item))
+					if (Array.isArray(itemValue)) {
+						const code = formatCode(itemValue[0], mime.getType(item))
 
-						requiredFileSystem[`${path} ${item}`] = code;
-					} else if (typeof itemValue === "object") {
+						requiredFileSystem[`${path} ${item}`] = [code, itemValue[1]];
+					} else {
 						addDirectoryFiles(itemValue, `${path} ${item}`);
 					}
 				}
@@ -113,13 +113,29 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			checkFileSystemCorrect();
 		},
-		getRequiredFileSystem() {
-			return requiredFileSystemObject;
+		getRequiredFileSystemObject() {
+			const fileSystemObject = {};
+			for (const pathString in requiredFileSystem) {
+				const filePath = pathString.split(" "),
+					fileName = filePath.pop();
+
+				// remove root object
+				filePath.shift();
+
+				let currentDirectoryObject = fileSystemObject;
+				for (const item of filePath) {
+					currentDirectoryObject = currentDirectoryObject[item] =
+						currentDirectoryObject[item] || {};
+				}
+				currentDirectoryObject[fileName] = requiredFileSystem[pathString];
+			}
+
+			return fileSystemObject;
 		},
 		resolveOnCodeCorrect() {
-			return new Promise(resolve => {
-				resolveFunction = () => resolve();
-			});
+			return new Promise(resolve =>
+				resolveFunction = () => resolve()
+			);
 		},
 		beginTutorial() {
 			return new Promise(resolve => {
@@ -156,10 +172,11 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			async function iterate(object) {
 				for (const key in object) {
 					const value = object[key];
-					if (Array.isArray(object)) {
-						object[key] = await iterate(value);
-					} else {
+
+					if (Array.isArray(value)) {
 						object[key][0] = await value[0];
+					} else {
+						object[key] = await iterate(value);
 					}
 				}
 
@@ -172,10 +189,35 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		displayText(text) {
 			const popupElement = elementFromString(`
 				<div class="tutorialPopup">
-					<div class="tutorialPopupHeader"></div>
-					<p class="tutorialPopupText">${text}</p>
+					<div class="tutorialPopupHeader">
+						<img class="tutorialCollapseButton" src="/images/icons/collapseIcon.png">
+					</div>
+					<div class="tutorialPopupContent">
+						<p>${text.replaceAll("<pre", "</p><pre").replaceAll("</pre>", "</pre><p>")}</p>
+					</div>
 				</div>
 			`);
+
+			const header = popupElement.querySelector(".tutorialPopupHeader"),
+				collapseIcon = popupElement.querySelector(".tutorialCollapseButton"),
+				content = popupElement.querySelector(".tutorialPopupContent");
+
+			let isCollapsed = false;
+			header.addEventListener("click", () => {
+				popupElement.classList.toggle("tutorialPopupCollapsed");
+				collapseIcon.classList.toggle("tutorialCollapseButtonCollapsed");
+
+				if (isCollapsed) {
+					for (const element of [...content.children])
+						element.style.display = "block";
+				} else {
+					for (const element of [...content.children])
+						element.style.display = "none";
+				}
+
+				isCollapsed = !isCollapsed;
+			});
+
 			document.body.appendChild(popupElement);
 		},
 		clearText() {
@@ -256,7 +298,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				id,
 				actionIndex,
 				lastCheckPointFileSystem,
-				requiredFileSystem: this.getRequiredFileSystem(),
+				requiredFileSystem: this.getRequiredFileSystemObject(),
 			});
 		},
 
@@ -284,12 +326,20 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			await this.resolveOnEvent(event, element);
 		},
 		async instructCodeAction(text, requiredCodeMethod, ...requiredCodeMethodParams) {
+			const actionIndex = requiredCodeMethodParams.pop();
+
 			this[requiredCodeMethod](...requiredCodeMethodParams);
 			this.clearAll();
 			this.enableInteraction();
 			this.displayTextAndSetPanel(text);
 			this.highlightAllCode();
 			await this.resolveOnCodeCorrect();
+			this.saveProgress(actionIndex + 1);
+		},
+		async instructCodeExecution(text) {
+			this.clearAll();
+			this.displayTextAndSetPanel(text);
+			await this.resolveOnEvent("click", document.getElementById("runCode"));
 		},
 	};
 	return tutorialFunctions;
@@ -325,8 +375,19 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		// file doesn't exist
 		if (fileContents === null) return false;
 
-		const code = formatCode(fileContents, mime.getType(name));
-		const correct = code === requiredFileSystem[`${path} ${name}`];
+		let correct;
+
+		// check if file is required
+		if (requiredFileSystem[`${path} ${name}`]) {
+			const [requiredCode, requiredEncoding] = requiredFileSystem[`${path} ${name}`];
+
+			const code = formatCode(fileContents, mime.getType(name)),
+				encoding = fileSystemManager.getFileEncodingScheme(path, name);
+
+			correct = requiredCode === code && requiredEncoding === encoding;
+		} else {
+			correct = false;
+		}
 
 		fileSystemManager.setFileCorrectState(path, name, correct);
 

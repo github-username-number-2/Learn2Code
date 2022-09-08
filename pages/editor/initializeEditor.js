@@ -8,7 +8,7 @@ export default async function initializeEditor() {
 		const tutorialID = hash.split("-")[1];
 		let tutorialData;
 		try {
-			tutorialData = await (import(`/data/tutorials/${tutorialID}.js`));
+			tutorialData = (await import(`/data/tutorials/${tutorialID}.js`)).default;
 		} catch {
 			alertCustom("Error: Could not load tutorial<br><br>Tutorials can be accessed from the main page under the tutorials tab<br><br>You will be redirected automatically in 15 seconds");
 			setTimeout(() => window.location.href = "//" + window.location.host, 15000);
@@ -16,7 +16,10 @@ export default async function initializeEditor() {
 			return;
 		}
 
-		runTutorial(tutorialData.default);
+		if ("actionString" in tutorialData)
+			tutorialData.actionList = parseActionString(tutorialData.actionString);
+
+		runTutorial(tutorialData);
 	} else if (hash.startsWith("editor")) {
 		const projectName = hash.split("-")[1],
 			projectData = await storageManager.getProjectData(projectName);
@@ -31,6 +34,7 @@ export default async function initializeEditor() {
 	} else {
 		window.location.href = "//" + window.location.host;
 	}
+
 
 	async function runTutorial(tutorialJSON) {
 		window.tutorialFunctions = initializeTutorialFunctions(tutorialJSON);
@@ -80,5 +84,108 @@ export default async function initializeEditor() {
 				saveIcon.style.animationName = null;
 			}, 600);
 		};
+	}
+
+	function parseActionString(actionString) {
+		const sectionList = actionString.split("---").map(section => section.trim());
+		const startingFileSystem = JSON.parse(sectionList.shift());
+
+		let actionList = [
+			[
+				"beginTutorial",
+			],
+			[
+				"loadFileSystem",
+				startingFileSystem,
+			],
+			[
+				"setRequiredFileSystem",
+				startingFileSystem,
+			],
+		];
+
+		for (let section of sectionList) {
+			const placeholder = [0, 0, 0].map(() => Math.random().toString().slice(2)).join("");
+			section = section.replaceAll("\n", placeholder);
+
+			section = replaceMarkdown(section, "`", "`", string =>
+				`<code class="highlightInline">${string}</code>`
+			);
+
+			section = replaceMarkdown(section, "<[", "]>", string => {
+				const [mimeType, code] = string.split(new RegExp(placeholder + "(.*)", "s"));
+				return `<pre data-lang="${mimeType}">${code.replaceAll(placeholder, "\n").trim()}</pre>`;
+			});
+
+			// instructCodeExecution
+			if (section.slice(-3) === ">>>") {
+				actionList.push(["instructCodeExecution", section.replaceAll(placeholder, "<br>").slice(0, -7)]);
+				continue;
+			}
+
+			// instruct code action
+			if (~section.indexOf("<{")) {
+				const codeActions = [];
+				section = replaceMarkdown(section, "<{", "}>", string => {
+					const paramList = string.split(new RegExp(placeholder + "(.*)", "s"));
+					const [actionInfo, text] = [paramList[0].split(" "), paramList[1].replaceAll(placeholder, "\n").trim()];
+					actionInfo.splice(3, 0, actionInfo[1] === "s" ? [text, "utf-8"] : text);
+
+					switch (actionInfo[0]) {
+						// create new file
+						case "f":
+							actionList.push(["addRequiredFile", text]);
+							break;
+						// write code into file
+						case "c":
+							codeActions.push([
+								{
+									"s": "setRequiredFileCode",
+									"a": "appendRequiredFileCode",
+									"i": "insertRequiredFileCode",
+								}[actionInfo[1]],
+								...actionInfo.slice(2),
+							]);
+							break;
+					}
+
+					return "";
+				});
+
+				for (const action of codeActions) {
+					// trim trailing br tags
+					while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
+
+					actionList.push(["instructCodeAction", section.replaceAll(placeholder, "<br>"), ...action]);
+				}
+
+				continue;
+			}
+
+			// trim trailing br tags
+			while (!section.lastIndexOf(placeholder) === placeholder.length) section = section.slice(0, -4);
+
+			actionList.push(["info", section.replaceAll(placeholder, "<br>").trim()]);
+		}
+
+		return actionList;
+
+
+		function replaceMarkdown(string, startString, endString, handler) {
+			let startIndex, resultString = "";
+			while (startIndex = string.indexOf(startString), ~startIndex) {
+				resultString += string.slice(0, startIndex);
+				string = string.slice(startIndex + startString.length);
+
+				const endIndex = string.indexOf(endString);
+				if (!~endIndex) throw new Error("Start markup sequence is never closed");
+
+				resultString += handler(string.slice(0, endIndex));
+				string = string.slice(endIndex + endString.length);
+			}
+			resultString += string;
+
+			return resultString;
+		}
 	}
 }

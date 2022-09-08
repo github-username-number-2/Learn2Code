@@ -108,9 +108,9 @@ const tutorialData = {
 			"clearAll",
 		],
 		[
-			"appendRequiredFileCode",
+			"setRequiredFileCode",
 			`js main.js`,
-			`alert("Hello World");`,
+			[`alert("Hello World");`, "utf-8"],
 		],
 		[
 			"displayTextAndSetPanel",

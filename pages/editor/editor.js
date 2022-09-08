@@ -38,14 +38,14 @@ window.addEventListener("load", async () => {
 
 	// loads in file system and editor
 	window.fileSystemManager = await createFileSystemManager();
-	fileSystemManager.loadFileSystem(fileSystem);
+	/*fileSystemManager.loadFileSystem(fileSystem);
 	fileSystemManager.changeItemName("otherFile", "file", "root testFolder testFolder");
 	fileSystemManager.changeItemName("testFoldersssss", "testFolder", "root testFolder");
 	fileSystemManager.removeItem("testFolder", "root testFolsder");
 	fileSystemManager.removeItem("main.js", "root testFolsder");
 	fileSystemManager.changeItemName("0.s", "3.s", "root testFolder testFoldersssss testFolder testFolder");
 	fileSystemManager.addItem("4.s", ["", "base64"], "root testFolder testFoldersssss testFolder testFolder");
-	fileSystemManager.moveItem("root testFolsder", "testFolder", "root testFolder testFoldersssss");
+	fileSystemManager.moveItem("root testFolsder", "testFolder", "root testFolder testFoldersssss");*/
 
 	/*
 	alertCustom("dadsa wa ad kah duah diauhd iauhwd iuaulll")

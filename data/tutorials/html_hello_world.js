@@ -33,8 +33,8 @@ const tutorialData = {
 			actionData.fileSystem,
 		],
 		[
-			"setRequiredFileSystem",
-			{ "index.html": "" },
+			"addRequiredFile",
+			`index.html`,
 		],
 		//
 		[
@@ -86,9 +86,9 @@ const tutorialData = {
 			"highlightAllCode",
 		],
 		[
-			"appendRequiredFileCode",
+			"setRequiredFileCode",
 			`index.html`,
-			`<!DOCTYPE html>`,
+			[`<!DOCTYPE html>`, "utf-8"],
 		],
 		[
 			"resolveOnCodeCorrect",
@@ -146,7 +146,7 @@ const tutorialData = {
 		],
 		[
 			"displayTextAndSetPanel",
-			`Add a title tag to the index.html file. The file should then look similar to this:<pre data-lang=\"text/html\">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Hello World&lt;/title&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>`,
+			`Add a title tag to the index.html file. The file should then look similar to this:<pre data-lang="text/html">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Hello World&lt;/title&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>`,
 		],
 		[
 			"highlightAllCode",
@@ -156,6 +156,7 @@ const tutorialData = {
 			`index.html`,
 			`<title>Hello World</title>`,
 			3,
+			0.
 		],
 		[
 			"resolveOnCodeCorrect",
@@ -190,6 +191,7 @@ const tutorialData = {
 			`index.html`,
 			`<h1>Hello World</h1>`,
 			6,
+			0,
 		],
 		[
 			"resolveOnCodeCorrect",

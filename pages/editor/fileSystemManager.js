@@ -1,27 +1,44 @@
 import mime from "https://cdn.skypack.dev/pin/mime@v3.0.0-Mgy8KWi04WDrrthUM8WI/mode=imports,min/unoptimized/lite.js";
-import { elementFromString, isValidUTF8, stringToArrayBuffer, arrayBufferToString } from "/js/functions.js";
+import { elementFromString, isValidUTF8, stringToArrayBuffer, arrayBufferToString, checkCharacterValid } from "/js/functions.js";
 
 export default async function createFileSystemManager() {
 	const filesContainer = document.getElementById("filesContainerInner");
-	const observer = new ResizeObserver(handleResize);
-	observer.observe(filesContainer);
+	const resizeObserver = new ResizeObserver(handleResize);
+	resizeObserver.observe(filesContainer);
 
 	// initialize new file and folder buttons
 	document.getElementById("newFileButton").addEventListener("click", () => addNewItem("file"));
 	document.getElementById("newFolderButton").addEventListener("click", () => addNewItem("folder"));
 
 	// initialize editor
-	const editor = monaco.editor.create(document.getElementById("codeContainer"), {
+	const codeContainer = document.getElementById("codeContainer");
+	const editor = monaco.editor.create(codeContainer, {
 		automaticLayout: true,
 		readOnly: true,
 	});
-	const defaultModel = monaco.editor.createModel("no files currently open", undefined, monaco.Uri.file("root"));
+	const defaultModel = monaco.editor.createModel(
+		"no files currently open",
+		"plaintext",
+		monaco.Uri.file("root"),
+	);
 	editor.setModel(defaultModel);
 
 	// for fileSystemChangeListeners
-	editor.onDidChangeModelContent(() =>
-		Object.values(manager.fileSystemChangeListeners).forEach(listener => listener())
-	);
+	let timeout;
+	editor.onDidChangeModelContent(() => {
+		Object.values(manager.fileSystemChangeListeners).forEach(listener => listener("edit"));
+
+		clearTimeout(timeout);
+		timeout = setTimeout(
+			() => setFileEncodingWarnings(
+				editor.getModel(),
+				manager.activeFileEncodingScheme,
+				manager.activeFileEncodingSchemeDisplay,
+			),
+			250,
+		);
+	});
+
 
 	// load file extension mappings to icons
 	const iconData = await (await fetch("/data/iconData.json")).json();
@@ -47,22 +64,28 @@ export default async function createFileSystemManager() {
 
 		activeFile: "",
 		activeFilePath: "",
-		activeFileDirectory: {},
+		activeFileEncodingScheme: "",
+		activeFileEncodingSchemeDisplay: "",
 
 		activeItem: "",
 		activePath: "",
-		activeDirectory: {},
 
 		fileSystemChangeListeners: {},
 
 		loadFileSystem(newFileSystem) {
 			editor.setModel(defaultModel);
+			editor.updateOptions({ readOnly: true });
 
 			fileSystem = { "root": {} };
 
+			// set object properties to defaults
+			this.activeFile = "";
+			this.activeFilePath = "";
+			this.activeFileEncodingScheme = "";
+			this.activeFileEncodingSchemeDisplay = "";
+
 			this.activeItem = "root";
 			this.activePath = "";
-			this.activeDirectory = fileSystem.root;
 
 			filesContainer.innerHTML = `<div id="fileSystemRoot" data-path="" data-name="root" data-is-directory="1" data-directory-state="1"></div>`;
 
@@ -91,11 +114,11 @@ export default async function createFileSystemManager() {
 			const isDirectory = !Array.isArray(itemValue);
 			const [itemContents, encodingScheme] = isDirectory ? [itemValue] : itemValue;
 
-			const [targetDirectoryPath, targetDirectoryName] = splitPath(targetDirectoryFullPath);
+			const [targetDirectoryName, targetDirectoryPath] = splitPath(targetDirectoryFullPath);
 			const targetDirectory = this.selectItem(targetDirectoryName, targetDirectoryPath);
 
 			const currentPath = targetDirectoryPath.length ? `${targetDirectoryPath} ${targetDirectoryName}` : targetDirectoryName,
-				itemDepth = targetDirectoryPath.length + 1;
+				itemDepth = targetDirectoryFullPath.split(" ").length;
 
 			const itemElement = elementFromString(`
 				<div class="file" data-path="${currentPath}">
@@ -183,39 +206,45 @@ export default async function createFileSystemManager() {
 
 				monaco.editor.createModel(
 					itemContents,
-					undefined,
+
+					// set language to plaintext if encoding is not utf-8
+					encodingScheme === "utf-8" ? undefined : "plaintext",
+
 					monaco.Uri.file(`${currentPath} ${itemName}`),
 				);
 			}
 
 			handleResize();
 
-			for (const listener of Object.values(this.fileSystemChangeListeners)) listener();
+			for (const listener of Object.values(this.fileSystemChangeListeners)) listener("addItem");
 		},
 		removeItem(targetItemName, targetItemPath) {
-			const deleteFileModel = (fileName, filePath) => {
-				monaco.editor.getModel(monaco.Uri.file(`${filePath} ${fileName}`)).dispose();
-
-				if (this.activeFile === fileName && this.activeFilePath === filePath)
-					this.setActiveItem(document.getElementById("fileSystemRoot"));
-			};
-
 			const targetItem = this.selectItem(targetItemName, targetItemPath);
 
+			const removeItem = (itemPath, itemName, itemElement) => {
+				if (this.activeItem === itemName && this.activePath === itemPath)
+					this.setActiveItem(document.getElementById("fileSystemRoot"));
+
+				itemElement.remove();
+			};
+
 			if (targetItem.getAttribute("data-is-directory")) {
+				// gets all items recursively
 				const subItems = this.getAllWithinDirectory(`${targetItemPath} ${targetItemName}`);
 				for (const subItem of subItems) {
-					if (!subItem.getAttribute("data-is-directory")) {
-						deleteFileModel(subItem.getAttribute("data-name"), subItem.getAttribute("data-path"));
-					}
+					const subItemPath = subItem.getAttribute("data-path"),
+						subItemName = subItem.getAttribute("data-name");
 
-					subItem.remove();
+					if (!subItem.getAttribute("data-is-directory"))
+						monaco.editor.getModel(monaco.Uri.file(`${subItemPath} ${subItemName}`)).dispose();
+
+					removeItem(subItemPath, subItemName, subItem);
 				}
 			} else {
-				deleteFileModel(targetItemName, targetItemPath);
+				monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`)).dispose();
 			}
 
-			targetItem.remove();
+			removeItem(targetItemPath, targetItemName, targetItem);
 
 			let targetDirectoryObject = fileSystem;
 			for (const directory of targetItemPath.split(" ")) {
@@ -223,7 +252,7 @@ export default async function createFileSystemManager() {
 			}
 			delete targetDirectoryObject[targetItemName];
 
-			for (const listener of Object.values(this.fileSystemChangeListeners)) listener();
+			for (const listener of Object.values(this.fileSystemChangeListeners)) listener("removeItem");
 		},
 		changeItemName(newItemName, targetItemName, targetItemPath) {
 			let targetDirectoryObject = fileSystem;
@@ -243,7 +272,7 @@ export default async function createFileSystemManager() {
 
 			// close and reopen folder if directory is not root
 			if (targetItemPath != "root") {
-				const [parentDirectoryPath, parentDirectoryName] = splitPath(targetItemPath);
+				const [parentDirectoryName, parentDirectoryPath] = splitPath(targetItemPath);
 
 				const directoryElement = fileSystemManager.selectItem(parentDirectoryName, parentDirectoryPath);
 				fileSystemManager.toggleDirectory(directoryElement);
@@ -278,7 +307,8 @@ export default async function createFileSystemManager() {
 				// deselect all files and hide file related elements
 				this.activeFile = "";
 				this.activeFilePath = "";
-				this.activeFileDirectory = {};
+				this.activeFileEncodingScheme = "";
+				this.activeFileEncodingSchemeDisplay = "";
 
 				editor.setModel(defaultModel);
 				editor.updateOptions({ readOnly: true });
@@ -304,7 +334,6 @@ export default async function createFileSystemManager() {
 
 				this.activeItem = targetItemName;
 				this.activePath = targetItemPath;
-				this.activeDirectory = targetDirectoryObject;
 
 				// if target item is file
 				if (!itemElement.getAttribute("data-is-directory")) {
@@ -315,37 +344,41 @@ export default async function createFileSystemManager() {
 
 					this.activeFile = targetItemName;
 					this.activeFilePath = targetItemPath;
-					this.activeFileDirectory = targetDirectoryObject;
-
-					const model = monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`));
-					editor.setModel(model);
-
-					editor.updateOptions({ readOnly: itemElement.getAttribute("data-is-readonly") });
 
 					// update file encoding info
-					const encodingValue = this.getFileEncodingScheme(targetItemPath, targetItemName),
-						encodingOption = document.querySelector(
-							`.fileEncodingOption[data-value="${this.getFileEncodingScheme(targetItemPath, targetItemName)}"`
-						),
+					const encodingScheme = this.getFileEncodingScheme(targetItemPath, targetItemName),
 						encodingOptionContainer = document.getElementById("fileOptionEncodingContainer");
 
+					const displayEncoding = document.querySelector(
+						`.fileEncodingOption[data-value="${encodingScheme}"]`
+					).innerText;
+
+					this.activeFileEncodingScheme = encodingScheme;
+					this.activeFileEncodingSchemeDisplay = displayEncoding;
+
 					for (const element of document.getElementsByClassName("fileEncodingOption")) {
-						element.style.display = element.getAttribute("data-value") === encodingValue
+						element.style.display = element.getAttribute("data-value") === encodingScheme
 							? "none"
 							: "block";
 					}
 
-					encodingOptionContainer.insertBefore(
+					const encodingText = encodingOptionContainer.firstElementChild;
+					encodingText.nextElementSibling.after(
 						document.querySelector(
-							`.fileEncodingOption[data-value="${this.getFileEncodingScheme(targetItemPath, targetItemName)}"`
-						),
-						encodingOptionContainer.firstElementChild.nextElementSibling
+							`.fileEncodingOption[data-value="${encodingScheme}"`
+						)
 					);
-					encodingOptionContainer.firstElementChild.innerText = "Encoding: " + encodingOption.innerText;
+					encodingText.innerText = "Encoding: " + displayEncoding
 
 					// show all file info elements
 					for (const fileInfoElement of document.getElementsByClassName("fileInfoElement"))
 						fileInfoElement.style.display = "block";
+
+					// update editor
+					const model = monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`));
+					editor.setModel(model);
+					editor.updateOptions({ readOnly: itemElement.getAttribute("data-is-readonly") });
+					setFileEncodingWarnings(model, encodingScheme, displayEncoding);
 				}
 			}
 		},
@@ -395,7 +428,9 @@ export default async function createFileSystemManager() {
 		},
 		getFileContents(path, name) {
 			const model = monaco.editor.getModel(monaco.Uri.file(`${path} ${name}`));
-			return model ? model.getValue() : null;
+			return model
+				? filterInvalidCharacters(model.getValue(), this.getFileEncodingScheme(path, name))
+				: null;
 		},
 		setFileContents(path, name, contents) {
 			const model = monaco.editor.getModel(monaco.Uri.file(`${path} ${name}`));
@@ -555,7 +590,7 @@ export default async function createFileSystemManager() {
 
 			// close and reopen folder if directory is not root
 			if (path != "root") {
-				const [directoryPath, directoryName] = splitPath(path);
+				const [directoryName, directoryPath] = splitPath(path);
 
 				const directoryElement = fileSystemManager.selectItem(directoryName, directoryPath);
 				fileSystemManager.toggleDirectory(directoryElement);
@@ -566,7 +601,7 @@ export default async function createFileSystemManager() {
 	}
 
 	function formatFileSystemDirectory(contents, path) {
-		const [itemPath, itemName] = splitPath(path);
+		const [itemName, itemPath] = splitPath(path);
 
 		if (typeof contents === "string") {
 			return [
@@ -580,6 +615,41 @@ export default async function createFileSystemManager() {
 
 			return contents;
 		}
+	}
+
+	function setFileEncodingWarnings(model, encodingScheme, encodingSchemeDisplay) {
+		const markers = monaco.editor.getModelMarkers(monaco).filter(
+			marker =>
+				marker.owner !== "encodingWarnings"
+				&& marker.resource.path === "/" + manager.activeFilePath
+		);
+
+		// lines start at 1
+		for (let lineIndex = 1, lineCount = model.getLineCount() + 1; lineIndex < lineCount; lineIndex++) {
+			const lineValue = [...model.getLineContent(lineIndex)];
+			for (let charIndex = 0, lineLength = lineValue.length; charIndex < lineLength; charIndex++) {
+				const char = lineValue[charIndex],
+					isValid = checkCharacterValid(char, encodingScheme);
+
+				if (!isValid) {
+					markers.push({
+						message: `"${char}" is not a valid character within the ${encodingSchemeDisplay} encoding scheme. Invalid characters will be ignored.`,
+						severity: monaco.MarkerSeverity.Warning,
+						startLineNumber: lineIndex,
+						startColumn: charIndex + 1,
+						endLineNumber: lineIndex,
+						endColumn: charIndex + 2,
+					});
+				}
+			}
+		}
+
+		monaco.editor.setModelMarkers(model, "encodingWarnings", markers);
+	}
+
+	function filterInvalidCharacters(string, encoding) {
+		const charArray = [...string].filter(char => checkCharacterValid(char, encoding));
+		return charArray.join("");
 	}
 
 	function checkItemValid(name, path, type) {
@@ -603,7 +673,7 @@ export default async function createFileSystemManager() {
 		return [
 			path.pop(),
 			path.join(" "),
-		].reverse();
+		];
 	}
 
 	function handleResize() {

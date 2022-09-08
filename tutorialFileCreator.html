@@ -11,7 +11,7 @@
 <body>
 	<textarea id="input"></textarea>
 	<textarea id="output"></textarea>
-	<button onclick="output.value = (e => (e.innerText = input.value || '!') && e.innerHTML)(document.createElement('p'))">convert</button>
+	<button onclick="output.value = (e => (e.innerText = input.value || '!', e.innerHTML.replaceAll('<br>', '\\n')))(document.createElement('p'))">convert</button>
 
 	<input type="file" id="temp">
 
@@ -84,6 +84,7 @@
 		text
 		requiredCodeMethod
 		...requiredCodeMethodParams
+		deleteCount
 
 		{requiredCodeMethod}
 		clearAll
