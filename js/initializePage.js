@@ -14,6 +14,9 @@ document.body.appendChild(mask);
 // hide mask on page load
 window.addEventListener("load", () => document.getElementById("mask").style.display = "none");
 
+// refresh page on hash change
+window.addEventListener("hashchange", () => window.location.reload());
+
 // custom alert and prompt functions
 !function () {
 	window.alertCustom = function (message, options = {}) {

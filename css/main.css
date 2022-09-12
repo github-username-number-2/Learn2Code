@@ -89,7 +89,6 @@ body {
 
 .prompt>.inputContainer {
 	vertical-align: middle;
-	width: fit-content;
 	height: 4vh;
 	margin: 0 2vw 2vh 2vw;
 }

@@ -25,7 +25,7 @@ The \`setTimeout\` function takes 2 parameters:
 1. The function to run
 2. The number of milliseconds to wait
 
-Write the following code in the “main.js” file:
+Write the following code in the "main.js" file:
 <[text/javascript
 setTimeout(function () {
   alert();
@@ -89,10 +89,10 @@ alert(intervalID);
 var timeoutID = setTimeout(function () {}, 1000);
 alert(timeoutID);
 
-var intervalID = setInterval(function () {}, 1000);
-alert(intervalID);
+var intervalID2 = setInterval(function () {}, 1000);
+alert(intervalID2);
 ]>
-As you can see, the ID is the return value calling either function.
+As you can see, the ID is the return value of calling either function.
 
 <{c s main.js
 var intervalID = setInterval(function () {}, 1000);
@@ -101,8 +101,8 @@ alert(intervalID);
 var timeoutID = setTimeout(function () {}, 1000);
 alert(timeoutID);
 
-var intervalID = setInterval(function () {}, 1000);
-alert(intervalID);
+var intervalID2 = setInterval(function () {}, 1000);
+alert(intervalID2);
 }>
 
 ---
@@ -111,18 +111,18 @@ Click the run button.
 >>>
 
 ---
-To use the clear function, pass the ID of the timeout interval you want to clear.
+To use the clear function, pass the ID of the timeout/interval you want to clear.
 
 Delete the code in main.js and write the following example:
 <[text/javascript
 var timeoutID = setTimeout(function () {
-  alert(“This timeout has been cleared”);
+  alert("This timeout has been cleared");
 }, 1000);
 
 clearTimeout(timeoutID);
 
 var intervalID = setInterval(function () {
-  if (confirm(“Clear the interval?”)) {
+  if (confirm("Clear the interval?")) {
     clearInterval(intervalID);
   }
 }, 5000);
@@ -130,13 +130,13 @@ var intervalID = setInterval(function () {
 
 <{c s main.js
 var timeoutID = setTimeout(function () {
-alert(“This timeout has been cleared”);
+alert("This timeout has been cleared");
 }, 1000);
 
 clearTimeout(timeoutID);
 
 var intervalID = setInterval(function () {
-if (confirm(“Clear the interval?”)) {
+if (confirm("Clear the interval?")) {
 	clearInterval(intervalID);
 }
 }, 5000);

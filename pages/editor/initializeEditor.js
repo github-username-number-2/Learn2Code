@@ -69,6 +69,8 @@ export default async function initializeEditor() {
 			document.title =
 			"Project: " + name;
 
+		history.pushState(null, "");
+
 		fileSystemManager.loadFileSystem(fileSystem);
 
 		// initialize autosave

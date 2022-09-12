@@ -525,6 +525,7 @@ export default async function createFileSystemManager() {
 		setFileCorrectState(filePath, fileName, state) {
 			this.selectItem(fileName, filePath).children[1].style.color = state ? "#00aa00" : "#000000";
 		},
+		//setFileDifferenceEditor(path, reuiredCode
 	};
 	return manager;
 

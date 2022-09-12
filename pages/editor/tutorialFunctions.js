@@ -23,6 +23,8 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		document.title =
 		"Tutorial: " + display;
 
+	history.pushState(null, "");
+
 	const revertFileSystemButton = document.getElementById("revertFileSystemButton");
 	revertFileSystemButton.addEventListener("click", async () => {
 		if (await confirmCustom("Are you sure you would like to revert the file system back the the last checkpoint?")) {
@@ -32,7 +34,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 
 	// initialize file correct checker
-	let lastCheckPointFileSystem, requiredFileSystem, timeout, resolveFunction = () => { };
+	let lastCheckPointFileSystem, requiredFileSystem = {}, timeout, resolveFunction = () => { };
 	fileSystemManager.fileSystemChangeListeners.tutorialChangeListener = type => {
 		const activeFile = fileSystemManager.activeFile,
 			activePath = fileSystemManager.activePath;
@@ -186,11 +188,12 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		async revertFileSystem() {
 			await this.loadFileSystem(lastCheckPointFileSystem);
 		},
-		displayText(text) {
+		displayText(text, codeTimer = false) {
 			const popupElement = elementFromString(`
 				<div class="tutorialPopup">
 					<div class="tutorialPopupHeader">
 						<img class="tutorialCollapseButton" src="/images/icons/collapseIcon.png">
+						${codeTimer ? `<p class="tutorialPopupTimer">60</p>` : ""}
 					</div>
 					<div class="tutorialPopupContent">
 						<p>${text.replaceAll("<pre", "</p><pre").replaceAll("</pre>", "</pre><p>")}</p>
@@ -200,6 +203,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			const header = popupElement.querySelector(".tutorialPopupHeader"),
 				collapseIcon = popupElement.querySelector(".tutorialCollapseButton"),
+				timer = popupElement.querySelector(".tutorialPopupTimer"),
 				content = popupElement.querySelector(".tutorialPopupContent");
 
 			let isCollapsed = false;
@@ -208,10 +212,10 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				collapseIcon.classList.toggle("tutorialCollapseButtonCollapsed");
 
 				if (isCollapsed) {
-					for (const element of [...content.children])
+					for (const element of [...content.children, timer])
 						element.style.display = "block";
 				} else {
-					for (const element of [...content.children])
+					for (const element of [...content.children, timer])
 						element.style.display = "none";
 				}
 
@@ -219,6 +223,46 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			});
 
 			document.body.appendChild(popupElement);
+
+			const showCorrectButton = document.createElement("button");
+			if (codeTimer) {
+				let timerInterval, remainingTime = 2;
+
+				// timer only runs when the page is active
+				if (document.visibilityState === "visible") startTimer();
+				document.addEventListener(
+					"visibilitychange",
+					() => ({ visible: startTimer, hidden: stopTimer }[document.visibilityState]()),
+				);
+
+				function startTimer() {
+					stopTimer();
+
+					timerInterval = setInterval(() => {
+						timer.innerText = remainingTime;
+
+						if (remainingTime-- < 1) {
+							stopTimer();
+
+							showCorrectButton.innerText = "Show correct code";
+							showCorrectButton.classList.add("tutorialPopupShowCorrect");
+							showCorrectButton.addEventListener("click", event => {
+								event.stopPropagation();
+								fileSystemManager.createFileDifferenceEditor();
+							});
+
+							header.style.width = "calc((100% - 14vh) / 2)";
+							header.style.borderTopRightRadius = "0";
+
+							timer.remove();
+							popupElement.append(showCorrectButton);
+						}
+					}, 1000);
+				}
+				function stopTimer() {
+					clearInterval(timerInterval);
+				}
+			}
 		},
 		clearText() {
 			for (const element of document.getElementsByClassName("tutorialPopup")) {
@@ -251,8 +295,8 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		setPanelText(text) {
 			document.getElementById("tutorialPanelText").innerHTML = text;
 		},
-		displayTextAndSetPanel(text) {
-			this.displayText(text);
+		displayTextAndSetPanel(text, codeTimer = false) {
+			this.displayText(text, codeTimer);
 			this.setPanelText(text);
 		},
 		awaitEvent: async eventListener => {
@@ -331,7 +375,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			this[requiredCodeMethod](...requiredCodeMethodParams);
 			this.clearAll();
 			this.enableInteraction();
-			this.displayTextAndSetPanel(text);
+			this.displayTextAndSetPanel(text, true);
 			this.highlightAllCode();
 			await this.resolveOnCodeCorrect();
 			this.saveProgress(actionIndex + 1);

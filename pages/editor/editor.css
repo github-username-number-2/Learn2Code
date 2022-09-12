@@ -431,7 +431,37 @@ code.highlightInline {
 	opacity: 1;
 }
 
+.tutorialPopupTimer {
+	position: absolute;
+	right: 1.5vh;
+	top: 0.3vh;
+	margin-top: 0;
+	font-size: 2vh;
+	color: #595959;
+}
+
+.tutorialPopupShowCorrect {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 14.01vh;
+	height: 3.3vh;
+	border: none;
+	border-bottom: 0.3vh solid #595959;
+	border-top-right-radius: 2vh;
+	font-size: 1.4vh;
+	color: #333333;
+	background-color: #00ee00;
+}
+
+.tutorialPopupShowCorrect:hover {
+	background-color: #00ee00cc;
+}
+
 .tutorialCollapseButton {
+	position: absolute;
+	transform: translate(-50%, 0);
+	left: 50%;
 	height: 2vh;
 	padding: 0.5vh;
 	opacity: 0.4;
