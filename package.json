@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "name": "learn2code",
+  "version": "1.0.0",
+  "main": "pages",
+  "scripts": {
+    "start": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/github-username-number-2/Learn2Code.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/github-username-number-2/Learn2Code/issues"
+  },
+  "homepage": "https://github.com/github-username-number-2/Learn2Code#readme",
+  "description": "",
+  "dependencies": {
+    "babel-plugin-module-resolver": "^4.1.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.74.0",
+    "webpack-tools": "^1.0.7"
+  }
+}
