@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="manifest" href="/manifest.json">
+
+	<link rel="icon" href="/images/logoTransparent.png">
+	<link rel="stylesheet" href="/css/main.css">
+	<link rel="stylesheet" href="pages/index/index.css">
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+	<title>Learn2Code</title>
+</head>
+
+<body>
+	<div id="header">
+		<img id="logo" src="/images/logoSolid.png" alt="logo">
+		<img id="saveIcon" src="/images/icons/saveIcon.png" alt="save to file">
+
+		<div id="infoButton" class="subPageButton">
+			<p>Info</p>
+		</div>
+		<div id="tutorialsButton" class="subPageButton">
+			<p>Tutorials</p>
+		</div>
+		<div id="editorButton" class="subPageButton">
+			<p>Editor</p>
+		</div>
+	</div>
+
+
+	<div id="info" class="subPage">
+		<h1>General Information</h1>
+
+		<h2>Tutorials</h2>
+
+		<p>The tutorials tab contains the tutorial trees for the main progression and other progressions.</p>
+
+		<img src="/images/infoTutorials.png" alt="image of the tutorials tab">
+
+
+		<h2>Editor</h2>
+
+		<p>The editor allows you to write your own programs using the knowledge you've gained from the tutorials.</p>
+
+		<img src="/images/infoEditor.png" alt="image of the editor tab">
+
+
+		<h2>Saving your progress</h2>
+
+		<p>Clicking the save icon on the top right of the page allows you to save your progress from both the tutorials and all the code you have written in the editor.</p>
+
+		<img src="/images/infoSave.png" alt="image of the save button">
+	</div>
+	<div id="tutorials" class="subPage"></div>
+	<div id="editor" class="subPage">
+		<div id="editorHeader">
+			<h1>Projects</h1>
+			<button id="newProjectButton" title="New Project">+</button>
+		</div>
+		<div id="projectsContainer"></div>
+	</div>
+
+	<script src="/js/initializePage.js" type="module"></script>
+	<script src="pages/index/index.js" type="module"></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{
+  "hosting": {
+    "target": "learn2c0de",
+    "public": "public",
+    "predeploy": "npm start",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "learn2code-dbdce"
+  },
+  "targets": {
+    "learn2code-dbdce": {
+      "hosting": {
+        "learn2c0de": [
+          "learn2c0de"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
