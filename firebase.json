@@ -1,12 +1,20 @@
 {
   "hosting": {
     "target": "learn2c0de",
-    "public": "public",
+    "public": "src",
     "predeploy": "npm start",
     "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+		"firebase.json",
+		"**/.*",
+		"**/node_modules/**"
+    ],
+	"headers": [
+		{
+			"source": "**",
+			"headers": [
+				{"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
+			]
+		}
     ]
   }
 }

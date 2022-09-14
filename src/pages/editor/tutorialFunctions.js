@@ -193,7 +193,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				<div class="tutorialPopup">
 					<div class="tutorialPopupHeader">
 						<img class="tutorialCollapseButton" src="/images/icons/collapseIcon.png">
-						${codeTimer ? `<p class="tutorialPopupTimer">60</p>` : ""}
+						${codeTimer === false ? `<p class="tutorialPopupTimer">60</p>` : ""}
 					</div>
 					<div class="tutorialPopupContent">
 						<p>${text.replaceAll("<pre", "</p><pre").replaceAll("</pre>", "</pre><p>")}</p>
@@ -208,31 +208,36 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			let isCollapsed = false;
 			header.addEventListener("click", () => {
+				isCollapsed = !isCollapsed;
+
 				popupElement.classList.toggle("tutorialPopupCollapsed");
 				collapseIcon.classList.toggle("tutorialCollapseButtonCollapsed");
 
-				if (isCollapsed) {
-					for (const element of [...content.children, timer, showCorrectButton])
-						element && (element.style.display = "block");
-				} else {
-					for (const element of [...content.children, timer, showCorrectButton])
-						element && (element.style.display = "none");
-				}
+				for (const element of [...content.children, timer, showCorrectButton])
+						element && (element.style.display = isCollapsed ? "none" : "block");
 
 				if (popupElement.contains(showCorrectButton)) {
 					header.style.width = {
 						[true]: "100%",
-						[false]: "calc((100% - 14vh) / 2)",
+						[false]: "calc(100% - 14vh)",
+					}[isCollapsed];
+
+					header.style.borderTopRightRadius = {
+						[true]: "2vh",
+						[false]: "0",
+					}[isCollapsed];
+
+					collapseIcon.style.left = {
+						[true]: "50%",
+						[false]: "calc((100% + 14vh) / 2)",
 					}[isCollapsed];
 				}
-
-				isCollapsed = !isCollapsed;
 			});
 
 			document.body.appendChild(popupElement);
 
 			const showCorrectButton = document.createElement("button");
-			if (codeTimer) {
+			if (codeTimer === false) {
 				let timerInterval, remainingTime = 2;
 
 				// timer only runs when the page is active
@@ -258,8 +263,12 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 								fileSystemManager.createFileDifferenceEditor();
 							});
 
-							header.style.width = "calc((100% - 14vh) / 2)";
-							header.style.borderTopRightRadius = "0";
+							if (isCollapsed) {
+								showCorrectButton.style.display = "none";
+							} else {
+								header.style.width = "calc(100% - 14vh)";
+								header.style.borderTopRightRadius = "0";
+							}
 
 							timer.remove();
 							popupElement.append(showCorrectButton);

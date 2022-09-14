@@ -456,13 +456,14 @@ code.highlightInline {
 }
 
 .tutorialPopupShowCorrect:hover {
+	color: #000000;
 	background-color: #00ee00cc;
 }
 
 .tutorialCollapseButton {
 	box-sizing: border-box;
 	position: absolute;
-	transform: translate(1.5vh, 0);
+	transform: translate(-50%, 0);
 	left: 50%;
 	width: 3vh;
 	padding: 0.5vh;
@@ -470,7 +471,7 @@ code.highlightInline {
 }
 
 .tutorialCollapseButtonCollapsed {
-	transform: scale(-1, -1) translate(1.5vh, 0);
+	transform: scale(-1, -1) translate(50%, 0);
 }
 
 .tutorialPopupContent {
