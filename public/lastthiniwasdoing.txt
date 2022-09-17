@@ -1,1 +1,0 @@
-creating a difference editor with required code after waiting for 60 seconds in tutorialFunctions.js and fileSystemManager.js

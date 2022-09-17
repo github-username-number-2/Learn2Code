@@ -9,7 +9,6 @@ const actionData = {
 
 const tutorialData = {
 	info: {
-		id: "hello_world",
 		display: "Hello World",
 	},
 	actionList: [
@@ -115,6 +114,7 @@ const tutorialData = {
 		[
 			"displayTextAndSetPanel",
 			`Open the folder named js. In the main.js file write the following code: <pre data-lang="text/javascript">alert("Hello World");</pre>`,
+			true,
 		],
 		[
 			"highlightAllCode",

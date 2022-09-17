@@ -21,7 +21,6 @@ const actionData = {
 
 const tutorialData = {
 	info: {
-		id: "html_hello_world",
 		display: "Hello World in HTML",
 	},
 	actionList: [
@@ -81,6 +80,7 @@ const tutorialData = {
 		[
 			"displayTextAndSetPanel",
 			`Write the following code in the index.html file:<pre data-lang=\"text/html\">&lt;!DOCTYPE html&gt;</pre>`,
+			true,
 		],
 		[
 			"highlightAllCode",

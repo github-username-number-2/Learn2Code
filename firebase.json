@@ -2,7 +2,7 @@
   "hosting": {
     "target": "learn2c0de",
     "public": "src",
-    "predeploy": "npm start",
+    "predeploy": "",
     "ignore": [
 		"firebase.json",
 		"**/.*",

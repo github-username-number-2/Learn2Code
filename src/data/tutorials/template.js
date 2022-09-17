@@ -20,7 +20,6 @@ const actionData = {
 
 const tutorialData = {
 	info: {
-		id: "",
 		display: "",
 	},
 	actionList: [

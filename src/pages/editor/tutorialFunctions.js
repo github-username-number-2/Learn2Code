@@ -15,9 +15,9 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 	panelTabContainer.insertBefore(tutorialTabElement, panelTabContainer.firstChild);
 	panelContentContainer.insertBefore(tutorialContentElement, panelContentContainer.firstChild);
-	document.body.appendChild(tutorialMaskElement);
-	document.body.appendChild(tutorialNextElement);
-	document.body.appendChild(tutorialStartElement);
+	document.body.append(tutorialMaskElement);
+	document.body.append(tutorialNextElement);
+	document.body.append(tutorialStartElement);
 
 	document.getElementById("headerText").innerText =
 		document.title =
@@ -136,7 +136,11 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		},
 		resolveOnCodeCorrect() {
 			return new Promise(resolve =>
-				resolveFunction = () => resolve()
+				resolveFunction = () => {
+					fileSystemManager.clearFileHints();
+
+					resolve();
+				}
 			);
 		},
 		beginTutorial() {
@@ -193,7 +197,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				<div class="tutorialPopup">
 					<div class="tutorialPopupHeader">
 						<img class="tutorialCollapseButton" src="/images/icons/collapseIcon.png">
-						${codeTimer === false ? `<p class="tutorialPopupTimer">60</p>` : ""}
+						${codeTimer === true ? `<p class="tutorialPopupTimer">60</p>` : ""}
 					</div>
 					<div class="tutorialPopupContent">
 						<p>${text.replaceAll("<pre", "</p><pre").replaceAll("</pre>", "</pre><p>")}</p>
@@ -214,7 +218,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				collapseIcon.classList.toggle("tutorialCollapseButtonCollapsed");
 
 				for (const element of [...content.children, timer, showCorrectButton])
-						element && (element.style.display = isCollapsed ? "none" : "block");
+					element && (element.style.display = isCollapsed ? "none" : "block");
 
 				if (popupElement.contains(showCorrectButton)) {
 					header.style.width = {
@@ -237,8 +241,8 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			document.body.appendChild(popupElement);
 
 			const showCorrectButton = document.createElement("button");
-			if (codeTimer === false) {
-				let timerInterval, remainingTime = 2;
+			if (codeTimer === true) {
+				let timerInterval, remainingTime = 59;
 
 				// timer only runs when the page is active
 				if (document.visibilityState === "visible") startTimer();
@@ -257,10 +261,12 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 							stopTimer();
 
 							showCorrectButton.innerText = "Show correct code";
+							showCorrectButton.title = "Create all required files/folders and show the correct code for each file";
 							showCorrectButton.classList.add("tutorialPopupShowCorrect");
+
 							showCorrectButton.addEventListener("click", event => {
 								event.stopPropagation();
-								fileSystemManager.createFileDifferenceEditor();
+								displayCorrectCode();
 							});
 
 							if (isCollapsed) {
@@ -268,6 +274,8 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 							} else {
 								header.style.width = "calc(100% - 14vh)";
 								header.style.borderTopRightRadius = "0";
+
+								collapseIcon.style.left = "calc((100% + 14vh) / 2)";
 							}
 
 							timer.remove();
@@ -464,5 +472,17 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		}
 
 		return correct;
+	}
+
+	async function displayCorrectCode() {
+		for (const requiredFile in requiredFileSystem) {
+			if (!(requiredFile in fileSystemManager.fileDifferenceEditors)) {
+				const pathList = requiredFile.split(" ");
+				const [path, name] = [pathList.slice(0, -1).join(" "), pathList.slice(-1)[0]];
+
+				if (!checkFileCodeCorrect(path, name))
+					fileSystemManager.showFileHint(path, name, requiredFileSystem[requiredFile]);
+			}
+		}
 	}
 }

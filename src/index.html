@@ -17,6 +17,24 @@
 
 	<title>Learn2Code</title>
 
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js";
+		import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-analytics.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyBwFMvexBoOz5FxEitGnWQyj7yGBuSTHwk",
+			authDomain: "learn2code-dbdce.firebaseapp.com",
+			projectId: "learn2code-dbdce",
+			storageBucket: "learn2code-dbdce.appspot.com",
+			messagingSenderId: "150991199658",
+			appId: "1:150991199658:web:221462cbaa607f2cce9fd3",
+			measurementId: "G-DPCT4PD6W0"
+		};
+
+		const app = initializeApp(firebaseConfig);
+		const analytics = getAnalytics(app);
+	</script>
+
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DPCT4PD6W0"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];

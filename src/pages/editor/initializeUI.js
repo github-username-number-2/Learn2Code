@@ -14,6 +14,10 @@ export default function initializeUI(defaultTab) {
 				const xOffset = separator.getBoundingClientRect().x;
 
 				editorContainer.style.width = window.innerWidth - xOffset - separatorWidth + "px";
+
+				fileSystemManager.editor.layout();
+				if (window.tutorial)
+					fileSystemManager.tutorialDifferenceEditor.layout();
 			},
 			startResize(event) {
 				separator.children[0].style.backgroundColor = "#595959";
@@ -33,6 +37,10 @@ export default function initializeUI(defaultTab) {
 					separator.style.left = mouseX - xOffset + "px";
 					panelContainer.style.width = mouseX - xOffset + "px";
 					editorContainer.style.width = window.innerWidth - mouseX + xOffset - separatorWidth + "px";
+
+					fileSystemManager.editor.layout();
+					if (window.tutorial)
+						fileSystemManager.tutorialDifferenceEditor.layout();
 				}, 20));
 			},
 			stopResize() {

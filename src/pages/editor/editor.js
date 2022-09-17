@@ -55,7 +55,7 @@ window.addEventListener("load", async () => {
 	alert(await promptCustom("da"))
 	alert(await confirmCustom("dadsa wa ad kah duah diahd iauhwd iuaulll"))
 	*/
-	const webCodeExecutor = await initializeWebCodeExecutor("https://Learn2CodeWebCodeExecutor.repl-account.repl.co", "/index.html");
+	const webCodeExecutor = await initializeWebCodeExecutor("https://learn2code-webcodeexecutor.web.app", "/index.html");
 	//webCodeExecutor.executeFilesList(fileSystemManager.getFilesList());
 
 	await initializeEditor();

@@ -11,11 +11,17 @@ const mask = document.createElement("div");
 mask.id = "mask";
 document.body.appendChild(mask);
 
-// hide mask on page load
-window.addEventListener("load", () => document.getElementById("mask").style.display = "none");
 
-// refresh page on hash change
-window.addEventListener("hashchange", () => window.location.reload());
+// hide mask on page load
+window.addEventListener("load", () =>
+	document.getElementById("mask").style.display = "none"
+);
+
+// clicking logo redirects to home page
+document.getElementById("logo").addEventListener("click", () =>
+	window.location = window.location.host
+);
+
 
 // custom alert and prompt functions
 !function () {

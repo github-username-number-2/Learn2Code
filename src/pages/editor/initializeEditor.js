@@ -16,6 +16,8 @@ export default async function initializeEditor() {
 			return;
 		}
 
+		tutorialData.info.id = tutorialID;
+
 		if ("actionString" in tutorialData)
 			tutorialData.actionList = parseActionString(tutorialData.actionString);
 
@@ -37,6 +39,8 @@ export default async function initializeEditor() {
 
 
 	async function runTutorial(tutorialJSON) {
+		window.tutorial = true;
+
 		window.tutorialFunctions = initializeTutorialFunctions(tutorialJSON);
 
 		initializeUI("tutorial");
@@ -61,6 +65,8 @@ export default async function initializeEditor() {
 	}
 
 	function runEditor(projectData) {
+		window.project = true;
+
 		initializeUI("main");
 
 		const { name, fileSystem } = projectData;
@@ -133,33 +139,29 @@ export default async function initializeEditor() {
 					const [actionInfo, text] = [paramList[0].split(" "), paramList[1].replaceAll(placeholder, "\n").trim()];
 					actionInfo.splice(3, 0, actionInfo[1] === "s" ? [text, "utf-8"] : text);
 
-					switch (actionInfo[0]) {
-						// create new file
-						case "f":
-							actionList.push(["addRequiredFile", text]);
-							break;
-						// write code into file
-						case "c":
-							codeActions.push([
-								{
-									"s": "setRequiredFileCode",
-									"a": "appendRequiredFileCode",
-									"i": "insertRequiredFileCode",
-								}[actionInfo[1]],
-								...actionInfo.slice(2),
-							]);
-							break;
-					}
+					// if add file
+					let requiredCodeMethodIndex = 1;
+					if (actionInfo[0] === "f") requiredCodeMethodIndex = 0;
+
+					codeActions.push([
+						{
+							"f": "addRequiredFile",
+							"s": "setRequiredFileCode",
+							"a": "appendRequiredFileCode",
+							"i": "insertRequiredFileCode",
+						}[actionInfo[requiredCodeMethodIndex]],
+						...actionInfo.slice(requiredCodeMethodIndex + 1),
+					]);
 
 					return "";
 				});
 
-				for (const action of codeActions) {
-					// trim trailing br tags
-					while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
 
+				// trim trailing br tags
+				while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
+
+				for (const action of codeActions)
 					actionList.push(["instructCodeAction", section.replaceAll(placeholder, "<br>"), ...action]);
-				}
 
 				continue;
 			}
@@ -169,6 +171,11 @@ export default async function initializeEditor() {
 
 			actionList.push(["info", section.replaceAll(placeholder, "<br>").trim()]);
 		}
+
+		actionList.push(
+			["saveProgress"],
+			["endTutorial"],
+		);
 
 		return actionList;
 

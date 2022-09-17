@@ -1,6 +1,5 @@
 export default {
 	info: {
-		id: "setTimeout_setInterval",
 		display: "setTimeout and setInterval",
 	},
 	actionString:

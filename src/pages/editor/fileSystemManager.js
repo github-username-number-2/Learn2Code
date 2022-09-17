@@ -13,7 +13,6 @@ export default async function createFileSystemManager() {
 	// initialize editor
 	const codeContainer = document.getElementById("codeContainer");
 	const editor = monaco.editor.create(codeContainer, {
-		automaticLayout: true,
 		readOnly: true,
 	});
 	const defaultModel = monaco.editor.createModel(
@@ -38,6 +37,23 @@ export default async function createFileSystemManager() {
 			250,
 		);
 	});
+	editor.onDidChangeCursorPosition(event => {
+		const currentModel = monaco.editor.getModel(
+			monaco.Uri.file(`${manager.activePath} ${manager.activeFile}`)
+		);
+
+		if (currentModel)
+			currentModel.cursorPosition = event.position;
+	});
+
+	const messageContribution = editor.getContribution("editor.contrib.messageController");
+	editor.onDidAttemptReadOnlyEdit(() => {
+		if (manager.activeItem === "root" && manager.activePath === "") {
+			messageContribution.showMessage("Click on a file to edit it.", editor.getPosition());
+		} else {
+			messageContribution.showMessage("This file cannot be edited as it is read-only.", editor.getPosition());
+		}
+	});
 
 
 	// load file extension mappings to icons
@@ -57,17 +73,31 @@ export default async function createFileSystemManager() {
 		iconImages[iconName] = await loadImage(`/images/${iconName}`);
 	}));
 
+
+	// tutorial specific
+	const tutorialDifferenceEditorContainer = elementFromString(`<div id="tutorialDifferenceEditorContainer"></div>`);
+	tutorialDifferenceEditorContainer.classList.add("tutorialDifferenceEditorContainerHidden");
+	codeContainer.append(tutorialDifferenceEditorContainer);
+
+	const tutorialDifferenceEditor = monaco.editor.createDiffEditor(tutorialDifferenceEditorContainer, {
+		enableSplitViewResizing: false,
+		renderSideBySide: false,
+	});
+	const tutorialDifferenceEditorNavigator =
+		monaco.editor.createDiffNavigator(tutorialDifferenceEditor);
+
 	let fileSystem;
 
 	const manager = {
 		editor,
+		tutorialDifferenceEditor,
 
 		activeFile: "",
 		activeFilePath: "",
 		activeFileEncodingScheme: "",
 		activeFileEncodingSchemeDisplay: "",
 
-		activeItem: "",
+		activeItem: "root",
 		activePath: "",
 
 		fileSystemChangeListeners: {},
@@ -274,10 +304,10 @@ export default async function createFileSystemManager() {
 			if (targetItemPath != "root") {
 				const [parentDirectoryName, parentDirectoryPath] = splitPath(targetItemPath);
 
-				const directoryElement = fileSystemManager.selectItem(parentDirectoryName, parentDirectoryPath);
-				fileSystemManager.toggleDirectory(directoryElement);
+				const directoryElement = manager.selectItem(parentDirectoryName, parentDirectoryPath);
+				manager.toggleDirectory(directoryElement);
 
-				if (fileSystemManager.getDirectoryState(directoryElement) === "0") fileSystemManager.toggleDirectory(directoryElement);
+				if (manager.getDirectoryState(directoryElement) === "0") manager.toggleDirectory(directoryElement);
 			}
 
 			// recompute file option positions
@@ -303,6 +333,10 @@ export default async function createFileSystemManager() {
 			this.addItem(targetItemName, contents, newItemPath);
 		},
 		setActiveItem(itemElement) {
+			// tutorial specific
+			if (window.tutorial)
+				tutorialDifferenceEditorContainer.classList.add("tutorialDifferenceEditorContainerHidden");
+
 			if (itemElement === document.getElementById("fileSystemRoot")) {
 				// deselect all files and hide file related elements
 				this.activeFile = "";
@@ -377,8 +411,31 @@ export default async function createFileSystemManager() {
 					// update editor
 					const model = monaco.editor.getModel(monaco.Uri.file(`${targetItemPath} ${targetItemName}`));
 					editor.setModel(model);
+					editor.focus();
+					if (model.cursorPosition) editor.setPosition(model.cursorPosition);
+
 					editor.updateOptions({ readOnly: itemElement.getAttribute("data-is-readonly") });
+
 					setFileEncodingWarnings(model, encodingScheme, displayEncoding);
+
+					// tutorial specific
+					if (window.tutorial) {
+						const fullPath = targetItemPath + " " + targetItemName;
+
+						if (fullPath in this.fileDifferenceEditors) {
+							tutorialDifferenceEditor.setModel({
+								original: this.fileDifferenceEditors[fullPath][0],
+								modified: model,
+							});
+							tutorialDifferenceEditor.focus();
+							tutorialDifferenceEditorNavigator.next();
+
+							const tutorialDifferenceEditorContainer = document.getElementById("tutorialDifferenceEditorContainer");
+							tutorialDifferenceEditorContainer.classList.remove("tutorialDifferenceEditorContainerHidden");
+						}
+
+						setDifferenceEditorEncodingWarnings(model, encodingScheme, displayEncoding);
+					}
 				}
 			}
 		},
@@ -522,10 +579,60 @@ export default async function createFileSystemManager() {
 		},
 
 		// tutorial specific
+		fileDifferenceEditors: {},
+
 		setFileCorrectState(filePath, fileName, state) {
 			this.selectItem(fileName, filePath).children[1].style.color = state ? "#00aa00" : "#000000";
 		},
-		//setFileDifferenceEditor(path, reuiredCode
+		showFileHint(path, name, requiredFile) {
+			requiredFile = [
+				monaco.editor.createModel(requiredFile[0], mime.getType(name)),
+				requiredFile[1],
+			];
+
+			this.fileDifferenceEditors[path + " " + name] = requiredFile;
+
+			// if files/directories do not exist, create them
+			path.split(" ").reduce((directoryPath, directoryName) => {
+				const targetDirectory = manager.selectItem(directoryName, directoryPath);
+				if (
+					!(
+						targetDirectory && manager.isItemDirectory(directoryName, directoryPath)
+					)
+				) {
+					manager.addItem(directoryName, {}, directoryPath);
+				}
+				return directoryPath + " " + directoryName;
+			});
+
+			if (this.selectItem(name, path)) {
+				if (this.isItemDirectory(name, path)) {
+					this.removeItem(name, path);
+					this.addItem(name, ["", requiredFile[1]]);
+				}
+			} else {
+				this.addItem(name, ["", requiredFile[1]], path);
+			}
+
+			const openDirectories = filesContainer.querySelectorAll(`.file[data-is-directory="1"][data-directory-state="1"]`);
+			for (const directory of openDirectories) this.toggleDirectory(directory);
+
+			const allDirectories = filesContainer.querySelectorAll(`.file[data-is-directory="1"]`);
+			for (const directory of allDirectories) this.toggleDirectory(directory);
+
+			const originalActiveItem = this.activeItem,
+				originalActivePath = this.activePath;
+			this.setActiveItem(document.getElementById("fileSystemRoot"));
+			this.setActiveItem(this.selectItem(originalActiveItem, originalActivePath));
+		},
+		clearFileHints() {
+			tutorialDifferenceEditorContainer.classList.add("tutorialDifferenceEditorContainerHidden");
+
+			for (const file of Object.values(this.fileDifferenceEditors))
+				file[0].dispose();
+
+			this.fileDifferenceEditors = {};
+		},
 	};
 	return manager;
 
@@ -572,9 +679,9 @@ export default async function createFileSystemManager() {
 	}
 
 	async function addNewItem(type) {
-		let path = fileSystemManager.activePath;
-		const activeItem = fileSystemManager.activeItem,
-			isCurrentItemDirectory = fileSystemManager.isItemDirectory(activeItem, path);
+		let path = manager.activePath;
+		const activeItem = manager.activeItem,
+			isCurrentItemDirectory = manager.isItemDirectory(activeItem, path);
 
 		if (isCurrentItemDirectory) path = `${path} ${activeItem}`.trim();
 
@@ -583,7 +690,7 @@ export default async function createFileSystemManager() {
 			name !== null // prompt was canceled
 			&& checkItemValid(name, path, type)
 		) {
-			fileSystemManager.addItem(
+			manager.addItem(
 				name,
 				{ file: ["", "utf-8"], folder: {} }[type],
 				path,
@@ -593,10 +700,10 @@ export default async function createFileSystemManager() {
 			if (path != "root") {
 				const [directoryName, directoryPath] = splitPath(path);
 
-				const directoryElement = fileSystemManager.selectItem(directoryName, directoryPath);
-				fileSystemManager.toggleDirectory(directoryElement);
+				const directoryElement = manager.selectItem(directoryName, directoryPath);
+				manager.toggleDirectory(directoryElement);
 
-				if (fileSystemManager.getDirectoryState(directoryElement) === "0") fileSystemManager.toggleDirectory(directoryElement);
+				if (manager.getDirectoryState(directoryElement) === "0") manager.toggleDirectory(directoryElement);
 			}
 		}
 	}
@@ -619,7 +726,7 @@ export default async function createFileSystemManager() {
 	}
 
 	function setFileEncodingWarnings(model, encodingScheme, encodingSchemeDisplay) {
-		const markers = monaco.editor.getModelMarkers(monaco).filter(
+		const markers = monaco.editor.getModelMarkers().filter(
 			marker =>
 				marker.owner !== "encodingWarnings"
 				&& marker.resource.path === "/" + manager.activeFilePath
@@ -648,6 +755,37 @@ export default async function createFileSystemManager() {
 		monaco.editor.setModelMarkers(model, "encodingWarnings", markers);
 	}
 
+	// tutorial specific
+	function setDifferenceEditorEncodingWarnings(model, encodingScheme, displayEncoding) {
+		const modelFilePath = model._associatedResource.path.substring(1);
+
+		// if model has difference editor
+		if (modelFilePath in manager.fileDifferenceEditors) {
+			const markers = monaco.editor.getModelMarkers().filter(
+				marker =>
+					marker.owner !== "tutorialEncodingWarnings"
+					&& marker.resource.path === "/" + manager.activeFilePath
+			);
+
+			const requiredFileEncoding = manager.fileDifferenceEditors[modelFilePath][1],
+				requiredFileEncodingDisplay = document.querySelector(`.fileEncodingOption[data-value="${requiredFileEncoding}"]`).innerText;
+
+			if (requiredFileEncoding !== encodingScheme) {
+				const lineCount = model.getLineCount();
+				markers.push({
+					message: `File encoding should be set to ${requiredFileEncodingDisplay}, current encoding is ${displayEncoding}`,
+					severity: monaco.MarkerSeverity.Error,
+					startLineNumber: 0,
+					startColumn: 0,
+					endLineNumber: lineCount,
+					endColumn: model.getLineContent(lineCount).length + 1,
+				});
+			}
+
+			monaco.editor.setModelMarkers(model, "tutorialEncodingWarnings", markers);
+		}
+	}
+
 	function filterInvalidCharacters(string, encoding) {
 		const charArray = [...string].filter(char => checkCharacterValid(char, encoding));
 		return charArray.join("");
@@ -655,8 +793,8 @@ export default async function createFileSystemManager() {
 
 	function checkItemValid(name, path, type) {
 		const siblingNames = [
-			...fileSystemManager.getImmidiateWithinDirectory(path)
-		].map(element => fileSystemManager.getItemName(element));
+			...manager.getImmidiateWithinDirectory(path)
+		].map(element => manager.getItemName(element));
 
 		if (!name) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot be blank`) || false;
 		if (siblingNames.includes(name)) return void alertCustom(`A ${type} in this directory already has the name "${name}"`) || false;

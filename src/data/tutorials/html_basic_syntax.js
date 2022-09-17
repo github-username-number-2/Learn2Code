@@ -9,7 +9,6 @@ const actionData = {
 
 const tutorialData = {
 	info: {
-		id: "html_basic_syntax",
 		display: "HTML Basic Syntax",
 	},
 	actionList: [

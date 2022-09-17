@@ -5,7 +5,7 @@
   "main": "pages",
   "scripts": {
     "start": "",
-    "deploy": "firebase deploy --only hosting:learn2c0de"
+    "deploy": "git push origin master:master && firebase deploy --only hosting:learn2c0de"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
     "url": "https://github.com/github-username-number-2/Learn2Code/issues"
   },
   "homepage": "https://github.com/github-username-number-2/Learn2Code#readme",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
 }
