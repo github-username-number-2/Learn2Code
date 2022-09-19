@@ -120,6 +120,7 @@
 }
 
 .project {
+	position: relative;
 	height: fit-content;
 	padding: 1vh 2vh 1vh 0;
 	cursor: pointer;
@@ -134,15 +135,24 @@
 	padding: 2vh 0 2vh 4vh;
 	margin: 0;
 	font-size: 4vh;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .project>img {
-	position: relative;
-	top: 0.5vh;
-	float: right;
+	position: absolute;
+	top: 0;
 	height: 4vh;
-	padding-left: 1.5vh;
+	padding: 1.5vh 0 2.5vh 0;
 	opacity: 0.5;
+}
+
+.project>img:nth-child(2) {
+	right: 0;
+}
+
+.project>img:nth-child(3) {
+	right: 5vh;
 }
 
 .project>img:hover {

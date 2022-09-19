@@ -37,7 +37,7 @@ export default function initializeStorageManager() {
 
 
 		let db;
-		const openRequest = indexedDB.open("UserFiles", 6);
+		const openRequest = indexedDB.open("UserFiles", 7);
 
 		openRequest.addEventListener("success", event => {
 			db = event.target.result;
@@ -59,7 +59,7 @@ export default function initializeStorageManager() {
 					keyPath: "id",
 				});
 			}
-			if (!db.objectStoreNames.contains("Settings")) {
+			if (!db.objectStoreNames.contains("EditorSettings")) {
 				db.createObjectStore("EditorSettings", {
 					keyPath: "name",
 				});
