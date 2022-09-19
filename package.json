@@ -5,7 +5,7 @@
   "main": "pages",
   "scripts": {
     "start": "",
-    "deploy": "git commit -a -m \"uhhhhh\"; git push origin @ && firebase deploy --only hosting:learn2c0de"
+    "deploy": "git add -A -m \"uhhhhh\"; && firebase deploy --only hosting:learn2c0de"
   },
   "repository": {
     "type": "git",
