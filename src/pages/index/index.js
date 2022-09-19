@@ -79,7 +79,8 @@ window.addEventListener("load", async () => {
 
 				if (newName === null) return; // prompt was canceled
 				if (!newName) return alertCustom(`Project names cannot be blank`);
-				if (!/^[0-9a-zA-Z._-]+$/.test(newName)) return alertCustom(`Project names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`);
+				if (!/^[0-9a-zA-Z ._-]+$/.test(newName)) return alertCustom(`Project names can only contain characters "0-9", "a-z", "A-Z", ".", "_", "-" and " "`);
+				if (newName.startsWith(" ") || newName.endsWith(" ")) return alertCustom(`Project names can not start or end with " "`);
 				if (newName === key) return alertCustom("The name must be different then the current.");
 				if (await storageManager.getProjectData(newName)) return alertCustom(`A project with this name already exists`);
 
