@@ -5,7 +5,7 @@
   "main": "pages",
   "scripts": {
     "start": "",
-    "deploy": "git add -A -m \"uhhhhh\"; && firebase deploy --only hosting:learn2c0de"
+    "deploy": "git add -A && git commit -m uhhhhh && git pull && git push https://github.com/github-username-number-2/Learn2Code && firebase deploy --only hosting:learn2c0de"
   },
   "repository": {
     "type": "git",
