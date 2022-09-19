@@ -5,7 +5,7 @@ export default async function initializeEditor() {
 	const hash = window.location.hash.substring(1);
 
 	if (hash.startsWith("tutorial")) {
-		const tutorialID = decodeURIComponent(hash.split("-")[1]);
+		const tutorialID = decodeURIComponent(hash.substring(9));
 		let tutorialData;
 		try {
 			tutorialData = (await import(`/data/tutorials/${tutorialID}.js`)).default;
@@ -23,7 +23,7 @@ export default async function initializeEditor() {
 
 		runTutorial(tutorialData);
 	} else if (hash.startsWith("editor")) {
-		const projectName = decodeURIComponent(hash.split("-")[1]),
+		const projectName = decodeURIComponent(hash.substring(7)),
 			projectData = await storageManager.getProjectData(projectName);
 
 		if (projectData === undefined) {

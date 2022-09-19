@@ -44,7 +44,7 @@ window.addEventListener("load", async () => {
 
 			storageManager.setProjectData({ name, fileSystem: { "index.html": ["", "utf-8"] } });
 
-			window.location = `//${window.location.host}/pages/editor.html#editor-${name}`;
+			window.location = `//${window.location.host}/pages/editor.html#editor-${encodeURIComponent(name)}`;
 		});
 
 		const keyList = await storageManager.getAllProjectKeys();
@@ -57,7 +57,7 @@ window.addEventListener("load", async () => {
 				</div>
 			`);
 			projectElement.addEventListener("click", () =>
-				window.open(`//${window.location.host}/pages/editor.html#editor-${key}`)
+				window.open(`//${window.location.host}/pages/editor.html#editor-${encodeURIComponent(key)}`)
 			);
 			projectElement.children[1].addEventListener("click", async event => {
 				event.stopPropagation();
