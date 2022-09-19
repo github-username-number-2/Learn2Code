@@ -1,4 +1,4 @@
-export default function initializeWebCodeExecutor(executorRootURL, startingPagePath) {
+export default function initializeWebCodeExecutor(startingPagePath) {
 	const runButton = document.getElementById("runCode");
 	let iframe, retryTimeout, timeoutLength = 500;
 
@@ -6,7 +6,8 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 		const executorURL = executorRootURL + "/_L2C_RESERVED_INDEX_.html";
 
 		let firstMessageReceived = false,
-			initializationComplete;
+			initializationComplete,
+			onFrameLoad = () => { };
 		window.addEventListener("message", event => {
 			if (event.data === "0") {
 				if (firstMessageReceived) {
@@ -16,7 +17,10 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 						initializationComplete = true;
 
 						runButton.addEventListener("click", () =>
-							webCodeExecutor.executeFilesList(fileSystemManager.getBinaryFilesList())
+							webCodeExecutor.executeFilesList(
+								fileSystemManager.getBinaryFilesList(),
+								() => window.open(executorRootURL + startingPagePath),
+							)
 						);
 						onready();
 
@@ -28,7 +32,7 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 			} else if (event.data === "1") {
 				onready();
 
-				window.open(executorRootURL + startingPagePath);
+				onFrameLoad();
 			}
 		});
 
@@ -37,10 +41,12 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 
 		const webCodeExecutor = {
 			ready: false,
-			executeFilesList(filesList) {
+			executeFilesList(filesList, callback) {
 				if (this.ready) {
 					this.ready = false;
 					runButton.style.backgroundColor = "#cccccc";
+
+					onFrameLoad = callback;
 
 					for (const fileData of filesList) {
 						fileData[0] = "/" + fileData[0].replaceAll(" ", "/");
@@ -50,6 +56,7 @@ export default function initializeWebCodeExecutor(executorRootURL, startingPageP
 				}
 			},
 		};
+		return webCodeExecutor;
 
 		function createIframe() {
 			iframe = document.createElement("iframe");

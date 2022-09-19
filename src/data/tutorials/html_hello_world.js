@@ -79,7 +79,7 @@ const tutorialData = {
 		],
 		[
 			"displayTextAndSetPanel",
-			`Write the following code in the index.html file:<pre data-lang=\"text/html\">&lt;!DOCTYPE html&gt;</pre>`,
+			`Write the following code in the index.html file:<pre data-lang="text/html">&lt;!DOCTYPE html&gt;</pre>`,
 			true,
 		],
 		[
@@ -113,7 +113,7 @@ const tutorialData = {
 		],
 		[
 			"displayTextAndSetPanel",
-			`Add the following code to the index.html file:<pre data-lang=\"text/html\">&lt;html&gt;\n  &lt;head&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>`,
+			`Add the following code to the index.html file:<pre data-lang="text/html">&lt;html&gt;\n  &lt;head&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>`,
 		],
 		[
 			"highlightAllCode",
@@ -181,7 +181,7 @@ const tutorialData = {
 		],
 		[
 			"displayTextAndSetPanel",
-			`Insert an h1 tag between the 2 body tags. The file should then look similar to this:<pre data-lang=\"text/html\">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Hello World&lt;/title&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n    &lt;h1&gt;Hello World&lt;/h1&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>`,
+			`Insert an h1 tag between the 2 body tags. The file should then look similar to this:<pre data-lang="text/html">&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n  &lt;head&gt;\n    &lt;title&gt;Hello World&lt;/title&gt;\n  &lt;/head&gt;\n\n  &lt;body&gt;\n    &lt;h1&gt;Hello World&lt;/h1&gt;\n  &lt;/body&gt;\n&lt;/html&gt;</pre>`,
 		],
 		[
 			"highlightAllCode",

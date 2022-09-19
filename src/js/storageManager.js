@@ -1,20 +1,21 @@
 export default function initializeStorageManager() {
 	return new Promise(resolve => {
 		const storageManager = {
-			getTutorialData(tutorialID) {
-				return createTransaction("TutorialData", "readonly", store => store.get(tutorialID));
-			},
 			getAllTutorialData() {
 				return createTransaction("TutorialData", "readonly", store => store.getAll());
+			},
+			getTutorialData(tutorialID) {
+				return createTransaction("TutorialData", "readonly", store => store.get(tutorialID));
 			},
 			setTutorialData(tutorialData) {
 				return createTransaction("TutorialData", "readwrite", store => store.put(tutorialData));
 			},
-			getProjectData(projectName) {
-				return createTransaction("ProjectData", "readonly", store => store.get(projectName));
-			},
+
 			getAllProjectKeys() {
 				return createTransaction("ProjectData", "readonly", store => store.getAllKeys());
+			},
+			getProjectData(projectName) {
+				return createTransaction("ProjectData", "readonly", store => store.get(projectName));
 			},
 			setProjectData(projectData) {
 				return createTransaction("ProjectData", "readwrite", store => store.put(projectData));
@@ -22,11 +23,21 @@ export default function initializeStorageManager() {
 			deleteProjectData(projectName) {
 				return createTransaction("ProjectData", "readwrite", store => store.delete(projectName));
 			},
+
+			getEditorSettings() {
+				return createTransaction("Settings", "readonly", store => store.getAll());
+			},
+			modifyEditorSetting(settingObject) {
+				return createTransaction("Settings", "readwrite", store => store.put(settingObject));
+			},
+			deleteEditorSetting(settingName) {
+				return createTransaction("Settings", "readwrite", store => store.delete(settingName));
+			},
 		};
 
 
 		let db;
-		const openRequest = indexedDB.open("UserFiles", 4);
+		const openRequest = indexedDB.open("UserFiles", 6);
 
 		openRequest.addEventListener("success", event => {
 			db = event.target.result;
@@ -46,6 +57,11 @@ export default function initializeStorageManager() {
 			if (!db.objectStoreNames.contains("TutorialData")) {
 				db.createObjectStore("TutorialData", {
 					keyPath: "id",
+				});
+			}
+			if (!db.objectStoreNames.contains("Settings")) {
+				db.createObjectStore("EditorSettings", {
+					keyPath: "name",
 				});
 			}
 

@@ -1,10 +1,14 @@
-export default function initializeUI(defaultTab) {
-	const resizeContainers = (function () {
-		let intervals = [], mouseX;
-		window.addEventListener("mousemove", event => mouseX = event.pageX);
+import mime from "/js/libraries/mime.js";
+import { stringToArrayBuffer } from "/js/functions.js";
 
-		const panelContainer = document.getElementById("panelContainer"),
-			editorContainer = document.getElementById("editorContainer");
+export default function initializeUI(defaultTab) {
+	const panelContainer = document.getElementById("panelContainer"),
+		editorContainer = document.getElementById("editorContainer");
+
+	const resizeContainers = (function () {
+		const intervals = [];
+		let mouseX;
+		window.addEventListener("mousemove", event => mouseX = event.pageX);
 
 		return {
 			resizeOnce() {
@@ -85,6 +89,55 @@ export default function initializeUI(defaultTab) {
 			)
 		);
 	}
+
+	const codeTab = document.getElementById("editorTabFileName"),
+		previewTab = document.getElementById("editorTabPreview"),
+		previewMask = document.getElementById("filePreviewMask");
+
+	codeTab.addEventListener("click", () => {
+		for (const frame of document.getElementsByClassName("filePreviewFrame"))
+			frame.remove();
+
+		previewMask.style.display = "none";
+	});
+	previewTab.addEventListener("click", () => {
+		previewMask.style.display = "block";
+
+		const targetFile = fileSystemManager.activeFile,
+			targetPath = fileSystemManager.activePath;
+		const currentFilePath =
+			(targetPath.substring(4) + " " + targetFile).replaceAll(" ", "/");
+
+		const targetFileContents = fileSystemManager.getFileContents(targetPath, targetFile),
+			targetFileEncoding = fileSystemManager.getFileEncodingScheme(targetPath, targetFile);
+
+		const previewFrame = document.createElement("iframe");
+		previewFrame.classList.add("filePreviewFrame");
+		previewFrame.width = previewMask.offsetWidth;
+		editorContainer.append(previewFrame);
+
+		previewFrame.addEventListener(
+			"load",
+			() => previewMask.style.display = "none",
+		);
+
+		webCodeExecutor.executeFilesList(
+			[[
+				(targetPath.substring(4) + " " + targetFile).trim(),
+				stringToArrayBuffer(targetFileContents, targetFileEncoding),
+				mime.getType(targetFile) || "text/plain",
+			]],
+			() => previewFrame.src = executorRootURL + currentFilePath,
+		);
+	});
+
+	const editorTabs = document.getElementsByClassName("editorTab");
+	for (const tab of editorTabs)
+		tab.addEventListener("click", () => {
+			for (const tab of editorTabs)
+				tab.children[0].style.backgroundColor = null;
+			tab.children[0].style.backgroundColor = "#cccccc";
+		});
 }
 
 export function selectTab(tabName) {

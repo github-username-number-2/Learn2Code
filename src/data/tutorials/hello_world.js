@@ -55,7 +55,7 @@ const tutorialData = {
 		],
 		[
 			"displayText",
-			`The main panel is where you can access files, and run your code. Click the tab titled \"main\" to swich to the main panel.`,
+			`The main panel is where you can access files, and run your code. Click the tab titled "main" to swich to the main panel.`,
 		],
 		[
 			"setPanelText",

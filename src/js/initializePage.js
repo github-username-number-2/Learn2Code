@@ -1,4 +1,4 @@
-import { elementFromString } from "/js/functions.js"
+import { elementFromString } from "/js/functions.js";
 
 // register service worker
 navigator.serviceWorker.register("/js/sw.js");
@@ -19,7 +19,7 @@ window.addEventListener("load", () =>
 
 // clicking logo redirects to home page
 document.getElementById("logo").addEventListener("click", () =>
-	window.location = window.location.host
+	window.location = window.location.origin
 );
 
 
@@ -109,6 +109,9 @@ document.getElementById("logo").addEventListener("click", () =>
 	};
 
 	function createPopupElement(popupHTML, { left, right, top, bottom, width, height }) {
+		// prevents errors
+		width, height;
+
 		for (const element of mask.children) element.style.display = "none";
 
 		const popupElement = elementFromString(popupHTML);

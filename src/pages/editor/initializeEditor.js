@@ -98,7 +98,7 @@ export default async function initializeEditor() {
 		const sectionList = actionString.split("---").map(section => section.trim());
 		const startingFileSystem = JSON.parse(sectionList.shift());
 
-		let actionList = [
+		const actionList = [
 			[
 				"beginTutorial",
 			],

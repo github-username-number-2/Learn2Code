@@ -14,6 +14,9 @@ export default async function createFileSystemManager() {
 	const codeContainer = document.getElementById("codeContainer");
 	const editor = monaco.editor.create(codeContainer, {
 		readOnly: true,
+		fontSize: userSettings.editorFontSize,
+		lineNumbers: userSettings.editorLineNumbers ? "on" : "off",
+		wordWrap: userSettings.editorWrapText ? "on" : "off",
 	});
 	const defaultModel = monaco.editor.createModel(
 		"no files currently open",
@@ -81,7 +84,10 @@ export default async function createFileSystemManager() {
 
 	const tutorialDifferenceEditor = monaco.editor.createDiffEditor(tutorialDifferenceEditorContainer, {
 		enableSplitViewResizing: false,
-		renderSideBySide: false,
+		renderSideBySide: { sideBySide: true, inline: false }[userSettings.tutorialDifferenceEditorStyle],
+		fontSize: userSettings.editorFontSize,
+		lineNumbers: userSettings.editorLineNumbers ? "on" : "off",
+		wordWrap: userSettings.editorWrapText ? "on" : "off",
 	});
 	const tutorialDifferenceEditorNavigator =
 		monaco.editor.createDiffNavigator(tutorialDifferenceEditor);
@@ -333,10 +339,6 @@ export default async function createFileSystemManager() {
 			this.addItem(targetItemName, contents, newItemPath);
 		},
 		setActiveItem(itemElement) {
-			// tutorial specific
-			if (window.tutorial)
-				tutorialDifferenceEditorContainer.classList.add("tutorialDifferenceEditorContainerHidden");
-
 			if (itemElement === document.getElementById("fileSystemRoot")) {
 				// deselect all files and hide file related elements
 				this.activeFile = "";
@@ -347,6 +349,9 @@ export default async function createFileSystemManager() {
 				editor.setModel(defaultModel);
 				editor.updateOptions({ readOnly: true });
 
+				for (const editorTab of document.getElementsByClassName("editorTab"))
+					editorTab.style.display = "none";
+
 				for (const fileOptionElement of document.getElementsByClassName("fileInfoElement"))
 					fileOptionElement.style.display = "none";
 			}
@@ -356,6 +361,15 @@ export default async function createFileSystemManager() {
 
 			// only update if item is not already active
 			if (this.activePath !== targetItemPath || this.activeItem !== targetItemName) {
+
+				// tutorial specific
+				if (window.tutorial)
+					tutorialDifferenceEditorContainer.classList.add("tutorialDifferenceEditorContainerHidden");
+
+				// remove preview frames
+				document.getElementById("editorTabFileName").click();
+
+
 				for (const fileElement of document.getElementsByClassName("file")) {
 					fileElement.style.backgroundColor = null;
 				}
@@ -402,7 +416,14 @@ export default async function createFileSystemManager() {
 							`.fileEncodingOption[data-value="${encodingScheme}"`
 						)
 					);
-					encodingText.innerText = "Encoding: " + displayEncoding
+					encodingText.innerText = "Encoding: " + displayEncoding;
+
+					// show all editor tabs
+					for (const editorTab of document.getElementsByClassName("editorTab"))
+						editorTab.style.display = "block";
+
+					document.getElementById("editorTabFileName").children[0].innerText =
+						targetItemPath.replaceAll(" ", "/").substring(4) + "/" + targetItemName;
 
 					// show all file info elements
 					for (const fileInfoElement of document.getElementsByClassName("fileInfoElement"))
@@ -586,7 +607,7 @@ export default async function createFileSystemManager() {
 		},
 		showFileHint(path, name, requiredFile) {
 			requiredFile = [
-				monaco.editor.createModel(requiredFile[0], mime.getType(name)),
+				monaco.editor.createModel(requiredFile[0], mime.getType(name) || "text/plain"),
 				requiredFile[1],
 			];
 
@@ -816,7 +837,9 @@ export default async function createFileSystemManager() {
 	}
 
 	function handleResize() {
-		let largestWidth = 0, vw = window.innerWidth / 100;
+		const vw = window.innerWidth / 100;
+
+		let largestWidth = 0;
 		for (const file of filesContainer.children) {
 			file.style.width = "fit-content";
 

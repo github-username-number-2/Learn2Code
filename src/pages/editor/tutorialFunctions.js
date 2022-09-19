@@ -71,7 +71,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			const path = ["root", ...filePath.split(" ")],
 				name = path.pop();
 
-			requiredFileSystem["root " + filePath] = [formatCode(requiredCode[0], mime.getType(name)), requiredCode[1]];
+			requiredFileSystem["root " + filePath] = [formatCode(requiredCode[0], mime.getType(name)) || "text/plain", requiredCode[1]];
 
 			checkFileCodeCorrect(path.join(" "), name);
 		},
@@ -80,7 +80,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				name = path.pop();
 			const currentCode = requiredFileSystem["root " + filePath][0];
 
-			requiredFileSystem["root " + filePath][0] = formatCode(currentCode + requiredCode, mime.getType(name));
+			requiredFileSystem["root " + filePath][0] = formatCode(currentCode + requiredCode, mime.getType(name) || "text/plain");
 
 			checkFileCodeCorrect(path.join(" "), name);
 		},
@@ -91,7 +91,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			const requiredFileObject = requiredFileSystem["root " + filePath];
 			requiredFileObject[0] = requiredFileObject[0].split("\n");
 			requiredFileObject[0].splice(lineNumber, deleteCount, requiredCode);
-			requiredFileObject[0] = formatCode(requiredFileObject[0].join("\n"), mime.getType(name));
+			requiredFileObject[0] = formatCode(requiredFileObject[0].join("\n"), mime.getType(name) || "text/plain");
 
 			checkFileCodeCorrect(path.join(" "), name);
 		},
@@ -104,7 +104,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				for (const item in directory) {
 					const itemValue = directory[item];
 					if (Array.isArray(itemValue)) {
-						const code = formatCode(itemValue[0], mime.getType(item))
+						const code = formatCode(itemValue[0], mime.getType(item) || "text/plain");
 
 						requiredFileSystem[`${path} ${item}`] = [code, itemValue[1]];
 					} else {
@@ -220,6 +220,11 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				for (const element of [...content.children, timer, showCorrectButton])
 					element && (element.style.display = isCollapsed ? "none" : "block");
 
+				popupElement.style.boxShadow = {
+					[true]: "none",
+					[false]: "0 0 10vh 0.1vh #bbbbbb",
+				}[isCollapsed];
+
 				if (popupElement.contains(showCorrectButton)) {
 					header.style.width = {
 						[true]: "100%",
@@ -242,7 +247,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			const showCorrectButton = document.createElement("button");
 			if (codeTimer === true) {
-				let timerInterval, remainingTime = 59;
+				let timerInterval, remainingTime = 1;
 
 				// timer only runs when the page is active
 				if (document.visibilityState === "visible") startTimer();
@@ -449,7 +454,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		if (requiredFileSystem[`${path} ${name}`]) {
 			const [requiredCode, requiredEncoding] = requiredFileSystem[`${path} ${name}`];
 
-			const code = formatCode(fileContents, mime.getType(name)),
+			const code = formatCode(fileContents, mime.getType(name) || "text/plain"),
 				encoding = fileSystemManager.getFileEncodingScheme(path, name);
 
 			correct = requiredCode === code && requiredEncoding === encoding;
