@@ -76,7 +76,7 @@ window.addEventListener("load", async () => {
 				event.stopPropagation();
 
 				const newName = await promptCustom("Enter new project name:");
-				
+
 				if (newName === null) return; // prompt was canceled
 				if (!newName) return alertCustom(`Project names cannot be blank`);
 				if (!/^[0-9a-zA-Z._-]+$/.test(newName)) return alertCustom(`Project names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`);

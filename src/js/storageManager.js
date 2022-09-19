@@ -25,13 +25,13 @@ export default function initializeStorageManager() {
 			},
 
 			getEditorSettings() {
-				return createTransaction("Settings", "readonly", store => store.getAll());
+				return createTransaction("EditorSettings", "readonly", store => store.getAll());
 			},
 			modifyEditorSetting(settingObject) {
-				return createTransaction("Settings", "readwrite", store => store.put(settingObject));
+				return createTransaction("EditorSettings", "readwrite", store => store.put(settingObject));
 			},
 			deleteEditorSetting(settingName) {
-				return createTransaction("Settings", "readwrite", store => store.delete(settingName));
+				return createTransaction("EditorSettings", "readwrite", store => store.delete(settingName));
 			},
 		};
 
