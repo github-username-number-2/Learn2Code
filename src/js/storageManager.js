@@ -1,4 +1,4 @@
-const DATABASE_VERSION = 10;
+const DATABASE_VERSION = 11;
 
 export default function initializeStorageManager() {
 	return new Promise(resolve => {
@@ -100,7 +100,7 @@ export default function initializeStorageManager() {
 
 		setTimeout(() => {
 			if (!open) alertCustom("The website needs an update. Close all other instances of this page and reload.");
-		}, 1000);
+		}, 2000);
 
 		function createTransaction(storeName, type, requestFunction) {
 			return new Promise(resolve => {
