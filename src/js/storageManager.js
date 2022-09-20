@@ -64,7 +64,6 @@ export default function initializeStorageManager() {
 		let db, open = false;
 		openRequest.addEventListener("success", event => {
 			open = true;
-			alert(open)
 
 			db = event.target.result;
 			resolve(storageManager);
@@ -98,6 +97,10 @@ export default function initializeStorageManager() {
 
 			resolve(storageManager);
 		});
+
+		setTimeout(() => {
+			if (!open) alertCustom("The website needs an update. Close all other instances of this page and reload.");
+		}, 1000);
 
 		function createTransaction(storeName, type, requestFunction) {
 			return new Promise(resolve => {
