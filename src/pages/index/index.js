@@ -43,7 +43,7 @@ window.addEventListener("load", async () => {
 					<a target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorial)}`}">${tutorialList[tutorial].display}</a>
 				`),
 				elementFromString(`
-					<p>${tutorialProgress.percentComplete}% complete | ${tutorialProgress.state} | ${tutorialProgress.completedOnce}</p>
+					<p>${tutorialProgress.progressPercent}% complete | ${tutorialProgress.state} | ${tutorialProgress.completedOnce}</p>
 				`),
 				document.createElement("br"),
 			);
