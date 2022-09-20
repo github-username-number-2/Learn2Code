@@ -1,6 +1,8 @@
 import mime from "/js/libraries/mime.js";
 import { elementFromString } from "/js/functions.js";
 
+const SHOW_CORRECT_DELAY = 60;
+
 export default function initializeTutorialFunctions(tutorialJSON) {
 	const { id, display } = tutorialJSON.info;
 
@@ -197,7 +199,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				<div class="tutorialPopup">
 					<div class="tutorialPopupHeader">
 						<img class="tutorialCollapseButton" src="/images/icons/collapseIcon.png">
-						${codeTimer === true ? `<p class="tutorialPopupTimer">60</p>` : ""}
+						${codeTimer === true ? `<p class="tutorialPopupTimer">${SHOW_CORRECT_DELAY}</p>` : ""}
 					</div>
 					<div class="tutorialPopupContent">
 						<p>${text.replaceAll("<pre", "</p><pre").replaceAll("</pre>", "</pre><p>")}</p>
@@ -247,7 +249,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			const showCorrectButton = document.createElement("button");
 			if (codeTimer === true) {
-				let timerInterval, remainingTime = 59;
+				let timerInterval, remainingTime = SHOW_CORRECT_DELAY - 1;
 
 				// timer only runs when the page is active
 				if (document.visibilityState === "visible") startTimer();

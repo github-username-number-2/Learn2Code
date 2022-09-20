@@ -1,3 +1,5 @@
+const DATABASE_VERSION = 9;
+
 export default function initializeStorageManager() {
 	return new Promise(resolve => {
 		const storageManager = {
@@ -9,6 +11,9 @@ export default function initializeStorageManager() {
 			},
 			setTutorialData(tutorialData) {
 				return createTransaction("TutorialData", "readwrite", store => store.put(tutorialData));
+			},
+			getTutorialProgress(tutorialID) {
+				return createTransaction("TutorialProgressData", "readonly", store => store.get(tutorialID));
 			},
 
 			getAllProjectKeys() {
@@ -35,10 +40,9 @@ export default function initializeStorageManager() {
 			},
 		};
 
+		const openRequest = indexedDB.open("UserFiles", DATABASE_VERSION);
 
 		let db;
-		const openRequest = indexedDB.open("UserFiles", 8);
-
 		openRequest.addEventListener("success", event => {
 			db = event.target.result;
 			resolve(storageManager);
@@ -56,6 +60,11 @@ export default function initializeStorageManager() {
 			}
 			if (!db.objectStoreNames.contains("TutorialData")) {
 				db.createObjectStore("TutorialData", {
+					keyPath: "id",
+				});
+			}
+			if (!db.objectStoreNames.contains("TutorialProgressData")) {
+				db.createObjectStore("TutorialProgressData", {
 					keyPath: "id",
 				});
 			}
