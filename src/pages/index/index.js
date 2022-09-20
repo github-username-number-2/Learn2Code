@@ -1,10 +1,8 @@
 import initializeStorageManager from "/js/storageManager.js";
 import { elementFromString } from "/js/functions.js";
 
-window.addEventListener("load", async () => {
-	// initialize global vars
-	window.storageManager = await initializeStorageManager();
 
+window.addEventListener("load", async () => {
 	// initialize sub page tabs
 	const subPages = [
 		...document.getElementsByClassName("subPage")
@@ -23,6 +21,9 @@ window.addEventListener("load", async () => {
 		});
 	}
 
+	// initialize global vars
+	window.storageManager = await initializeStorageManager();
+
 	// initialize tutorial and editor tabs
 	loadTutorialTab();
 	loadEditorTab();
@@ -36,7 +37,7 @@ window.addEventListener("load", async () => {
 		const tutorialsContainer = document.getElementById("tutorials");
 		for (const tutorial in tutorialList) {
 			const tutorialProgress =
-			await storageManager.getTutorialProgress(tutorial);
+				await storageManager.getTutorialProgress(tutorial);
 
 			tutorialsContainer.append(
 				elementFromString(`
