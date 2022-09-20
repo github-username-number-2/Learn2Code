@@ -40,9 +40,9 @@ export default function initializeStorageManager() {
 			},
 		};
 
+		let db;
 		const openRequest = indexedDB.open("UserFiles", DATABASE_VERSION);
 
-		let db;
 		openRequest.addEventListener("success", event => {
 			db = event.target.result;
 			resolve(storageManager);
