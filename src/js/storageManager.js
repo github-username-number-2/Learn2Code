@@ -26,7 +26,7 @@ export default function initializeStorageManager() {
 
 				const currentData = {
 					id: tutorialID,
-					progressPercent: progressPercent === undefined === undefined || currentProgress.progressPercent === undefined || 0,
+					progressPercent: progressPercent === undefined || currentProgress.progressPercent === undefined || 0,
 					state: state === undefined || currentProgress.state === undefined || "incomplete",
 					completedOnce: completedOnce === undefined || currentProgress.completedOnce === undefined || false,
 				};
