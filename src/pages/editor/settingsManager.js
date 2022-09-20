@@ -2,7 +2,7 @@ import { elementFromString } from "/js/functions.js";
 
 const settingsInfo = {
 	editorFontSize: {
-		default: 16,
+		default: 14,
 		type: "number",
 		display: "Code font size",
 		description: "Font size of all editors (2-40)",
