@@ -247,7 +247,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			const showCorrectButton = document.createElement("button");
 			if (codeTimer === true) {
-				let timerInterval, remainingTime = 1;
+				let timerInterval, remainingTime = 59;
 
 				// timer only runs when the page is active
 				if (document.visibilityState === "visible") startTimer();
