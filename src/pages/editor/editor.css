@@ -437,10 +437,10 @@ code.highlightInline {
 	display: none;
 	position: fixed;
 	left: 0;
-	top: 0;
+	top: 9vh;
 	z-index: 5;
 	width: 100vw;
-	height: 100vh;
+	height: 91vh;
 	background-color: #00000000;
 }
 
