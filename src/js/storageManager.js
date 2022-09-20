@@ -12,8 +12,12 @@ export default function initializeStorageManager() {
 			setTutorialData(tutorialData) {
 				return createTransaction("TutorialData", "readwrite", store => store.put(tutorialData));
 			},
+
 			getTutorialProgress(tutorialID) {
 				return createTransaction("TutorialProgressData", "readonly", store => store.get(tutorialID));
+			},
+			setTutorialProgress(tutorialID, ) {
+				return createTransaction("TutorialProgressData", "readwrite", store => store.get(tutorialID));
 			},
 
 			getAllProjectKeys() {
