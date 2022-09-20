@@ -23,10 +23,26 @@ window.addEventListener("load", async () => {
 		});
 	}
 
-	// initialize editor tab
+	// initialize tutorial and editor tabs
+	loadTutorialTab();
 	loadEditorTab();
 
 
+	async function loadTutorialTab() {
+		const tutorialIndex = (await import("/data/tutorials/tutorialIndex.js")).default,
+			{ entryPoint, tutorialList } = tutorialIndex;
+		addTutorialElement(tutorialList[entryPoint]);
+
+		const tutorialsContainer = document.getElementById("tutorials");
+		for (const tutorial in tutorialList) {
+			tutorialsContainer.append(elementFromString(`
+				<a target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorial)}`}">${tutorialList[tutorial].display}<br></a>
+			`));
+		}
+
+		function addTutorialElement(tutorialObject) {
+		}
+	}
 
 	async function loadEditorTab() {
 		const newProjectButton = document.getElementById("newProjectButton"),
