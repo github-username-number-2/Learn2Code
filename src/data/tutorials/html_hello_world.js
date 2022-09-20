@@ -11,7 +11,7 @@ displayNextButton
 setPanelText
 enableInteraction
 disableInteraction
-saveProgress
+createCheckpoint
 endTutorial
 */
 
@@ -61,7 +61,7 @@ const tutorialData = {
 		],
 		//
 		[
-			"saveProgress",
+			"createCheckpoint",
 		],
 		[
 			"clearAll",
@@ -95,7 +95,7 @@ const tutorialData = {
 		],
 		//
 		[
-			"saveProgress",
+			"createCheckpoint",
 		],
 		[
 			"clearAll",
@@ -128,7 +128,7 @@ const tutorialData = {
 		],
 		//
 		[
-			"saveProgress",
+			"createCheckpoint",
 		],
 		[
 			"clearAll",
@@ -163,7 +163,7 @@ const tutorialData = {
 		],
 		//
 		[
-			"saveProgress",
+			"createCheckpoint",
 		],
 		[
 			"clearAll",
@@ -211,7 +211,7 @@ const tutorialData = {
 		],
 		//
 		[
-			"saveProgress",
+			"createCheckpoint",
 		],
 		[
 			"endTutorial",

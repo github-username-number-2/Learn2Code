@@ -371,7 +371,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			}
 		},
 		// progress should only be saved when code is correct
-		saveProgress(actionIndex) {
+		createCheckpoint(actionIndex) {
 			lastCheckPointFileSystem = fileSystemManager.getFileSystem();
 			revertFileSystemButton.disabled = false;
 
@@ -415,7 +415,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			this.displayTextAndSetPanel(text, true);
 			this.highlightAllCode();
 			await this.resolveOnCodeCorrect();
-			this.saveProgress(actionIndex + 1);
+			this.createCheckpoint(actionIndex + 1);
 		},
 		async instructCodeExecution(text) {
 			this.clearAll();

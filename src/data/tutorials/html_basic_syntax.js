@@ -111,7 +111,7 @@ const tutorialData = {
 		],
 		//
 		[
-			"saveProgress",
+			"createCheckpoint",
 		],
 		[
 			"endTutorial",

@@ -179,7 +179,7 @@ export default async function initializeEditor() {
 		}
 
 		actionList.push(
-			["saveProgress"],
+			["createCheckpoint"],
 			["endTutorial"],
 		);
 

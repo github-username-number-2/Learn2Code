@@ -1,3 +1,8 @@
+button,
+input {
+	border: 0.2vh solid #000000;
+}
+
 #header {
 	position: fixed;
 	width: 100%;
@@ -508,7 +513,6 @@ code.highlightInline {
 	transform: translate(-50%, -50%);
 	width: 20vh;
 	height: 10vh;
-	border: 0.2vh solid #000000;
 	cursor: pointer;
 }
 
@@ -517,7 +521,6 @@ code.highlightInline {
 	bottom: 5vh;
 	width: 15vh;
 	height: 7vh;
-	border: 0.2vh solid #000000;
 	cursor: pointer;
 }
 
