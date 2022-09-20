@@ -17,7 +17,7 @@ window.addEventListener("load", async () => {
 
 	for (const index of subPages.keys()) {
 		const subPageButton = document.getElementById(subPages[index] + "Button");
-		subPageButton.style.left = 7 + index * 12 + "vw";
+		subPageButton.style.left = "calc(11vh + " + index * 12 + "vw)";
 		subPageButton.addEventListener("mousedown", () => {
 			switchSubPages(subPages[index]);
 		});

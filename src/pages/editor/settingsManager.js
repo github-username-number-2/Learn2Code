@@ -160,6 +160,9 @@ export default async function initializeSettingsManager() {
 
 		changedSettings[settingName] = value;
 		for (const setting in changedSettings) {
+			if (changedSettings[setting] === settingObject.default)
+				await storageManager.deleteEditorSetting(setting);
+
 			if (changedSettings[setting] === userSettings[setting])
 				delete changedSettings[setting];
 		}

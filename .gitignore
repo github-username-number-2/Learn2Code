@@ -1,7 +1,0 @@
-.gitignore
-workspace.code-workspace
-node_modules
-.firebase
-.firebaserc
-firebase.json
-.eslintrc.js

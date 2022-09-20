@@ -433,6 +433,10 @@ code.highlightInline {
 	background-color: #eeeeee;
 }
 
+#tutorialPanelContent code.highlightInline {
+	font-size: 1.4vh;
+}
+
 #tutorialMask {
 	display: none;
 	position: fixed;
