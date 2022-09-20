@@ -162,6 +162,12 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		async endTutorial() {
 			this.clearAll();
 			this.displayText(`You have completed the ${display} tutorial. Click the next button to be redirected back to the home page.`);
+
+			await storageManager.setTutorialProgress(
+				id,
+				{ state: "complete", completedOnce: true },
+			);
+
 			await this.displayNextButton();
 
 			window.location.href = "//" + window.location.host;
