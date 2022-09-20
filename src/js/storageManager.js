@@ -13,8 +13,13 @@ export default function initializeStorageManager() {
 				return createTransaction("TutorialData", "readwrite", store => store.put(tutorialData));
 			},
 
-			getTutorialProgress(tutorialID) {
-				return createTransaction("TutorialProgressData", "readonly", store => store.get(tutorialID));
+			async getTutorialProgress(tutorialID) {
+				const progressData = await createTransaction("TutorialProgressData", "readonly", store => store.get(tutorialID));
+				return progressData || {
+					progressPercent: 0,
+					state: "incomplete",
+					completedOnce: false,
+				};
 			},
 			async setTutorialProgress(tutorialID, { progressPercent, state, completedOnce }) {
 				const currentProgress = await storageManager.getTutorialProgress(tutorialID);
@@ -54,10 +59,13 @@ export default function initializeStorageManager() {
 			},
 		};
 
-		let db;
 		const openRequest = indexedDB.open("UserFiles", DATABASE_VERSION);
 
+		let db, open = false;
 		openRequest.addEventListener("success", event => {
+			open = true;
+			alert(open)
+
 			db = event.target.result;
 			resolve(storageManager);
 		});

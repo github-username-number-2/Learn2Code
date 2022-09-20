@@ -35,7 +35,8 @@ window.addEventListener("load", async () => {
 
 		const tutorialsContainer = document.getElementById("tutorials");
 		for (const tutorial in tutorialList) {
-			const tutorialProgress = await storageManager.getTutorialProgress(tutorial);
+			const tutorialProgress =
+			await storageManager.getTutorialProgress(tutorial);
 
 			tutorialsContainer.append(
 				elementFromString(`
