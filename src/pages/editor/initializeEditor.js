@@ -47,7 +47,9 @@ export default async function initializeEditor() {
 		// load stored progress
 		let actionIndex = 0;
 
-		const savedData = await storageManager.getTutorialData(tutorialJSON.info.id);
+		const tutorialID = tutorialJSON.info.id;
+
+		const savedData = await storageManager.getTutorialData(tutorialID);
 		if (savedData) {
 			({ actionIndex } = savedData);
 			const { lastCheckPointFileSystem, requiredFileSystem } = savedData;
@@ -56,10 +58,15 @@ export default async function initializeEditor() {
 			tutorialFunctions.setRequiredFileSystem(requiredFileSystem);
 		}
 
-		const actionList = tutorialJSON.actionList;
-		for (; actionIndex < actionList.length; actionIndex++) {
+		const actionList = tutorialJSON.actionList,
+			actionCount = actionList.length;
+		for (; actionIndex < actionCount; actionIndex++) {
 			const instruction = tutorialJSON.actionList[actionIndex];
 			await tutorialFunctions[instruction[0]](...instruction.slice(1), actionIndex);
+			await storageManager.setTutorialProgress(
+				tutorialID,
+				{ progressPercent: (actionIndex + 1) / actionCount * 100 },
+			);
 		}
 	}
 

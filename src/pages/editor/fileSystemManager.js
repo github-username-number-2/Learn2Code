@@ -32,11 +32,18 @@ export default async function createFileSystemManager() {
 
 		clearTimeout(timeout);
 		timeout = setTimeout(
-			() => setFileEncodingWarnings(
-				editor.getModel(),
-				manager.activeFileEncodingScheme,
-				manager.activeFileEncodingSchemeDisplay,
-			),
+			() => {
+				setFileEncodingWarnings(
+					editor.getModel(),
+					manager.activeFileEncodingScheme,
+					manager.activeFileEncodingSchemeDisplay,
+				);
+
+				webCodeExecutor.executeFilesList(
+					fileSystemManager.getBinaryFilesList(),
+					() => { },
+				);
+			},
 			250,
 		);
 	});

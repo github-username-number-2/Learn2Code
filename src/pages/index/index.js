@@ -35,9 +35,17 @@ window.addEventListener("load", async () => {
 
 		const tutorialsContainer = document.getElementById("tutorials");
 		for (const tutorial in tutorialList) {
-			tutorialsContainer.append(elementFromString(`
-				<a target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorial)}`}">${tutorialList[tutorial].display}<br></a>
-			`));
+			const tutorialProgress = await storageManager.getTutorialProgress(tutorial);
+
+			tutorialsContainer.append(
+				elementFromString(`
+					<a target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorial)}`}">${tutorialList[tutorial].display}</a>
+				`),
+				elementFromString(`
+					<p>${tutorialProgress.percentComplete}% complete | ${tutorialProgress.state} | ${tutorialProgress.completedOnce}</p>
+				`),
+				document.createElement("br"),
+			);
 		}
 
 		function addTutorialElement(tutorialObject) {
