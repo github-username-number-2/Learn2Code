@@ -192,7 +192,7 @@ export default async function createFileSystemManager() {
 			renameButton.addEventListener("click", async event => {
 				event.stopPropagation();
 
-				const newName = await promptCustom("Enter new name:", { defaultInputValue: itemName });
+				const newName = await promptCustom("Enter new name:", { defaultValue: itemName });
 				if (
 					newName !== null // prompt was canceled
 					&& checkItemValid(newName, currentPath, isDirectory ? "folder" : "file")

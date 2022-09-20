@@ -37,7 +37,7 @@ export default function initializeStorageManager() {
 
 
 		let db;
-		const openRequest = indexedDB.open("UserFiles", 7);
+		const openRequest = indexedDB.open("UserFiles", 8);
 
 		openRequest.addEventListener("success", event => {
 			db = event.target.result;
@@ -70,13 +70,19 @@ export default function initializeStorageManager() {
 
 		function createTransaction(storeName, type, requestFunction) {
 			return new Promise(resolve => {
-				const transaction = db.transaction(storeName, type);
-				transaction.onerror = error => console.log(error);
+				try {
+					const transaction = db.transaction(storeName, type);
 
-				const store = transaction.objectStore(storeName),
-					request = requestFunction(store);
+					transaction.onerror = error => console.log(error);
 
-				request.onsuccess = event => resolve(event.target.result);
+					const store = transaction.objectStore(storeName),
+						request = requestFunction(store);
+
+					request.onsuccess = event => resolve(event.target.result);
+				} catch {
+					// version change occurring, wait for update and reload page
+					setTimeout(() => window.location.reload(), 1000);
+				}
 			});
 		}
 	});

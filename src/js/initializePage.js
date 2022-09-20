@@ -76,7 +76,7 @@ document.getElementById("logo").addEventListener("click", () =>
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
 					<div class="inputContainer">
-						<input class="popupInput" value="${options.defaultInputValue || ""}" maxlength="${options.maxLength || ""}" type="text">
+						<input class="popupInput" value="${options.defaultValue || ""}" maxlength="${options.maxLength || ""}" type="text">
 						<button class="popupButton">Confirm</button>
 						<button class="popupButton">Cancel</button>
 					</div>

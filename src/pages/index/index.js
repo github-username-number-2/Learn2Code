@@ -93,7 +93,7 @@ window.addEventListener("load", async () => {
 			projectElement.children[2].addEventListener("click", async event => {
 				event.stopPropagation();
 
-				const newName = await promptCustom("Enter new project name:");
+				const newName = await promptCustom("Enter new project name:", { defaultValue: key });
 
 				if (newName === null) return; // prompt was canceled
 				if (!newName) return alertCustom(`Project names cannot be blank`);
