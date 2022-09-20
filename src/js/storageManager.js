@@ -1,4 +1,4 @@
-const DATABASE_VERSION = 9;
+const DATABASE_VERSION = 10;
 
 export default function initializeStorageManager() {
 	return new Promise(resolve => {
