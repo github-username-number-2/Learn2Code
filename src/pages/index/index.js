@@ -31,26 +31,73 @@ window.addEventListener("load", async () => {
 
 	async function loadTutorialTab() {
 		const tutorialIndex = (await import("/data/tutorials/tutorialIndex.js")).default,
-			{ entryPoint, tutorialList } = tutorialIndex;
-		addTutorialElement(tutorialList[entryPoint]);
+			{ tutorialList } = tutorialIndex,
+			tutorialDataList = {},
+			tutorialProgressList = {};
 
-		const tutorialsContainer = document.getElementById("tutorials");
-		for (const tutorial in tutorialList) {
-			const tutorialProgress =
-				await storageManager.getTutorialProgress(tutorial);
+		let lowestContainerPosition = 0;
+		const tutorialsContainer = document.getElementById("tutorialsContainerInner");
+		for (const tutorialID in tutorialList) {
+			const tutorialProgress = await storageManager.getTutorialProgress(tutorialID),
+				tutorialData = tutorialList[tutorialID];
 
-			tutorialsContainer.append(
+			const tutorialElement =
 				elementFromString(`
-					<a target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorial)}`}">${tutorialList[tutorial].display}</a>
-				`),
-				elementFromString(`
-					<p>${Math.trunc(tutorialProgress.progressPercent)}% complete | ${tutorialProgress.state} | ${tutorialProgress.completedOnce}</p>
-				`),
-				document.createElement("br"),
-			);
+					<a id="tutorial_${tutorialID}" class="tutorialLink" target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorialID)}`}">
+						<div class="tutorialContainer" style="left: ${tutorialData.left}vh; top: ${tutorialData.top}vh">
+							<div class="difficultyBar"></div>
+							<img src="/data/tutorials/resources/${tutorialID}/icon.png">
+							<h1>${tutorialData.display}</h1>
+							<p>${Math.trunc(tutorialProgress.progressPercent)}% Complete</p>
+							<div class="tutorialMask"></div>
+						</div>
+					</a>
+				`);
+			tutorialsContainer.append(tutorialElement);
+
+			tutorialElement.addEventListener("mousedown", event => event.stopPropagation());
+
+			tutorialDataList[tutorialID] = tutorialData;
+			tutorialProgressList[tutorialID] = tutorialProgress;
+
+			lowestContainerPosition = Math.max(lowestContainerPosition, tutorialData.top);
 		}
 
-		function addTutorialElement(tutorialObject) {
+		document.getElementById("tutorialSpacer").style.top = lowestContainerPosition + "vh";
+
+		// enable tutorials
+		for (const tutorialID in tutorialProgressList) {
+			const prerequisites = tutorialDataList[tutorialID].prerequisites,
+				unlocked = prerequisites.every(requiredTutorialID =>
+					tutorialProgressList[requiredTutorialID].completedOnce
+				);
+
+			if (unlocked) {
+				const tutorialElement = document.getElementById("tutorial_" + tutorialID);
+				tutorialElement.style.pointerEvents = "auto";
+
+				tutorialElement.querySelector(".tutorialMask").style.display = "none";
+			}
+		}
+
+		const origin = {};
+		const tutorialTabContent = document.getElementById("tutorials");
+		tutorialTabContent.addEventListener("mousedown", event => {
+			origin.x = event.clientX;
+			origin.y = event.clientY;
+			origin.scrollX = tutorialTabContent.scrollLeft;
+			origin.scrollY = tutorialTabContent.scrollTop;
+
+
+			tutorialTabContent.addEventListener("mousemove", mouseMove);
+		});
+		window.addEventListener("mouseup", () =>
+			tutorialTabContent.removeEventListener("mousemove", mouseMove)
+		);
+
+		function mouseMove(event) {
+			tutorialTabContent.scrollLeft = origin.x + origin.scrollX - event.clientX;
+			tutorialTabContent.scrollTop = origin.y + origin.scrollY - event.clientY;
 		}
 	}
 

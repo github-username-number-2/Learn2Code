@@ -1,7 +1,7 @@
 import mime from "/js/libraries/mime.js";
 import { elementFromString } from "/js/functions.js";
 
-const SHOW_CORRECT_DELAY = 60;
+const SHOW_CORRECT_DELAY = 1;
 
 export default function initializeTutorialFunctions(tutorialJSON) {
 	const { id, display } = tutorialJSON.info;
@@ -68,34 +68,23 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 		},
 		addRequiredFile(fullPath) {
 			requiredFileSystem["root " + fullPath.replaceAll("/", " ")] = ["", "utf-8"];
+
+			checkFileSystemCorrect();
 		},
 		setRequiredFileCode(filePath, requiredCode) {
-			const path = ["root", ...filePath.split(" ")],
-				name = path.pop();
-
-			requiredFileSystem["root " + filePath] = [formatCode(requiredCode[0], mime.getType(name)) || "text/plain", requiredCode[1]];
-
-			checkFileCodeCorrect(path.join(" "), name);
+			requiredFileSystem["root " + filePath] = requiredCode;
 		},
 		appendRequiredFileCode(filePath, requiredCode) {
-			const path = ["root", ...filePath.split(" ")],
-				name = path.pop();
 			const currentCode = requiredFileSystem["root " + filePath][0];
 
-			requiredFileSystem["root " + filePath][0] = formatCode(currentCode + requiredCode, mime.getType(name) || "text/plain");
-
-			checkFileCodeCorrect(path.join(" "), name);
+			requiredFileSystem["root " + filePath][0] = currentCode + requiredCode;
 		},
 		insertRequiredFileCode(filePath, requiredCode, lineNumber, deleteCount) {
-			const path = ["root", ...filePath.split(" ")],
-				name = path.pop();
-
 			const requiredFileObject = requiredFileSystem["root " + filePath];
+
 			requiredFileObject[0] = requiredFileObject[0].split("\n");
 			requiredFileObject[0].splice(lineNumber, deleteCount, requiredCode);
-			requiredFileObject[0] = formatCode(requiredFileObject[0].join("\n"), mime.getType(name) || "text/plain");
-
-			checkFileCodeCorrect(path.join(" "), name);
+			requiredFileObject[0] = requiredFileObject[0].join("\n");
 		},
 		setRequiredFileSystem(fileSystem) {
 			requiredFileSystem = {};
@@ -106,7 +95,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 				for (const item in directory) {
 					const itemValue = directory[item];
 					if (Array.isArray(itemValue)) {
-						const code = formatCode(itemValue[0], mime.getType(item) || "text/plain");
+						const code = itemValue[0];
 
 						requiredFileSystem[`${path} ${item}`] = [code, itemValue[1]];
 					} else {
@@ -137,13 +126,19 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 			return fileSystemObject;
 		},
 		resolveOnCodeCorrect() {
-			return new Promise(resolve =>
+			return new Promise(resolve => {
 				resolveFunction = () => {
 					fileSystemManager.clearFileHints();
 
 					resolve();
-				}
-			);
+				};
+
+				if (checkFileSystemCorrect())
+					setTimeout(() =>
+						resolveFunction(),
+						2000,
+					);
+			});
 		},
 		beginTutorial() {
 			return new Promise(resolve => {
@@ -165,7 +160,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			await storageManager.setTutorialProgress(
 				id,
-				{ state: "complete", completedOnce: true },
+				{ progressPercent: 100, state: "complete", completedOnce: true },
 			);
 
 			await this.displayNextButton();
@@ -460,12 +455,14 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 		// check if file is required
 		if (requiredFileSystem[`${path} ${name}`]) {
-			const [requiredCode, requiredEncoding] = requiredFileSystem[`${path} ${name}`];
+			const [requiredCode, requiredEncoding] = requiredFileSystem[`${path} ${name}`],
+				mimeType = mime.getType(name) || "text/plain";
 
-			const code = formatCode(fileContents, mime.getType(name) || "text/plain"),
+			const code = fileContents,
 				encoding = fileSystemManager.getFileEncodingScheme(path, name);
 
-			correct = requiredCode === code && requiredEncoding === encoding;
+			correct = formatCode(requiredCode, mimeType) === formatCode(code, mimeType)
+				&& requiredEncoding === encoding;
 		} else {
 			correct = false;
 		}
@@ -488,14 +485,24 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 	}
 
 	async function displayCorrectCode() {
+		let firstRequiredFileFullPath;
 		for (const requiredFile in requiredFileSystem) {
 			if (!(requiredFile in fileSystemManager.fileDifferenceEditors)) {
 				const pathList = requiredFile.split(" ");
 				const [path, name] = [pathList.slice(0, -1).join(" "), pathList.slice(-1)[0]];
 
-				if (!checkFileCodeCorrect(path, name))
+				if (!checkFileCodeCorrect(path, name)) {
+					firstRequiredFileFullPath = firstRequiredFileFullPath
+						|| [name, path];
+
 					fileSystemManager.showFileHint(path, name, requiredFileSystem[requiredFile]);
+				}
 			}
 		}
+
+		// show incorrect file
+		firstRequiredFileFullPath && fileSystemManager.setActiveItem(
+			fileSystemManager.selectItem(...firstRequiredFileFullPath)
+		);
 	}
 }

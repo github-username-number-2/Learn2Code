@@ -32,7 +32,7 @@ input {
 }
 
 #saveIcon:hover {
-	background-color: #fffffe77;
+	background-color: #ffffff77;
 	cursor: pointer;
 }
 
@@ -68,7 +68,7 @@ input {
 	box-sizing: border-box;
 	border-left: 0.07vw solid #cccccc;
 	border-right: 0.07vw solid #cccccc;
-	cursor: ew-resize;
+	cursor: col-resize;
 }
 
 #containersSeparator>div {
@@ -118,7 +118,7 @@ input {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #fffffe;
+	background-color: #ffffff;
 }
 
 #runCode {
@@ -156,7 +156,7 @@ input {
 	position: absolute;
 	top: 2.5vh;
 	height: 2.5vh;
-	background-color: #fffffe;
+	background-color: #ffffff;
 	cursor: pointer;
 }
 
@@ -166,12 +166,12 @@ input {
 
 #newFileButton {
 	right: 0vh;
-	border-right: 5vh solid #fffffe;
+	border-right: 5vh solid #ffffff;
 }
 
 #newFolderButton {
 	right: 0;
-	border-right: 2vh solid #fffffe;
+	border-right: 2vh solid #ffffff;
 }
 
 #filesContainerInner {
@@ -466,7 +466,7 @@ code.highlightInline {
 	border-radius: 1vh;
 	font-size: 2vh;
 	white-space: nowrap;
-	background-color: #fffffe;
+	background-color: #ffffff;
 	cursor: pointer;
 }
 
@@ -552,7 +552,7 @@ code.highlightInline {
 	padding-top: 3.3vh;
 	padding-bottom: 3.3;
 	border-radius: 2vh;
-	background-color: #fffffe;
+	background-color: #ffffff;
 	text-align: center;
 	box-shadow: 0 0 10vh 0.1vh #bbbbbb;
 }

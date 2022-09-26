@@ -1,3 +1,4 @@
+import { encodeHTMLEntities } from "/js/functions.js";
 import initializeUI from "./initializeUI.js";
 import initializeTutorialFunctions from "./tutorialFunctions.js";
 
@@ -20,6 +21,19 @@ export default async function initializeEditor() {
 
 		if ("actionString" in tutorialData)
 			tutorialData.actionList = parseActionString(tutorialData.actionString);
+
+		// check if tutorial is unlocked
+		const tutorialIndex = (await import("/data/tutorials/tutorialIndex.js")).default,
+			tutorialPrerequisites = tutorialIndex.tutorialList[tutorialID].prerequisites;
+
+		for (const requiredTutorialID of tutorialPrerequisites) {
+			if (!(await storageManager.getTutorialProgress(requiredTutorialID)).completedOnce) {
+				alertCustom("This tutorial has not been unlocked yet. You will be redirected to home in 15 seconds.");
+				setTimeout(() => window.location.href = "//" + window.location.host, 15000);
+
+				return;
+			}
+		}
 
 		runTutorial(tutorialData);
 	} else if (hash.startsWith("editor")) {
@@ -128,7 +142,7 @@ export default async function initializeEditor() {
 
 			section = replaceMarkdown(section, "<[", "]>", string => {
 				const [mimeType, code] = string.split(new RegExp(placeholder + "(.*)", "s"));
-				return `<pre data-lang="${mimeType}">${code.replaceAll(placeholder, "\n").trim()}</pre>`;
+				return `<pre data-lang="${mimeType}">${encodeHTMLEntities(code).replaceAll(placeholder, "\n").trim()}</pre>`;
 			});
 
 			// instructCodeExecution
@@ -142,7 +156,7 @@ export default async function initializeEditor() {
 				const codeActions = [];
 				section = replaceMarkdown(section, "<{", "}>", string => {
 					const paramList = string.split(new RegExp(placeholder + "(.*)", "s"));
-					const [actionInfo, text] = [paramList[0].split(" "), paramList[1].replaceAll(placeholder, "\n").trim()];
+					const [actionInfo, text] = [paramList[0].split(" "), paramList[1].replaceAll(placeholder, "\n").slice(0, -1)];
 					actionInfo.splice(3, 0, actionInfo[1] === "s" ? [text, "utf-8"] : text);
 
 					// if add file
@@ -165,6 +179,9 @@ export default async function initializeEditor() {
 
 				// trim trailing br tags
 				while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
+
+				// trim all br tags after </pre>
+				while (~section.indexOf("</pre>" + placeholder)) section = section.replace("</pre>" + placeholder, "</pre>");
 
 				for (const action of codeActions)
 					actionList.push(["instructCodeAction", section.replaceAll(placeholder, "<br>"), ...action]);
@@ -193,7 +210,7 @@ export default async function initializeEditor() {
 				string = string.slice(startIndex + startString.length);
 
 				const endIndex = string.indexOf(endString);
-				if (!~endIndex) throw new Error("Start markup sequence is never closed");
+				if (!~endIndex) throw new Error(`Start markup sequence is never closed. End sequence: ${endString} Current parsed string: ${resultString}`);
 
 				resultString += handler(string.slice(0, endIndex));
 				string = string.slice(endIndex + endString.length);

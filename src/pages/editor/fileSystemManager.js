@@ -614,7 +614,7 @@ export default async function createFileSystemManager() {
 		},
 		showFileHint(path, name, requiredFile) {
 			requiredFile = [
-				monaco.editor.createModel(requiredFile[0], mime.getType(name) || "text/plain"),
+				monaco.editor.createModel(requiredFile[0], undefined, monaco.Uri.file(Math.random() + name)),
 				requiredFile[1],
 			];
 

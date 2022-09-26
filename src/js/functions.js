@@ -5,6 +5,12 @@ function elementFromString(string) {
 	return template.content.firstElementChild;
 }
 
+function encodeHTMLEntities(text) {
+	const textArea = document.createElement("textarea");
+	textArea.innerText = text;
+	return textArea.innerHTML;
+}
+
 function isValidUTF8(arrayBuffer) {
 	const decoder = new TextDecoder("utf-8", { fatal: true });
 
@@ -120,6 +126,7 @@ const [arrayBufferToBase64, base64ToArrayBuffer] = (() => {
 
 export {
 	elementFromString,
+	encodeHTMLEntities,
 	isValidUTF8,
 	checkCharacterValid,
 	stringToArrayBuffer,
