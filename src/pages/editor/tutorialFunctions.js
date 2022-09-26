@@ -1,7 +1,8 @@
 import mime from "/js/libraries/mime.js";
 import { elementFromString } from "/js/functions.js";
 
-const SHOW_CORRECT_DELAY = 1;
+// delay for showing correct answer in seconds
+const SHOW_CORRECT_DELAY = 60;
 
 export default function initializeTutorialFunctions(tutorialJSON) {
 	const { id, display } = tutorialJSON.info;

@@ -41,7 +41,7 @@ This code listens for the click event on the button element, and creates an aler
 <{c s main.js
 var button = document.getElementById("button");
 button.onclick = function () {
-	alert("button clicked");
+  alert("button clicked");
 };
 }>
 
@@ -73,10 +73,10 @@ Now when you click the input and type something, an alert is created displaying 
 <{c s main.js
 var input = document.getElementById("input");
 input.onkeydown = function (keyEvent) {
-	alert("key pressed: " + keyEvent.key);
+  alert("key pressed: " + keyEvent.key);
 };
 input.onkeyup = function (keyEvent) {
-	alert("key released: " + keyEvent.key);
+  alert("key released: " + keyEvent.key);
 };
 }>
 
@@ -123,6 +123,6 @@ As you can see, to attach different handlers, all that is needed is to prefix th
 
 ---
 
-This was a basic explanation of events and event listeners. There are more complex features of event handling, like event bubbling/propagation, element focus, and dispatching custom events.
+This was a basic explanation of events and event listeners. There are more complex characteristics of event handling, like event bubbling/capture, propagation, element focus, and dispatching custom events.
 `,
 };

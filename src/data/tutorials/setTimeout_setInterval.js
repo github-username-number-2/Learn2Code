@@ -33,7 +33,7 @@ This code will create an \`alert\` box after 3 seconds, or 3000 milliseconds.
 
 <{c s main.js
 setTimeout(function () {
-alert();
+  alert();
 }, 3000);
 }>
 
@@ -58,7 +58,7 @@ setInterval(function () {
 
 <{c s main.js
 setInterval(function () {
-alert();
+  alert();
 }, 3000);
 }>
 
@@ -128,15 +128,15 @@ var intervalID = setInterval(function () {
 
 <{c s main.js
 var timeoutID = setTimeout(function () {
-alert("This timeout has been cleared");
+  alert("This timeout has been cleared");
 }, 1000);
 
 clearTimeout(timeoutID);
 
 var intervalID = setInterval(function () {
-if (confirm("Clear the interval?")) {
-	clearInterval(intervalID);
-}
+  if (confirm("Clear the interval?")) {
+    clearInterval(intervalID);
+  }
 }, 5000);
 }>
 
