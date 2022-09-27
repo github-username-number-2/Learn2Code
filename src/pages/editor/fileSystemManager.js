@@ -829,6 +829,12 @@ export default async function createFileSystemManager() {
 		if (!/^[0-9a-zA-Z._-]+$/.test(name)) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names can only contain characters "0-9", "a-z", "A-Z", ".", "_", and "-"`) || false;
 		if (name.endsWith(".")) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot end with "."`) || false;
 
+		// item names cannot interfere with native object properties
+		const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf({}));
+		for (const propertyName of propertyNames) {
+			if (name === propertyName) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot be "${propertyName}". Nice try.`) || false;
+		}
+
 		// restricted file names that interfere with code executor
 		if (["_L2C_RESERVED_INDEX_.html", "_L2C_RESERVED_WORKER_.js"].includes(name)) return void alertCustom(`"_L2C_RESERVED_INDEX_.html" and "_L2C_RESERVED_WORKER_.js" are reserved file names used by the code executor`) || false;
 

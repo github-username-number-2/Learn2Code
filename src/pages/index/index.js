@@ -80,6 +80,7 @@ window.addEventListener("load", async () => {
 			}
 		}
 
+		// enable drag to scroll
 		const origin = {};
 		const tutorialTabContent = document.getElementById("tutorials");
 		tutorialTabContent.addEventListener("mousedown", event => {
