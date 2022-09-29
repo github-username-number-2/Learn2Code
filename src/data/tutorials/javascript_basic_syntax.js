@@ -73,11 +73,11 @@ Multiline comments can be placed anywhere a space can. So, you can think of mult
 
 This is allowed:
 <[text/javascript
-If (true/*comment*/) { }
+if (true/*comment*/) { }
 ]>
 And this is not:
 <[text/javascript
-If (tr/*comment*/ue) { }
+if (tr/*comment*/ue) { }
 ]>
 
 ---
@@ -119,17 +119,22 @@ Click the run button.
 After comments are removed, all that is left are statements.
 
 Statements can be made of either keywords, expressions, code blocks, or a combination of the three. Examples of keywords are:
+
 \`for\` | Create a for loop
+
 \`var\` | Declare a variable
+
 \`while\` | Create a while loop
+
 \`throw\` | Throw an error
+
 \`import\` | Import data from another script
 
 ---
 
 Code blocks combine multiple lines of code into a single statement, and are denoted with \`{ }\`.
 
-The \`if\` statement executes the following statement when the condition is truthy:
+The \`if\` statement executes the statement that directly follows it, when the condition (the expression between the parenthesis) is truthy:
 <[text/javascript
 // "alert(2)" is not part of the if statement, and will run automatically regardless of the condition
 if (true) alert(1); alert(2);
@@ -138,6 +143,7 @@ if (true) alert(1); alert(2);
 To execute multiple statements, you would use a code block:
 <[text/javascript
 if (true) {
+	// both alerts will now run if the condition it truthy
 	alert(1);
 	alert(2);
 }
@@ -157,8 +163,8 @@ switch (true)
 // no error
 switch (true) {
 	case true:
-	alert();
-	break;
+		alert();
+		break;
 }
 ]>
 
@@ -166,10 +172,10 @@ switch (true) {
 
 Code blocks do not require semicolons to separate them from other statements:
 <[text/javascript
-// no error occurs
 while (true) {
-	/* */
+
 }alert(1);
+// no error occurs
 ]>
 
 ---
@@ -179,21 +185,37 @@ The final component to statements are expressions.
 A statement made up of only 1 expression is known as an expression statement.
 
 An expression is made up of a combination of operators, operands and other expressions. Some important operators are:
+
 \`operand && operand\` | Evaluate to \`true\` if both sides are truthy else evaluate to \`false\`
+
 \`operand || operand\` | Evaluate to the first operand if that side is truthy else evaluate to the second operand
-\`variableOperand = operand\` | Assign a value to a variable and evaluate to the assigned value
+
+\`variableOperand = valueOperand\` | Assign a value to a variable and evaluate to the assigned value
+
 \`operand == operand\` | Check if both sides are of same value and evaluate to \`true\`/\`false\` (\`1 == "1"\` is \`true\`)
+
 \`operand === operand\` | Check if both sides are of same value and type and evaluate to \`true\`/\`false\` (\`1 === "1"\` is \`false\` but \`1 === 1\` is \`true\`)
+
 \`objectOperand.propertyOperand\` | Select a property of an object
+
 \`operand + operand\` | Add 2 numbers or combine 2 strings
+
 \`operand - operand\` | Subtract 2 numbers
+
 \`operand * operand\` | Multiply 2 numbers
+
 \`operand / operand\` | Divide 2 numbers
+
 \`operand < operand\` | Evaluate to \`true\` if the first operand is less than the second, else \`false\`
+
 \`operand > operand\` | Evaluate to \`true\` if the second operand is less than the first, else \`false\`
+
 \`operand <= operand\` | Evaluate to \`true\` if the first operand is less than or equal to the second (same value), else \`false\`
+
 \`operand >= operand\` | Evaluate to \`true\` if the second operand is less than or equal to the first (same value), else \`false\`
+
 \`operand <== operand\` | Evaluate to \`true\` if the first operand is less than or equal to the second (same value and type), else \`false\`
+
 \`operand >== operand\` | Evaluate to \`true\` if the second operand is less than or equal to the first (same value and type), else \`false\`
 
 ---
@@ -251,7 +273,7 @@ var x = 'some string';
 (true || true) && typeof false === "boolean";
 
 // evaluated the "||"
-(true) && typeof false === "boolean";
+true && typeof false === "boolean";
 
 // evaluated the "typeof"
 true && "boolean" === "boolean";
@@ -295,6 +317,7 @@ Additionally, it could be argued that there are only 2 statements total rather t
 ---
 
 Based on all this information, the structure of JavaScript code can be viewed as in the following diagram:
-<img src="/data/tutorials/resources/javascript_basic_syntax/syntaxDiagram">	
+
+<a href="/data/tutorials/resources/javascript_basic_syntax/syntaxDiagram.png" target="_blank"><img src="/data/tutorials/resources/javascript_basic_syntax/syntaxDiagram.png" style="width: 100%"></a>
 `,
 };

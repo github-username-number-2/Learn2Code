@@ -176,20 +176,16 @@ export default async function initializeEditor() {
 					return "";
 				});
 
+				// line breaks need to be trimmed in case there is no text afterwards
+				section = trimLineBreaks(section, placeholder);
+
 				for (const action of codeActions)
 					actionList.push(["instructCodeAction", section.replaceAll(placeholder, "<br>"), ...action]);
 
 				continue;
 			}
 
-			// trim trailing br tags
-			while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
-
-			// trim all br tags after </pre>
-			while (~section.indexOf("</pre>" + placeholder)) section = section.replace("</pre>" + placeholder, "</pre>");
-
-			// trim all br tags after <p>
-			while (~section.indexOf("<p>" + placeholder)) section = section.replace("<p>" + placeholder, "<p>");
+			section = trimLineBreaks(section, placeholder);
 
 			actionList.push(["info", section.replaceAll(placeholder, "<br>").trim()]);
 		}
@@ -217,6 +213,19 @@ export default async function initializeEditor() {
 			resultString += string;
 
 			return resultString;
+		}
+
+		function trimLineBreaks(section, placeholder) {
+			// trim trailing br tags
+			while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
+
+			// trim all br tags after </pre>
+			while (~section.indexOf("</pre>" + placeholder)) section = section.replace("</pre>" + placeholder, "</pre>");
+
+			// trim all br tags after <p>
+			while (~section.indexOf("<p>" + placeholder)) section = section.replace("<p>" + placeholder, "<p>");
+
+			return section;
 		}
 	}
 }
