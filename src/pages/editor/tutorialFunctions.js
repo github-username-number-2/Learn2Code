@@ -166,7 +166,7 @@ export default function initializeTutorialFunctions(tutorialJSON) {
 
 			await this.displayNextButton();
 
-			window.location.href = "//" + window.location.host;
+			window.location.href = `//${window.location.host}/#tutorials`;
 		},
 		async loadFileSystem(fileSystem) {
 			// await all fetch requests

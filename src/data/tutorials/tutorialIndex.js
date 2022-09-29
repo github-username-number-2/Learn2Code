@@ -18,6 +18,12 @@ export default {
 			top: 60,
 			prerequisites: ["html_hello_world"],
 		},
+		javascript_basic_syntax: {
+			display: "JavaScript Basic Syntax",
+			left: 14,
+			top: 30,
+			prerequisites: ["hello_world"],
+		},
 
 		// incomplete
 		events_and_event_listeners: {

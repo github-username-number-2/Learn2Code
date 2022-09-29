@@ -176,13 +176,6 @@ export default async function initializeEditor() {
 					return "";
 				});
 
-
-				// trim trailing br tags
-				while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
-
-				// trim all br tags after </pre>
-				while (~section.indexOf("</pre>" + placeholder)) section = section.replace("</pre>" + placeholder, "</pre>");
-
 				for (const action of codeActions)
 					actionList.push(["instructCodeAction", section.replaceAll(placeholder, "<br>"), ...action]);
 
@@ -190,7 +183,13 @@ export default async function initializeEditor() {
 			}
 
 			// trim trailing br tags
-			while (!section.lastIndexOf(placeholder) === placeholder.length) section = section.slice(0, -4);
+			while (section.endsWith(placeholder)) section = section.slice(0, -placeholder.length);
+
+			// trim all br tags after </pre>
+			while (~section.indexOf("</pre>" + placeholder)) section = section.replace("</pre>" + placeholder, "</pre>");
+
+			// trim all br tags after <p>
+			while (~section.indexOf("<p>" + placeholder)) section = section.replace("<p>" + placeholder, "<p>");
 
 			actionList.push(["info", section.replaceAll(placeholder, "<br>").trim()]);
 		}
