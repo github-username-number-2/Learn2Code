@@ -12,6 +12,9 @@ export default function initializeStorageManager() {
 			setTutorialData(tutorialData) {
 				return createTransaction("TutorialData", "readwrite", store => store.put(tutorialData));
 			},
+			deleteTutorialData(tutorialID) {
+				return createTransaction("TutorialData", "readwrite", store => store.delete(tutorialID));
+			},
 
 			async getTutorialProgress(tutorialID) {
 				const progressData = await createTransaction("TutorialProgressData", "readonly", store => store.get(tutorialID));
@@ -24,16 +27,16 @@ export default function initializeStorageManager() {
 			async setTutorialProgress(tutorialID, { progressPercent, state, completedOnce }) {
 				const currentProgress = await storageManager.getTutorialProgress(tutorialID);
 
-				const curentProgressPercent = currentProgress.progressPercent,
+				const currentProgressPercent = currentProgress.progressPercent,
 					currentState = currentProgress.state,
 					currentCompletedOnce = currentProgress.completedOnce;
 
 				const currentData = {
 					id: tutorialID,
 					progressPercent: progressPercent === undefined
-						? curentProgressPercent === undefined
+						? currentProgressPercent === undefined
 							? 0
-							: curentProgressPercent
+							: currentProgressPercent
 						: progressPercent,
 					state: state === undefined
 						? currentState === undefined
@@ -49,6 +52,9 @@ export default function initializeStorageManager() {
 				return createTransaction("TutorialProgressData", "readwrite",
 					store => store.put(currentData)
 				);
+			},
+			deleteTutorialProgress(tutorialID) {
+				return createTransaction("TutorialProgressData", "readwrite", store => store.delete(tutorialID));
 			},
 
 			getAllProjectKeys() {

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "main": "pages",
   "scripts": {
-    "start": "",
+    "spellCheck": "cspell \"**\" --unique -r ./src -e js/libraries/mime.js",
     "deploy": "git add -A && git commit -m uhhhhh && git pull && git push https://github.com/github-username-number-2/Learn2Code && firebase deploy --only hosting:learn2c0de"
   },
   "repository": {

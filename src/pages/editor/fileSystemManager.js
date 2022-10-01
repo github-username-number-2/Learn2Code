@@ -144,7 +144,7 @@ export default async function createFileSystemManager() {
 		selectItem(itemName, itemPath) {
 			return filesContainer.querySelector(`div[data-name="${itemName}"][data-path="${itemPath}"]`);
 		},
-		getImmidiateWithinDirectory(directoryPath) {
+		getImmediateWithinDirectory(directoryPath) {
 			return filesContainer.querySelectorAll(`div[data-path="${directoryPath}"]`);
 		},
 		getAllWithinDirectory(directoryPath) {
@@ -217,7 +217,7 @@ export default async function createFileSystemManager() {
 			const itemPlacementIndex = sortDirectoryToArray(targetDirectoryObject).findIndex(name => name[0] === itemName);
 			const itemPrevious = [
 				targetDirectory,
-				...[...this.getImmidiateWithinDirectory(currentPath)].map(item => getItemLastChild(item)),
+				...[...this.getImmediateWithinDirectory(currentPath)].map(item => getItemLastChild(item)),
 			][itemPlacementIndex];
 			itemPrevious.after(itemElement);
 
@@ -473,7 +473,7 @@ export default async function createFileSystemManager() {
 				directoryPath = directoryElement.getAttribute("data-path");
 
 			const subItems = show
-				? this.getImmidiateWithinDirectory(`${directoryPath} ${directoryName}`)
+				? this.getImmediateWithinDirectory(`${directoryPath} ${directoryName}`)
 				: this.getAllWithinDirectory(`${directoryPath} ${directoryName}`);
 
 
@@ -821,7 +821,7 @@ export default async function createFileSystemManager() {
 
 	function checkItemValid(name, path, type) {
 		const siblingNames = [
-			...manager.getImmidiateWithinDirectory(path)
+			...manager.getImmediateWithinDirectory(path)
 		].map(element => manager.getItemName(element));
 
 		if (!name) return void alertCustom(`${type[0].toUpperCase() + type.substring(1)} names cannot be blank`) || false;

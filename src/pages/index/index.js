@@ -35,50 +35,99 @@ window.addEventListener("load", async () => {
 			tutorialDataList = {},
 			tutorialProgressList = {};
 
-		let lowestContainerPosition = 0;
-		const tutorialsContainer = document.getElementById("tutorialsContainerInner");
+		let rightMostContainerPosition = 0, bottomMostContainerPosition = 0, currentTutorialID;
+		const tutorialsContainer = document.getElementById("tutorialsContainerInner"),
+			previewTitle = document.getElementById("tutorialPreviewTitle"),
+			previewDescription = document.getElementById("tutorialPreviewDescription"),
+			previewImage = document.getElementById("tutorialPreviewImage"),
+			previewBackButton = document.getElementById("tutorialPreviewBack"),
+			previewResetButton = document.getElementById("tutorialPreviewReset"),
+			openButtonLink = document.getElementById("tutorialOpenButtonLink"),
+			openButton = openButtonLink.children[0],
+			previewRelatedLinks = document.getElementById("tutorialPreviewRelatedLinks"),
+			previewElements = document.getElementsByClassName("tutorialPreview");
+
 		for (const tutorialID in tutorialList) {
 			const tutorialProgress = await storageManager.getTutorialProgress(tutorialID),
 				tutorialData = tutorialList[tutorialID];
 
 			const tutorialElement =
 				elementFromString(`
-					<a id="tutorial_${tutorialID}" class="tutorialLink" target="_blank" href="${`//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorialID)}`}">
-						<div class="tutorialContainer" style="left: ${tutorialData.left}vh; top: ${tutorialData.top}vh">
-							<div class="difficultyBar"></div>
-							<img src="/data/tutorials/resources/${tutorialID}/icon.png">
-							<h1>${tutorialData.display}</h1>
-							<p>${Math.trunc(tutorialProgress.progressPercent)}% Complete</p>
-							<div class="tutorialMask"></div>
-						</div>
-					</a>
+					<div id="tutorial_${tutorialID}" class="tutorialContainer" style="left: ${tutorialData.left}vh; top: ${tutorialData.top}vh">
+						<div class="difficultyBar"></div>
+						<img src="/data/tutorials/resources/${tutorialID}/icon.png">
+						<h1>${tutorialData.display}</h1>
+						<p>${Math.trunc(tutorialProgress.progressPercent)}% Complete</p>
+						<div class="tutorialMask"></div>
+					</div>
 				`);
 			tutorialsContainer.append(tutorialElement);
 
 			tutorialElement.addEventListener("mousedown", event => event.stopPropagation());
 
+			tutorialElement.addEventListener("click", () => {
+				currentTutorialID = tutorialID;
+
+				previewTitle.innerText = tutorialData.display;
+				previewDescription.innerText = tutorialData.description;
+				previewImage.src = `/data/tutorials/resources/${tutorialID}/icon.png`;
+				openButtonLink.href = `//${window.location.host}/pages/editor.html#tutorial-${encodeURIComponent(tutorialID)}`;
+
+				for (const link of document.querySelectorAll(".tutorialPreviewLink"))
+					link.remove();
+				for (const link of tutorialData.relatedLinks)
+					previewRelatedLinks.append(
+						elementFromString(`<a class="tutorialPreviewLink" href="${link}" target="_blank">${link}</a>`)
+					);
+
+				const unlocked = tutorialLockedStates[tutorialID];
+				openButton.disabled = !unlocked;
+				unlocked
+					? openButton.removeAttribute("title")
+					: openButton.title = "Complete the previous tutorials to unlock this one";
+
+				for (const tutorialPreviewElement of previewElements)
+					tutorialPreviewElement.style.display = "block";
+			});
+
 			tutorialDataList[tutorialID] = tutorialData;
 			tutorialProgressList[tutorialID] = tutorialProgress;
 
-			lowestContainerPosition = Math.max(lowestContainerPosition, tutorialData.top);
+			rightMostContainerPosition = Math.max(rightMostContainerPosition, tutorialData.left);
+			bottomMostContainerPosition = Math.max(bottomMostContainerPosition, tutorialData.top);
 		}
 
-		document.getElementById("tutorialSpacer").style.top = lowestContainerPosition + "vh";
+		const tutorialSpacer = document.getElementById("tutorialSpacer");
+		tutorialSpacer.style.left = rightMostContainerPosition + "vh";
+		tutorialSpacer.style.top = bottomMostContainerPosition + "vh";
 
-		// enable tutorials
+		// store tutorial locked states
+		const tutorialLockedStates = {};
 		for (const tutorialID in tutorialProgressList) {
 			const prerequisites = tutorialDataList[tutorialID].prerequisites,
 				unlocked = prerequisites.every(requiredTutorialID =>
 					tutorialProgressList[requiredTutorialID].completedOnce
 				);
 
-			if (unlocked) {
-				const tutorialElement = document.getElementById("tutorial_" + tutorialID);
-				tutorialElement.style.pointerEvents = "auto";
+			tutorialLockedStates[tutorialID] = unlocked;
 
-				tutorialElement.querySelector(".tutorialMask").style.display = "none";
-			}
+			const tutorialElement = document.getElementById("tutorial_" + tutorialID);
+			tutorialElement.querySelector(".tutorialMask").style.display = unlocked ? "none" : null;
 		}
+
+		// enable tutorial back and reset button
+		previewBackButton.addEventListener("click", () => {
+			for (const tutorialPreviewElement of previewElements)
+				tutorialPreviewElement.style.display = "none";
+		});
+		previewResetButton.addEventListener("click", async () => {
+			if (await confirmCustom("Are you sure you would like to clear all data for this tutorial?<br><br>All unlocked tutorials will stay unlocked.")) {
+				await storageManager.setTutorialProgress(currentTutorialID, { progressPercent: 0 });
+				await storageManager.deleteTutorialData(currentTutorialID);
+
+				window.location.reload();
+			}
+		});
 
 		// enable drag to scroll
 		const origin = {};

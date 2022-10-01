@@ -87,6 +87,187 @@
 	cursor: move;
 }
 
+.tutorialPreview {
+	display: none;
+}
+
+#tutorialPreviewMask {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: #00000055;
+}
+
+#tutorialPreviewTabMask {
+	position: fixed;
+	left: calc(11vh + 12vw);
+	top: 4.5vh;
+	z-index: 1;
+	width: 10vw;
+	height: 4.7vh;
+	border-top: 0.5vh solid #595959;
+	border-left: 0.5vh solid #595959;
+	border-right: 0.5vh solid #595959;
+	border-top-left-radius: 1vh;
+	border-top-right-radius: 1vh;
+	background-color: #00000055;
+}
+
+#tutorialPreviewContainer {
+	box-sizing: border-box;
+	position: fixed;
+	left: calc(50% - 50vh);
+	top: 20vh;
+	z-index: 1;
+	width: 100vh;
+	height: 70vh;
+	border: 1vh solid #808080;
+	border-radius: 2vh;
+	background-color: #eeeeee;
+	cursor: default;
+}
+
+#tutorialPreviewHeader {
+	box-sizing: border-box;
+	position: absolute;
+	left: -1vh;
+	top: -1vh;
+	width: calc(100% + 2vh);
+	height: 6vh;
+	border-left: 1vh solid #808080;
+	border-right: 1vh solid #808080;
+	border-top: 1vh solid #808080;
+	border-top-left-radius: 2vh;
+	border-top-right-radius: 2vh;
+	border-bottom: 0.2vh solid #808080;
+	background-color: #00ee00;
+}
+
+#tutorialPreviewBack {
+	position: absolute;
+}
+
+#tutorialPreviewReset {
+	box-sizing: border-box;
+	position: relative;
+	float: right;
+	height: 100%;
+	padding: 1vh;
+}
+
+#tutorialPreviewBack,
+#tutorialPreviewReset {
+	height: 100%;
+	opacity: 0.3;
+	cursor: pointer;
+}
+
+#tutorialPreviewBack:hover,
+#tutorialPreviewReset:hover {
+	opacity: 0.7;
+}
+
+#tutorialPreviewTitle {
+	box-sizing: border-box;
+	display: inline-block;
+	left: 5vh;
+	top: 7vh;
+	width: 50%;
+	padding: 8vh 2vh 0 2vh;
+	margin: 0;
+	text-align: center;
+	font-size: 3.5vh;
+}
+
+#tutorialPreviewDescription {
+	box-sizing: border-box;
+	position: absolute;
+	width: 50%;
+	padding: 2.5vh;
+	margin: 0;
+	font-size: 2vh;
+	text-indent: 3vh;
+}
+
+#tutorialPreviewContainerRight {
+	position: absolute;
+	right: 0;
+	top: 5vh;
+	width: 50%;
+}
+
+#tutorialPreviewImage {
+	box-sizing: border-box;
+	position: relative;
+	top: 2vh;
+	width: calc(100% - 6vh);
+	height: 25vh;
+	margin: 2vh 1vh 0 1vh;
+	padding: 1vh;
+	border-left: 0.5vh solid #cccccc;
+	border-right: 0.5vh solid #555555;
+	border-top: 0.5vh solid #aaaaaa;
+	border-bottom: 0.5vh solid #777777;
+	object-fit: contain;
+	image-rendering: crisp-edges;
+}
+
+#tutorialOpenButtonLink>button {
+	position: relative;
+	width: 30vh;
+	height: 4vh;
+	border: 0.1vh solid #444444;
+	border-radius: 0.5vh;
+	margin-left: calc(50% - 17vh);
+	margin-top: 7vh;
+	vertical-align: middle;
+	font-size: 1.6vh;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #444444;
+	background-color: #22ee22;
+	cursor: pointer;
+}
+
+#tutorialOpenButtonLink>button:active {
+	background-color: #00ee00;
+}
+
+#tutorialOpenButtonLink>button:disabled {
+	border: 0.1vh solid #000000;
+	background-color: #999999;
+	cursor: not-allowed;
+}
+
+#tutorialOpenButtonLink>button>img {
+	height: 2vh;
+	padding-left: 0.5vh;
+	vertical-align: middle;
+}
+
+#tutorialPreviewRelatedLinks {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding-top: 1vh;
+	padding-bottom: 2vh;
+	border-top: 0.2vh solid #808080;
+}
+
+#tutorialPreviewRelatedLinks>h1 {
+	text-align: center;
+	font-size: 2vh;
+	padding-bottom: 1vh;
+	margin: 0;
+}
+
+#tutorialPreviewRelatedLinks>a {
+	display: block;
+	text-align: center;
+	font-size: 1.5vh;
+}
+
 #tutorialsContainerOuter {
 	position: absolute;
 	left: 50%;
@@ -101,8 +282,8 @@
 	height: 0;
 }
 
-.tutorialLink {
-	pointer-events: none;
+.tutorialOpenButton {
+	background-color: #000000;
 }
 
 .tutorialContainer {
@@ -115,6 +296,7 @@
 	margin: 5vh;
 	border-radius: 1.5vh;
 	background-color: #eeeeee;
+	cursor: pointer;
 }
 
 .tutorialContainer:active {
@@ -123,10 +305,8 @@
 
 #tutorialSpacer {
 	position: absolute;
-	left: -50vw;
-	width: 100vw;
+	width: 24vh;
 	height: 40vh;
-	background-color: #00000000;
 }
 
 .difficultyBar {
