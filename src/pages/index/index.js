@@ -42,6 +42,7 @@ window.addEventListener("load", async () => {
 			previewImage = document.getElementById("tutorialPreviewImage"),
 			previewBackButton = document.getElementById("tutorialPreviewBack"),
 			previewResetButton = document.getElementById("tutorialPreviewReset"),
+			previewDeleteButton = document.getElementById("tutorialPreviewDelete"),
 			openButtonLink = document.getElementById("tutorialOpenButtonLink"),
 			openButton = openButtonLink.children[0],
 			previewRelatedLinks = document.getElementById("tutorialPreviewRelatedLinks"),
@@ -115,14 +116,22 @@ window.addEventListener("load", async () => {
 			tutorialElement.querySelector(".tutorialMask").style.display = unlocked ? "none" : null;
 		}
 
-		// enable tutorial back and reset button
+		// enable tutorial back, reset, and delete buttons
 		previewBackButton.addEventListener("click", () => {
 			for (const tutorialPreviewElement of previewElements)
 				tutorialPreviewElement.style.display = "none";
 		});
 		previewResetButton.addEventListener("click", async () => {
-			if (await confirmCustom("Are you sure you would like to clear all data for this tutorial?<br><br>All unlocked tutorials will stay unlocked.")) {
+			if (await confirmCustom("Are you sure you would like to clear progress for this tutorial?<br><br>All unlocked tutorials will stay unlocked.")) {
 				await storageManager.setTutorialProgress(currentTutorialID, { progressPercent: 0 });
+				await storageManager.deleteTutorialData(currentTutorialID);
+
+				window.location.reload();
+			}
+		});
+		previewDeleteButton.addEventListener("click", async () => {
+			if (await confirmCustom("Are you sure you would like to clear all progress for this tutorial?<br><br>Any tutorials requiring this one as a prerequisite will become locked.")) {
+				await storageManager.deleteTutorialProgress(currentTutorialID);
 				await storageManager.deleteTutorialData(currentTutorialID);
 
 				window.location.reload();

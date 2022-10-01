@@ -149,24 +149,27 @@
 	position: absolute;
 }
 
-#tutorialPreviewReset {
+#tutorialPreviewReset,
+#tutorialPreviewDelete {
 	box-sizing: border-box;
 	position: relative;
 	float: right;
 	height: 100%;
-	padding: 1vh;
+	padding: 1vh 1vh 1vh 0;
 }
 
 #tutorialPreviewBack,
-#tutorialPreviewReset {
+#tutorialPreviewReset,
+#tutorialPreviewDelete {
 	height: 100%;
 	opacity: 0.3;
 	cursor: pointer;
 }
 
 #tutorialPreviewBack:hover,
-#tutorialPreviewReset:hover {
-	opacity: 0.7;
+#tutorialPreviewReset:hover,
+#tutorialPreviewDelete:hover {
+	opacity: 0.8;
 }
 
 #tutorialPreviewTitle {

@@ -35,7 +35,7 @@ export default {
 		},
 		javascript_basic_syntax: {
 			display: "JavaScript Basic Syntax",
-			description: ``,
+			description: `To add functionality to websites, the JavaScript programming language (not the same as Java) is used. The most important thing to do when learning a new language is to learn its syntax. Relative to HTML or CSS, the syntax of JavaScript is much more complex, and unlike HTML and CSS, errors will happen if the syntax is wrong.`,
 			left: 14,
 			top: 30,
 			prerequisites: ["hello_world"],
@@ -48,27 +48,36 @@ export default {
 		// incomplete
 		events_and_event_listeners: {
 			display: "Events & Event Listeners",
-			description: ``,
+			description: `Events happen when the user interacts with a webpage, something loads, an error happens, etc. Event listeners allow JavaScript programs to capture those events and make decisions based on their properties.`,
 			left: 14,
 			top: 90,
 			prerequisites: [],
-			relatedLinks: [],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Web/API/Event",
+				"https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events",
+				"https://developer.mozilla.org/en-US/docs/Web/Events",
+			],
 		},
 		setTimeout_setInterval: {
 			display: "setTimeout and setInterval",
-			description: ``,
+			description: `In certain cases, a program may need to wait a certain amount of time before executing code. To do this, are the setTimeout and setInterval functions. setTimeout will add a delay before executing code, while setInterval runs code over and over with a delay in between.`,
 			left: 40,
 			top: 90,
 			prerequisites: [],
-			relatedLinks: [],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Web/API/setTimeout",
+				"https://developer.mozilla.org/en-US/docs/Web/API/setInterval",
+			],
 		},
 		pong: {
 			display: "Pong",
-			description: ``,
+			description: `Pong is a tennis based game released in 1972 by Atari. Originally Pong was not programmed, but instead built using physical electronic logic gates. Although it could seem simple on the surface, programming Pong will require all of the knowledge described in the previous tutorials.`,
 			left: 28,
 			top: 60,
 			prerequisites: [],
-			relatedLinks: [],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Games/Introduction",
+			],
 		},
 	},
 };
