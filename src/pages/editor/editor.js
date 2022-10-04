@@ -16,4 +16,6 @@ window.addEventListener("load", async () => {
 	window.webCodeExecutor = await initializeWebCodeExecutor("/index.html");
 
 	await initializeEditor();
+
+	loadPage();
 });

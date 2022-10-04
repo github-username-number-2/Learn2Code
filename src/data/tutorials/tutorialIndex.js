@@ -73,8 +73,8 @@ export default {
 			display: "Pong",
 			description: `Pong is a tennis based game released in 1972 by Atari. Originally Pong was not programmed, but instead built using physical electronic logic gates. Although it could seem simple on the surface, programming Pong will require all of the knowledge described in the previous tutorials.`,
 			left: 28,
-			top: 60,
-			prerequisites: [],
+			top: 120,
+			prerequisites: ["events_and_event_listeners", "setTimeout_setInterval"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Games/Introduction",
 			],

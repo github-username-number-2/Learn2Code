@@ -306,6 +306,12 @@
 	background-color: #e5e5e5;
 }
 
+.tutorialPrerequisiteLine {
+	position: absolute;
+	height: 0.5vh;
+	background-color: #777777;
+}
+
 #tutorialSpacer {
 	position: absolute;
 	width: 24vh;

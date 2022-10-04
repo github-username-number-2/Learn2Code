@@ -19,6 +19,7 @@ function isValidUTF8(arrayBuffer) {
 	} catch (error) {
 		if (error instanceof TypeError)
 			return false;
+
 		throw error;
 	}
 	return true;

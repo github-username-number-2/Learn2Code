@@ -1,3 +1,6 @@
+import md5 from "/js/libraries/md5.js";
+import { elementFromString, stringToArrayBuffer, arrayBufferToString } from "/js/functions.js";
+
 const DATABASE_VERSION = 11;
 
 export default function initializeStorageManager() {
@@ -79,6 +82,77 @@ export default function initializeStorageManager() {
 			deleteEditorSetting(settingName) {
 				return createTransaction("EditorSettings", "readwrite", store => store.delete(settingName));
 			},
+
+			async saveToFile() {
+				const databaseJSON = {};
+
+				const objectStores = ["TutorialData", "TutorialProgressData", "ProjectData", "EditorSettings"];
+				for (const objectStore of objectStores)
+					databaseJSON[objectStore] =
+						await createTransaction(objectStore, "readonly", store => store.getAll());
+
+				const fileJSON = JSON.stringify(databaseJSON),
+					arrayBuffer = stringToArrayBuffer(md5(md5(fileJSON)) + "|" + fileJSON, "utf-8"),
+					binary = getRandom4Bits() + arrayBufferToString(arrayBuffer, "binary") + getRandom4Bits();
+
+				const downloadURL = URL.createObjectURL(
+					new Blob([stringToArrayBuffer(binary, "binary")])
+				);
+
+				const anchor = elementFromString(`<a href="${downloadURL}" download="Learn2Code-Save-File-${new Date().toLocaleDateString()}.L2CSF"></a>`);
+				document.body.append(anchor);
+				anchor.click();
+
+				function getRandom4Bits() {
+					return Math.floor(Math.random() * 16).toString(2);
+				}
+			},
+			async loadFromFile() {
+				const existingData = await (async () => {
+					const objectStores = ["TutorialData", "TutorialProgressData", "ProjectData", "EditorSettings"];
+					for (const objectStore of objectStores)
+						if ((await createTransaction(objectStore, "readonly", store => store.getAll())).length)
+							return true;
+				})();
+
+				if (existingData && !await confirmCustom("Are you sure you would like to load an existing save?<br><br>You have existing data that will be replaced.")) return;
+
+				const fileInput = elementFromString(`<input type="file" accept=".L2CSF">`);
+
+				fileInput.addEventListener("change", () => {
+					const file = fileInput.files[0];
+
+					const reader = new FileReader();
+					reader.addEventListener("load", async () => {
+						const binary = arrayBufferToString(reader.result, "binary").slice(4, -4);
+
+						const [hash, jsonText] = arrayBufferToString(stringToArrayBuffer(binary, "binary"), "utf-8").split("|");
+
+						if (md5(md5(jsonText)) !== hash) return alertCustom("Error: Could not load save file. It has been modified or corrupt.");
+
+						try {
+							const databaseJSON = JSON.parse(jsonText);
+
+							for (const storeName in databaseJSON) {
+								await createTransaction(storeName, "readwrite", store => store.clear());
+
+								for (const storeObject of databaseJSON[storeName])
+									createTransaction(storeName, "readwrite", store => store.add(storeObject));
+							}
+
+							await alertCustom("Save file loaded successfully.");
+
+							window.location.reload();
+						} catch {
+							return alertCustom("Error: Could not load save file. It has been modified or corrupt.");
+						}
+					});
+					reader.readAsArrayBuffer(file);
+				});
+
+				document.body.append(fileInput);
+				fileInput.click();
+			},
 		};
 
 		const openRequest = indexedDB.open("UserFiles", DATABASE_VERSION);
@@ -134,8 +208,10 @@ export default function initializeStorageManager() {
 					const store = transaction.objectStore(storeName),
 						request = requestFunction(store);
 
-					request.onsuccess = event => resolve(event.target.result);
-				} catch {
+					request && (request.onsuccess = event => resolve(event.target.result));
+				} catch (error) {
+					console.log(error);
+
 					// version change occurring, wait for update and reload page
 					setTimeout(() => window.location.reload(), 1000);
 				}

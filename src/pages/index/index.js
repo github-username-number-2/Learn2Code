@@ -25,8 +25,10 @@ window.addEventListener("load", async () => {
 	window.storageManager = await initializeStorageManager();
 
 	// initialize tutorial and editor tabs
-	loadTutorialTab();
-	loadEditorTab();
+	await loadTutorialTab();
+	await loadEditorTab();
+
+	loadPage();
 
 
 	async function loadTutorialTab() {
@@ -85,7 +87,7 @@ window.addEventListener("load", async () => {
 				openButton.disabled = !unlocked;
 				unlocked
 					? openButton.removeAttribute("title")
-					: openButton.title = "Complete the previous tutorials to unlock this one";
+					: openButton.title = "Complete the previous tutorials to unlock this one.";
 
 				for (const tutorialPreviewElement of previewElements)
 					tutorialPreviewElement.style.display = "block";
@@ -137,6 +139,58 @@ window.addEventListener("load", async () => {
 				window.location.reload();
 			}
 		});
+
+		// draw lines connecting tutorials
+		const canvas =
+			elementFromString(`<canvas class="tutorialPrerequisiteLine" width="" height=""></canvas>`);
+		for (const tutorialData of Object.values(tutorialDataList)) {
+			for (const prerequisite of tutorialData.prerequisites) {
+				const prerequisiteData = tutorialDataList[prerequisite];
+
+				const prerequisiteLine = document.createElement("div");
+				prerequisiteLine.classList.add("tutorialPrerequisiteLine");
+
+				const [tutorialLeft, tutorialTop, prerequisiteLeft, prerequisiteTop] = [
+					tutorialData.left, tutorialData.top,
+					prerequisiteData.left, prerequisiteData.top
+				];
+
+				const startingX = Math.min(tutorialLeft, prerequisiteLeft) + 5,
+					startingY = prerequisiteTop + 31,
+					lineWidth = Math.abs(tutorialLeft - prerequisiteLeft),
+					lineHeight = tutorialTop - prerequisiteTop - 26,
+					endingX = lineWidth + startingX,
+					endingY = lineHeight + startingY;
+
+				prerequisiteLine.style.width = Math.sqrt(lineWidth ** 2 + lineHeight ** 2) + "vh";
+
+				if (startingX < startingY)
+					prerequisiteLine.style.transform =
+						`rotate(${Math.atan(endingY - startingY / endingX - startingX) - 90 * Math.PI / 180}rad)`;
+				else
+					prerequisiteLine.style.transform =
+						`rotate(${Math.atan(endingY - startingY / startingX - endingX) - 90 * Math.PI / 180}rad)`;
+
+				tutorialsContainer.append(prerequisiteLine);
+				/*const canvas = elementFromString(`<canvas class="tutorialPrerequisiteLine" width="300" height="300"></canvas>`),
+					context = canvas.getContext("2d");
+				context.strokeStyle = "#777777";
+				context.lineWidth = screen.height / 70;
+
+
+				canvas.style.left = Math.min(tutorialLeft, prerequisiteLeft) + 5 + "vh";
+				canvas.style.top = prerequisiteTop + 31 + "vh";
+				canvas.style.width = Math.abs(tutorialLeft - prerequisiteLeft) + "vh";
+				canvas.style.height = tutorialTop - prerequisiteTop - 26 + "vh";
+
+				const lineDirectionLeft = tutorialLeft > prerequisiteLeft;
+				context.moveTo(lineDirectionLeft ? 0 : 300, 0);
+				context.lineTo(lineDirectionLeft ? 300 : 0, 300);
+				context.stroke();
+
+				tutorialsContainer.append(canvas);*/
+			}
+		}
 
 		// enable drag to scroll
 		const origin = {};

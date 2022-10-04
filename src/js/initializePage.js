@@ -11,17 +11,22 @@ const mask = document.createElement("div");
 mask.id = "mask";
 document.body.appendChild(mask);
 
-
-// hide mask on page load
-window.addEventListener("load", () =>
-	document.getElementById("mask").style.display = "none"
-);
-
 // clicking logo redirects to home page
 document.getElementById("logo").addEventListener("click", () =>
 	window.location = window.location.origin
 );
 
+// page load function
+window.loadPage = () => {
+	document.getElementById("mask").style.display = "none";
+
+	document.getElementById("saveIcon").addEventListener("click", async () => {
+		if (await confirmCustom("Load existing save or create new save?", { confirmText: "Load save file", cancelText: "Create save file" }))
+			storageManager.loadFromFile();
+		else
+			storageManager.saveToFile();
+	});
+};
 
 // custom alert and prompt functions
 !function () {
@@ -50,8 +55,8 @@ document.getElementById("logo").addEventListener("click", () =>
 				`<div class="popup confirm">
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
-					<button class="popupButton confirm">Confirm</button>
-					<button class="popupButton cancel">Cancel</button>
+					<button class="popupButton confirm">${options.confirmText || "Confirm"}</button>
+					<button class="popupButton cancel">${options.cancelText || "Cancel"}</button>
 				</div>`,
 				options,
 			);
@@ -76,6 +81,8 @@ document.getElementById("logo").addEventListener("click", () =>
 					<div class="popupHeader"></div>
 					<p class="popupText">${message}</p>
 					<div class="inputContainer">
+
+
 						<input class="popupInput" value="${options.defaultValue || ""}" maxlength="${options.maxLength || ""}" type="text">
 						<button class="popupButton">Confirm</button>
 						<button class="popupButton">Cancel</button>
@@ -107,6 +114,7 @@ document.getElementById("logo").addEventListener("click", () =>
 			}, 10);
 		});
 	};
+
 
 	function createPopupElement(popupHTML, { left, right, top, bottom, width, height }) {
 		// prevents errors
