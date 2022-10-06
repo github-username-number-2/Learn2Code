@@ -49,7 +49,7 @@ export default {
 		dom_manipulation: {
 			display: "DOM Manipulation",
 			description: ``,
-			left: 0,
+			left: 60,
 			top: 0,
 			prerequisites: [],
 			relatedLinks: [
