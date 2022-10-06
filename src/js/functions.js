@@ -38,6 +38,14 @@ function checkCharacterValid(character, encoding) {
 	}
 }
 
+function readFileAsArrayBuffer(file) {
+	return new Promise(resolve => {
+		const reader = new FileReader();
+		reader.addEventListener("load", () => resolve(reader.result));
+		reader.readAsArrayBuffer(file);
+	});
+}
+
 function stringToArrayBuffer(string, encodingScheme) {
 	switch (encodingScheme) {
 		case "utf-8":
@@ -130,6 +138,7 @@ export {
 	encodeHTMLEntities,
 	isValidUTF8,
 	checkCharacterValid,
+	readFileAsArrayBuffer,
 	stringToArrayBuffer,
 	arrayBufferToString,
 	arrayBufferToBinary,

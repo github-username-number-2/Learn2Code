@@ -1,5 +1,5 @@
 import md5 from "/js/libraries/md5.js";
-import { elementFromString, stringToArrayBuffer, arrayBufferToString } from "/js/functions.js";
+import { elementFromString, stringToArrayBuffer, arrayBufferToString, readFileAsArrayBuffer } from "/js/functions.js";
 
 const DATABASE_VERSION = 11;
 
@@ -102,6 +102,7 @@ export default function initializeStorageManager() {
 				const anchor = elementFromString(`<a href="${downloadURL}" download="Learn2Code-Save-File-${new Date().toLocaleDateString()}.L2CSF"></a>`);
 				document.body.append(anchor);
 				anchor.click();
+				anchor.remove();
 
 				function getRandom4Bits() {
 					return Math.floor(Math.random() * 16).toString(2);
@@ -119,35 +120,32 @@ export default function initializeStorageManager() {
 
 				const fileInput = elementFromString(`<input type="file" accept=".L2CSF">`);
 
-				fileInput.addEventListener("change", () => {
-					const file = fileInput.files[0];
+				fileInput.addEventListener("change", async () => {
+					const fileArrayBuffer = await readFileAsArrayBuffer(fileInput.files[0]);
+					fileInput.remove();
 
-					const reader = new FileReader();
-					reader.addEventListener("load", async () => {
-						const binary = arrayBufferToString(reader.result, "binary").slice(4, -4);
+					const binary = arrayBufferToString(fileArrayBuffer, "binary").slice(4, -4);
 
-						const [hash, jsonText] = arrayBufferToString(stringToArrayBuffer(binary, "binary"), "utf-8").split("|");
+					const [hash, jsonText] = arrayBufferToString(stringToArrayBuffer(binary, "binary"), "utf-8").split("|");
 
-						if (md5(md5(jsonText)) !== hash) return alertCustom("Error: Could not load save file. It has been modified or corrupt.");
+					if (md5(md5(jsonText)) !== hash) return alertCustom("Error: Could not load save file. It has been modified or corrupt.");
 
-						try {
-							const databaseJSON = JSON.parse(jsonText);
+					try {
+						const databaseJSON = JSON.parse(jsonText);
 
-							for (const storeName in databaseJSON) {
-								await createTransaction(storeName, "readwrite", store => store.clear());
+						for (const storeName in databaseJSON) {
+							await createTransaction(storeName, "readwrite", store => store.clear());
 
-								for (const storeObject of databaseJSON[storeName])
-									createTransaction(storeName, "readwrite", store => store.add(storeObject));
-							}
-
-							await alertCustom("Save file loaded successfully.");
-
-							window.location.reload();
-						} catch {
-							return alertCustom("Error: Could not load save file. It has been modified or corrupt.");
+							for (const storeObject of databaseJSON[storeName])
+								createTransaction(storeName, "readwrite", store => store.add(storeObject));
 						}
-					});
-					reader.readAsArrayBuffer(file);
+
+						await alertCustom("Save file loaded successfully.");
+
+						window.location.reload();
+					} catch {
+						return alertCustom("Error: Could not load save file. It has been modified or corrupt.");
+					}
 				});
 
 				document.body.append(fileInput);

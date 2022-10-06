@@ -148,14 +148,15 @@ input {
 
 #filesContainerOuter>p {
 	width: fit-content;
-	margin-left: 2vh;
+	margin: 2vh;
 	font-size: 2.4vh;
 }
 
 .newItemButton {
+	box-sizing: border-box;
 	position: absolute;
 	top: 2.5vh;
-	height: 2.5vh;
+	height: 3vh;
 	background-color: #ffffff;
 	cursor: pointer;
 }
@@ -165,12 +166,26 @@ input {
 }
 
 #newFileButton {
-	right: 0vh;
-	border-right: 5vh solid #ffffff;
+	right: 0;
+	padding: 0.3vh;
+	border-right: 12.5vh solid #ffffff;
 }
 
 #newFolderButton {
 	right: 0;
+	padding: 0.3vh;
+	border-right: 9vh solid #ffffff;
+}
+
+#importFilesButton {
+	right: 0;
+	padding-top: 0.3vh;
+	border-right: 5.5vh solid #ffffff;
+}
+
+#exportFilesButton {
+	right: 0;
+	padding: 0.4vh;
 	border-right: 2vh solid #ffffff;
 }
 
@@ -178,6 +193,7 @@ input {
 	display: grid;
 	position: absolute;
 	width: calc(100% - 2vw);
+	max-height: calc(100% - 12vh);
 	padding-top: 2vh;
 	padding-bottom: 2vh;
 	border-top: 0.07vw solid #cccccc;

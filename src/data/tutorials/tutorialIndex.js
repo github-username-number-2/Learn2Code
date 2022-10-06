@@ -46,6 +46,15 @@ export default {
 		},
 
 		// incomplete
+		dom_manipulation: {
+			display: "DOM Manipulation",
+			description: ``,
+			left: 0,
+			top: 0,
+			prerequisites: [],
+			relatedLinks: [
+			],
+		},
 		events_and_event_listeners: {
 			display: "Events & Event Listeners",
 			description: `Events happen when the user interacts with a webpage, something loads, an error happens, etc. Event listeners allow JavaScript programs to capture those events and make decisions based on their properties.`,
