@@ -60,11 +60,10 @@ export default async function createFileSystemManager() {
 
 	const messageContribution = editor.getContribution("editor.contrib.messageController");
 	editor.onDidAttemptReadOnlyEdit(() => {
-		if (manager.activeItem === "root" && manager.activePath === "") {
+		if (manager.activeFile === "")
 			messageContribution.showMessage("Click on a file to edit it.", editor.getPosition());
-		} else {
+		else
 			messageContribution.showMessage("This file cannot be edited as it is read-only.", editor.getPosition());
-		}
 	});
 
 
@@ -265,7 +264,10 @@ export default async function createFileSystemManager() {
 			const targetItem = this.selectItem(targetItemName, targetItemPath);
 
 			const removeItem = (itemPath, itemName, itemElement) => {
-				if (this.activeItem === itemName && this.activePath === itemPath)
+				if (
+					this.activeItem === itemName && this.activePath === itemPath
+					|| this.activeFilePath + " " + this.activeFile === itemPath + " " + itemName
+				)
 					this.setActiveItem(document.getElementById("fileSystemRoot"));
 
 				itemElement.remove();
