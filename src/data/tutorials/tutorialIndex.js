@@ -49,8 +49,8 @@ export default {
 		dom_manipulation: {
 			display: "DOM Manipulation",
 			description: `Without DOM manipulation, page content would be unchangeable, static. Using built in methods of DOM manipulation in JavaScript allow you to modify the HTML of a page with much more flexibility than CSS. Any part of the page can be modified, including adding and deleting elements and their attributes.`,
-			left: 60,
-			top: 0,
+			left: -60,
+			top: 120,
 			prerequisites: [],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction",
@@ -74,9 +74,9 @@ export default {
 		events_and_event_listeners: {
 			display: "Events & Event Listeners",
 			description: `Events happen when the user interacts with a webpage, something loads, an error happens, etc. Event listeners allow JavaScript programs to capture those events and make decisions based on their properties.`,
-			left: 14,
-			top: 90,
-			prerequisites: [],
+			left: -28,
+			top: 150,
+			prerequisites: ["dom_manipulation"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Web/API/Event",
 				"https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events",
@@ -87,7 +87,7 @@ export default {
 			display: "setTimeout and setInterval",
 			description: `In certain cases, a program may need to wait a certain amount of time before executing code. To do this, are the setTimeout and setInterval functions. setTimeout will add a delay before executing code, while setInterval runs code over and over with a delay in between.`,
 			left: 40,
-			top: 90,
+			top: 120,
 			prerequisites: [],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Web/API/setTimeout",
@@ -98,7 +98,7 @@ export default {
 			display: "Pong",
 			description: `Pong is a tennis based game released in 1972 by Atari. Originally Pong was not programmed, but instead built using physical electronic logic gates. Although it could seem simple on the surface, programming Pong will require all of the knowledge described in the previous tutorials.`,
 			left: 28,
-			top: 120,
+			top: 180,
 			prerequisites: ["events_and_event_listeners", "setTimeout_setInterval"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Games/Introduction",
