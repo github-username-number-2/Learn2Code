@@ -1,248 +1,141 @@
 export default {
-	info: {
-		display: "DOM Manipulation",
-	},
-	actionString: `
-{}
-
----
-
-By the end of this tutorial, you should know the basics of CSS, including the overall syntax, selecting elements, and styling elements.
-
----
-
-CSS stands for <b>Cascading StyleSheets</b> and it is used for adding styles to HTML elements. Styles refer to the CSS rules that apply to an element.
-
-For example, the following code will select all \`h1\` elements, set its position to be centered, set the font size of to 60 pixels, and change the color to red (\`#ff0000\` in hex):
-<[text/css
-h1 {
-  text-align: center;
-  font-size: 60px;
-  color: #ff0000;
+  info: {
+    display: "DOM Manipulation",
+  },
+  actionString: `
+{
+  "index.html": ["<!DOCTYPE html>\\n<html>\\n  <head>\\n  </head>\\n  <body>\\n    <img src=\\"painting.jpg\\" id=\\"painting\\">\\n    <script src=\\"main.js\\"></script>\\n  </body>\\n</html>", "utf-8"],
+  "main.js": ["", "utf-8"],
+  "painting.jpg": ["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", "base64"]
 }
-]>
 
 ---
 
-CSS can be written within HTML \`style\` tags:
-<[text/html
-<style>
-  #buttonElement {
-    width: 10vw;
-  }
-</style>
-]>
-
-Or you can link external CSS files:
-<[text/html
-<link rel="stylesheet" href="path/to/file.css">
-]>
-
-Both the link and style tags should be placed within the head tags.
+As discussed in previous tutorials, HTML is made up of tags. But the word "tag" refers to parts of the code itself, not the HTML that is displayed on the page.
 
 ---
 
-Set up a new HTML document and write a link to a CSS file named main.css:
+When buttons, images, text, etc., are displayed on the page are no longer tags, they are elements.
+
+HTML tag refers to the tag in code, and HTML element refers to what the browser has created as the result of the tag. Although tags and elements are technically different, the terms are usually used interchangeably.
+
+Example of a tag:
 <[text/html
-<!DOCTYPE html>
-
-<html>
-
-<head>
-  <link rel="stylesheet" href="main.css">
-</head>
-
-<body>
-</body>
-
-</html>
+<h1 style="font-size: 40px; color: #00ff00; font-family: Montserrat">some text...</h1>
 ]>
 
-<{c s index.html
-<!DOCTYPE html>
+Example of an element created from that tag:
+<h1 style="font-size: 40px; color: #00ff00; font-family: Montserrat">some text...</h1>
 
-<html>
+---
 
-<head>
-  <link rel="stylesheet" href="main.css">
-</head>
+After you visit a website and the website's HTML file is loaded to your computer, your browser will create what is known as the DOM, or <b>Document Object Model</b>. It stores the live HTML that is currently displayed on the page.
 
-<body>
-</body>
+If an HTML file is loaded and no changes are made to the original code, the DOM will store the same data as the file. But usually you will want to change what is displayed on the page, and this is known as DOM manipulation. It is the act of manipulating the HTML that is displayed on the page and it is done through JavaScript.
 
-</html>
+Through JavaScript you are able to add and delete elements as well as add, delete and modify the attributes of elements.
+
+---
+
+To interact with an element, an interface to interact with it is needed. This can be done using one of many built in methods, but the method covered in this tutorial will be \`document.getElementById\`.
+
+\`document.getElementById\` will return the element that has the specified ID and if no elements have that ID, will return \`null\`.
+---
+
+Write the following code in main.js:
+<[text/javascript
+var imageElement = document.getElementById("painting");
+]>
+
+<{c s main.js
+var imageElement = document.getElementById("painting");
 }>
 
+\`imageElement\` is now an interface for interacting with the element.
+
 ---
 
-Add a button and image element:
-<[text/html
-<!DOCTYPE html>
+To modify attributes of an element, use the \`setAttribute\` method. For example if you wanted to change the \`src\` attribute:
+<[text/javascript
+var imageElement = document.getElementById("painting");
 
-<html>
-
-<head>
-  <link rel="stylesheet" href="main.css">
-</head>
-
-<body>
-  <button id="buttonElement">button text</button>
-  <img id="imageElement" src="image.png">
-</body>
-
-</html>
+imageElement.setAttribute("src", "https://otherwebsite/otherimage");
 ]>
 
-<{c i index.html 9 0 \n
-  <button id="buttonElement">button text</button>
-  <img id="imageElement" src="image.png">
+\`setAttribute\` takes 2 parameters: the name of the attribute to change and the new value of the attribute.
+
+---
+
+To remove attributes, use the \`removeAttribute\` method:
+<[text/javascript
+var imageElement = document.getElementById("painting");
+
+imageElement.removeAttribute("src");
+]>
+
+It takes 1 parameter, the name of the attribute to remove.
+
+---
+
+There are many shortcuts for setting attributes:
+<[text/javascript
+var imageElement = document.getElementById("painting");
+
+imageElement.setAttribute("id", "newID");
+// this is the same as:
+imageElement.id = "newID";
+
+imageElement.setAttribute("src", "newImageSrc");
+// this is the same as:
+imageElement.src = "newImageSrc";
+]>
+
+---
+
+The \`style\` shorthand for setting CSS is arguably one of the most useful. It sets CSS styles within an element using the element's \`style\` attribute. It is used like this:
+<[text/javascript
+var element = document.getElementById("divElement");
+
+element.style.backgroundColor = "red";
+element.style.width = "100px";
+element.style.position = "absolute";
+element.style.left = "200px";
+]>
+
+Notice that the \`background-color\` style is set using \`backgroundColor\` with a capital letter and no hyphen. This is the same for all other styles containing hyphens; the hyphen is removed and the word to the right is capitalized, but the first word is always lower case. (This is known as camel case.)
+
+---
+
+To remove a style, set it to \`null\`:
+<[text/javascript
+var element = document.getElementById("divElement");
+
+element.style.backgroundColor = null;
+element.style.width = null;
+element.style.position = null;
+element.style.left = null;
+]>
+
+---
+
+Add the following to the end of main.js to set the size and position of \`imageElement\`:
+<[text/javascript
+imageElement.style.position = "absolute";
+imageElement.style.left = "350px";
+imageElement.style.bottom = "200px";
+imageElement.style.width = "500px";
+]>
+
+<{c a main.js
+imageElement.style.position = "absolute";
+imageElement.style.left = "350px";
+imageElement.style.bottom = "200px";
+imageElement.style.width = "500px";
 }>
 
 ---
 
 Click the run button.
 >>>
-
----
-
-As you can see, the button and image elements both have the \`id\` attribute:
-<[text/html
-<button id="buttonElement">button text</button>
-<img id="imageElement" src="image.png">
-]>
-
-The \`id\` attribute is used to identify elements with a custom name. In this case the names are \`buttonElement\` and \`imageElement\`. IDs are unique; no 2 elements should share the same ID.
-
----
-
-Create a file named "main.css"
-<c f
-main.css
-}>
-
----
-In CSS, elements can be selected by their IDs using \`#\` followed by the ID.
-
-In main.css, write the following code:
-<[text/css
-#buttonElement {
-  width: 300px;
-  height: 300px;
-  font-size: 80px;
-}
-]>
-
-<{c s main.css
-#buttonElement {
-  width: 300px;
-  height: 300px;
-  font-size: 80px;
-}
-}>
-
----
-
-Click the run button.
-
-The button should now be a 300 pixel square with a larger font size as well.
->>>
-
----
-
-To position elements, one method is to use absolute positioning. Positioning an element with absolute positions will put it at a specific point on the screen, regardless of other elements. With absolute positioning it is possible to have overlapping elements.
-
-Add the \`position\`, \`left\`, and \`top\` styles to the button element as shown:
-<[text/css
-#buttonElement {
-  position: absolute;
-  left: 400px;
-  top: 200px;
-  width: 300px;
-  height: 300px;
-  font-size: 80px;
-}
-]>
-
-<{c i main.css 1 0 \n
-  position: absolute;
-  left: 400px;
-  top: 200px;
-}>
-
-The \`left\` and \`top\` styles will set an element's position from the left of the screen and the top of the screen, respectively. Positions can also be set from the right of the screen and the bottom of the screen using \`right\` and \`top\`.
-
----
-
-Click the run button.
-
-The button should now be 400 pixels from the top of the screen and 200 pixels from the left of the screen.
->>>
-
----
-
-To select groups of elements, classes are used. Unlike IDs, classes do not have to be unique.
-
-The \`class\` attribute is used to add an element to a class. Add the image and button elements to the \`square\` class:
-<[text/html
-<!DOCTYPE html>
-
-<html>
-
-<head>
-  <link rel="stylesheet" href="main.css">
-</head>
-
-<body>
-  <button id="buttonElement" class="square">button text</button>
-  <img id="imageElement" class="square" src="image.png">
-</body>
-
-</html>
-]>
-
-<{c i index.html 9 2 \n
-  <button id="buttonElement" class="square">button text</button>
-  <img id="imageElement" class="square" src="image.png">
-}>
-
----
-
-To select elements from a class, use \`.\` followed by the class name.
-
-Remove the \`width\` and \`height\` styles from the button and add them to the square class. The file should then look like this:
-<[text/css
-#buttonElement {
-  position: absolute;
-  left: 400px;
-  top: 200px;
-  font-size: 80px;
-}
-
-.square {
-  width: 300px;
-  height: 300px;
-}
-]>
-
-<{c s main.css
-#buttonElement {
-  position: absolute;
-  left: 400px;
-  top: 200px;
-  font-size: 80px;
-}
-
-.square {
-  width: 300px;
-  height: 300px;
-}
-}>
-
----
-
-Run your code.
-
-Both the button and the image should now be sized to 300 by 300 pixels.
->>>
-  `,
+`,
 };

@@ -141,28 +141,64 @@ window.addEventListener("load", async () => {
 		});
 
 		// draw lines connecting tutorials
-		const context = document.getElementById("tutorialPrerequisiteLines").getContext("2d");
-		context.strokeStyle = "#777777";
-		context.lineWidth = screen.height / 300;
-
-		const vh = screen.height / 100,
-			offset = document.getElementById("tutorialsContainerOuter").offsetLeft;
-
+		const scale = document.documentElement.clientHeight / 50;
 		for (const tutorialData of Object.values(tutorialDataList)) {
 			for (const prerequisite of tutorialData.prerequisites) {
 				const prerequisiteData = tutorialDataList[prerequisite];
+
+				const canvas = elementFromString(`<canvas class="tutorialPrerequisiteLine" width="300" height="300"></canvas>`),
+					context = canvas.getContext("2d");
 
 				const [tutorialLeft, tutorialTop, prerequisiteLeft, prerequisiteTop] = [
 					tutorialData.left, tutorialData.top,
 					prerequisiteData.left, prerequisiteData.top
 				];
 
-				//canvas.style.left = Math.min(tutorialLeft, prerequisiteLeft) - 5 + "vh";
-				//canvas.style.top = prerequisiteTop + 31 + "vh";
+				const canvasWidth = Math.abs(tutorialLeft - prerequisiteLeft),
+					canvasHeight = tutorialTop - prerequisiteTop - 26,
+					scaledHeight = canvasHeight * scale;
 
-				context.moveTo((tutorialLeft - 5 + offset) * vh / 3000, (tutorialTop + 31 + offset) * vh / 3000);
-				context.lineTo(prerequisiteLeft * vh / 3000, prerequisiteTop * vh / 3000);
+				canvas.style.top = prerequisiteTop + 31 + "vh";
+				canvas.style.height = canvasHeight + "vh";
+
+				canvas.height = scaledHeight;
+
+				const lineWidth = document.documentElement.clientHeight / 150,
+					strokeStyle = tutorialProgressList[prerequisite].completedOnce
+						? "#888888"
+						: "#555555";
+
+				// check if width is 0
+				if (canvasWidth) {
+					const scaledWidth = canvasWidth * scale;
+					canvas.width = scaledWidth;
+
+					canvas.style.left = Math.min(tutorialLeft, prerequisiteLeft) + 5 + "vh";
+					canvas.style.width = canvasWidth + "vh";
+
+					context.lineWidth = lineWidth;
+					context.strokeStyle = strokeStyle;
+
+					const lineDirectionLeft = tutorialLeft > prerequisiteLeft;
+					context.moveTo(lineDirectionLeft ? 0 : scaledWidth, 0);
+					context.lineTo(lineDirectionLeft ? scaledWidth : 0, scaledHeight);
+				} else {
+					const scaledWidth = 2 * scale;
+					canvas.width = scaledWidth;
+
+					canvas.style.left = Math.min(tutorialLeft, prerequisiteLeft) + 4 + "vh";
+					canvas.style.width = "2vh";
+
+					context.lineWidth = lineWidth;
+					context.strokeStyle = strokeStyle;
+
+					context.moveTo(scaledWidth / 2, 0);
+					context.lineTo(scaledWidth / 2, scaledHeight);
+				}
+
 				context.stroke();
+
+				tutorialsContainer.append(canvas);
 			}
 		}
 
@@ -186,6 +222,17 @@ window.addEventListener("load", async () => {
 			tutorialTabContent.scrollLeft = origin.x + origin.scrollX - event.clientX;
 			tutorialTabContent.scrollTop = origin.y + origin.scrollY - event.clientY;
 		}
+
+		// enable scroll to zoom
+		let currentScale = 1;
+		tutorialTabContent.addEventListener("wheel", event => {
+			// constrain scale between 0.2 and 20
+			currentScale = Math.min(Math.max(currentScale - event.deltaY / 1000, 0.2), 3);
+
+			tutorialsContainer.style.transform = `scale(${currentScale})`;
+
+			event.preventDefault();
+		});
 	}
 
 	async function loadEditorTab() {

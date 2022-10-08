@@ -48,11 +48,27 @@ export default {
 		// incomplete
 		dom_manipulation: {
 			display: "DOM Manipulation",
-			description: ``,
+			description: `Without DOM manipulation, page content would be unchangeable, static. Using built in methods of DOM manipulation in JavaScript allow you to modify the HTML of a page with much more flexibility than CSS. Any part of the page can be modified, including adding and deleting elements and their attributes.`,
 			left: 60,
 			top: 0,
 			prerequisites: [],
 			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction",
+				"https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById",
+				"https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model",
+			],
+		},
+		basics_of_css: {
+			display: "Basics of CSS",
+			description: `HTML can add elements to the page but is incapable of changing the look of those elements. That is the purpose of CSS, to change how elements look on the page. This includes but is not limited to their size, color and position.`,
+			left: -30,
+			top: 90,
+			prerequisites: ["html_basic_syntax"],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Web/CSS",
+				"https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics",
+				"https://developer.mozilla.org/en-US/docs/Web/CSS/Reference",
+				"https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors",
 			],
 		},
 		events_and_event_listeners: {
