@@ -267,8 +267,7 @@ export default async function createFileSystemManager() {
 				if (
 					this.activeItem === itemName && this.activePath === itemPath
 					|| this.activeFilePath + " " + this.activeFile === itemPath + " " + itemName
-				)
-					this.setActiveItem(document.getElementById("fileSystemRoot"));
+				) this.setActiveItem(document.getElementById("fileSystemRoot"));
 
 				itemElement.remove();
 			};
