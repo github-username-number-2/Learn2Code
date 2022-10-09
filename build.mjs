@@ -67,7 +67,7 @@ const htmlminifyConfig = {
 							break;
 
 						case "html":
-							newContents = replaceMarkdown(newContents, `<script type="module">`, `</script>`, code =>
+							newContents = replaceMarkdown(contents, `<script type="module">`, `</script>`, code =>
 								`<script type="module">${uglify.minify(code)}</script>`
 							);
 							newContents = replaceMarkdown(newContents, `<script>`, `</script>`, code =>
@@ -88,8 +88,9 @@ const htmlminifyConfig = {
 					} else {
 						fs.copyFileSync(path, outputDirectory + fileName);
 					}
-				} catch {
+				} catch (error) {
 					console.log("Error occurred in file: " + path);
+					throw error;
 				}
 			}
 		}

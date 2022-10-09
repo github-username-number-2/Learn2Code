@@ -1,0 +1,19 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta content="IE=edge" http-equiv=X-UA-Compatible><meta content="width=device-width,initial-scale=1" name=viewport><link href=/manifest.json rel=manifest><meta content=#007700 name=theme-color><meta content="Learn2Code teaches web programming through interactive tutorials. Code simple websites and games with HTML, CSS and JavaScript." name=description><link href=/favicon.png rel=icon><link href=/css/main.css rel=stylesheet><link href=pages/index/index.css rel=stylesheet><link href=https://fonts.googleapis.com rel=preconnect><link href=https://fonts.gstatic.com rel=preconnect crossorigin><link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel=stylesheet><title>Learn2Code</title><script type=module>import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js";
+		import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-analytics.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyBwFMvexBoOz5FxEitGnWQyj7yGBuSTHwk",
+			authDomain: "learn2code-dbdce.firebaseapp.com",
+			projectId: "learn2code-dbdce",
+			storageBucket: "learn2code-dbdce.appspot.com",
+			messagingSenderId: "150991199658",
+			appId: "1:150991199658:web:221462cbaa607f2cce9fd3",
+			measurementId: "G-DPCT4PD6W0",
+		};
+
+		const app = initializeApp(firebaseConfig);
+		const analytics = getAnalytics(app);</script><script src="https://www.googletagmanager.com/gtag/js?id=G-DPCT4PD6W0" async></script><script>window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag("js", new Date());
+
+		gtag("config", "G-DPCT4PD6W0");</script></head><body><div id=header><img src=/images/logoSolid.png alt=logo id=logo title=Home> <img src=/images/icons/saveIcon.png alt="save to file" id=saveIcon><div id=infoButton class=subPageButton><p>Info</p></div><div id=tutorialsButton class=subPageButton><p>Tutorials</p></div><div id=editorButton class=subPageButton><p>Editor</p></div></div><div id=info class=subPage><h1>General Information</h1><h2>Tutorials</h2><p>The tutorials tab contains the tutorial trees for the main progression and other progressions.</p><img src=/images/infoTutorials.png alt="image of the tutorials tab"><h2>Editor</h2><p>The editor allows you to write your own programs using the knowledge you've gained from the tutorials.</p><img src=/images/infoEditor.png alt="image of the editor tab"><h2>Saving your progress</h2><p>Clicking the save icon on the top right of the page allows you to save/load your progress from both the tutorials and all the code you have written in the editor.</p><img src=/images/infoSave.png alt="image of the save button"></div><div id=tutorials class=subPage><div id=tutorialsContainerOuter><div id=tutorialsContainerInner><div id=tutorialSpacer></div></div></div><div id=tutorialPreviewTabMask class=tutorialPreview></div><div id=tutorialPreviewMask class=tutorialPreview></div><div id=tutorialPreviewContainer class=tutorialPreview><div id=tutorialPreviewHeader><img src=/images/icons/backButton.png id=tutorialPreviewBack title=Return> <img src=/images/icons/deleteIcon.png id=tutorialPreviewDelete title="Reset all progress"> <img src=/images/icons/resetIcon.png id=tutorialPreviewReset title="Reset progress"></div><h1 id=tutorialPreviewTitle></h1><p id=tutorialPreviewDescription></p><div id=tutorialPreviewContainerRight><img id=tutorialPreviewImage><a id=tutorialOpenButtonLink target=_blank><button>Open Tutorial <img src=/images/icons/newWindowIcon.png></button></a></div><div id=tutorialPreviewRelatedLinks><h1>Recommended Articles:</h1></div></div></div><div id=editor class=subPage><div id=editorHeader><h1>Projects</h1><button id=newProjectButton title="New Project">+</button></div><div id=projectsContainer></div></div><script src=/js/initializePage.js type=module></script><script src=pages/index/index.js type=module></script></body></html>
