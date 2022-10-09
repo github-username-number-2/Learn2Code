@@ -22,7 +22,7 @@ const cachedAssets = [
 	"/data/tutorials/tutorialIndex.js",
 ];
 
-self.addEventListener("install", event =>
+self.addEventListener("install", event => {
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
 			for (const asset of cachedAssets) {
@@ -31,8 +31,10 @@ self.addEventListener("install", event =>
 				);
 			}
 		})
-	)
-);
+	);
+
+	self.skipWaiting();
+});
 
 self.addEventListener("activate", event => {
 	event.waitUntil(
