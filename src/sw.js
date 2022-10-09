@@ -28,6 +28,11 @@ const cachedAssets = [
 	"/manifest.json",
 ];
 
+// in hours
+const fileExpiryTimes = {
+	"/data/tutorials/tutorialIndex.js": 12,
+};
+
 self.addEventListener("install", event => {
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
@@ -54,17 +59,23 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", async event =>
 	event.respondWith(
-		caches.match(event.request).then(cacheResult =>
-			cacheResult || fetch(event.request).then(async response => {
-				if (new URL(event.request.url).host === self.location.host) {
-					const cache = await caches.open(cacheName);
-					cache.put(event.request, response.clone());
-				}
+		caches.match(event.request).then(cacheResult => {
+			const resourceAge = new Date(cacheResult.headers.get("date")).getTime() + 1000 * 60 * 60,
+				resourceExpiryTime = fileExpiryTimes[cacheResult.headers.get("path")];
 
-				return response;
-			}).catch(response =>
-				new Response(
-					`
+			if (resourceExpiryTime && Date.now() > resourceAge * resourceExpiryTime) {
+				return cacheResult;
+			} else {
+				return fetch(event.request).then(async response => {
+					if (new URL(event.request.url).host === self.location.host) {
+						const cache = await caches.open(cacheName);
+						cache.put(event.request, response.clone());
+					}
+
+					return response;
+				}).catch(response =>
+					new Response(
+						`
 						<!DOCTYPE html>
 						<html lang="en">
 						<head>
@@ -76,14 +87,15 @@ self.addEventListener("fetch", async event =>
 						</body>
 						</html>
 					`,
-					{
-						headers: new Headers({
-							"status": response.status,
-							"content-type": "text/html; charset=utf-8",
-						})
-					},
-				)
-			)
-		)
+						{
+							headers: new Headers({
+								"status": response.status,
+								"content-type": "text/html; charset=utf-8",
+							})
+						},
+					)
+				);
+			}
+		})
 	)
 );
