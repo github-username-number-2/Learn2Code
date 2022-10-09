@@ -56,12 +56,10 @@ self.addEventListener("fetch", async event =>
 	event.respondWith(
 		caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(response => {
-				if (response.status === "200") {
-					const cache = caches.open(cacheName);
-					cache.put(event.request, response);
+				const cache = caches.open(cacheName);
+				cache.put(event.request, response);
 
-					return response;
-				}
+				return response;
 			}).catch(response =>
 				new Response(
 					`
