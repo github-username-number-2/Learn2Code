@@ -17,7 +17,7 @@ self.addEventListener("install", event =>
 		caches.open(cacheName).then(cache => {
 			for (const asset of cachedAssets) {
 				try {console.log(asset)
-					cache.add(asset);
+					cache.put(asset);
 				} catch {
 					console.log("Error: Request for asset failed: " + asset);
 				}
@@ -44,7 +44,7 @@ self.addEventListener("fetch", async event => {
 			cacheResult || fetch(event.request).then(response => {
 				if (response.status === 200) {
 					const cache = caches.open(cacheName);
-					cache.add(event.request, response);
+					cache.put(event.request, response);
 
 					return response;
 				}
