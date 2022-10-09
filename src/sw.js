@@ -58,19 +58,19 @@ self.addEventListener("fetch", async event => {
 
 					return response;
 				}
-
-				return new Response(
+			}).catch(response =>
+				new Response(
 					`
 						<!DOCTYPE html>
-            			<html lang="en">
-            			<head>
-              				<meta charset="utf-8">
-              				<title>Error ${response.status}</title>
-            			</head>
-            			<body>
-              				<pre>Error ${response.status}</pre>
-            			</body>
-            			</html>
+						<html lang="en">
+						<head>
+							<meta charset="utf-8">
+							<title>Error ${response.status}</title>
+						</head>
+						<body>
+							<pre>Error ${response.status}</pre>
+						</body>
+						</html>
 					`,
 					{
 						headers: new Headers({
@@ -78,8 +78,8 @@ self.addEventListener("fetch", async event => {
 							"content-type": "text/html; charset=utf-8",
 						})
 					},
-				);
-			})
+				)
+			)
 		)
 	);
 });
