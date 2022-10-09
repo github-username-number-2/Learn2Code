@@ -16,10 +16,16 @@ const cachedAssets = [
 	"/js/initializePage.js",
 	"/js/storageManager.js",
 	"/js/functions.js",
+	"/js/libraries/md5.js",
+	"/js/libraries/mime.js",
+	"/js/libraries/beautifyJS/beautify.html.min.js",
+	"/js/libraries/beautifyJS/beautify.css.min.js",
+	"/js/libraries/beautifyJS/beautify.min.js",
 	"/css/main.css",
 	"/favicon.png",
 	"/data/iconData.json",
 	"/data/tutorials/tutorialIndex.js",
+	"/manifest.json",
 ];
 
 self.addEventListener("install", event => {
@@ -46,9 +52,7 @@ self.addEventListener("activate", event => {
 	);
 });
 
-self.addEventListener("fetch", async event => {
-	console.log(event);
-
+self.addEventListener("fetch", async event =>
 	event.respondWith(
 		caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(response => {
@@ -81,5 +85,5 @@ self.addEventListener("fetch", async event => {
 				)
 			)
 		)
-	);
-});
+	)
+);
