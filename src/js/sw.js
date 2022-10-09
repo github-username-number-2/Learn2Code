@@ -8,6 +8,7 @@ const cachedAssets = [
 	"pages/editor/editor.js",
 	"pages/editor/editor.css",
 	"favicon.png",
+	"tutorialIndex.js",
 ];
 
 self.addEventListener("install", event =>
