@@ -67,10 +67,10 @@ self.addEventListener("fetch", async event =>
 						<html lang="en">
 						<head>
 							<meta charset="utf-8">
-							<title>Error ${response.status}</title>
+							<title>Error code: ${response.status}</title>
 						</head>
 						<body>
-							<h1>Error ${response.status}</h1>
+							<h1>Error code: ${response.status}</h1>
 						</body>
 						</html>
 					`,
