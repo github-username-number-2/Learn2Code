@@ -26,8 +26,30 @@ self.addEventListener("fetch", async event => {
 	event.respondWith(
 		caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(response => {
-				const cache = caches.open(cacheName);
-				cache.add(event.request, response);
+				if (response.status === 200) {
+					const cache = caches.open(cacheName);
+					cache.add(event.request, response);
+
+					return response;
+				}
+
+				return new Response(
+					`
+						<!DOCTYPE html>
+            			<html lang="en">
+            			<head>
+              				<meta charset="utf-8">
+              				<title>Error ${response.status}</title>
+            			</head>
+            			<body>
+              				<pre>Error ${response.status}</pre>
+            			</body>
+            			</html>
+					`,
+					{
+						headers: new Headers({ "content-type": "text/html; charset=utf-8" })
+					},
+				);
 			})
 		)
 	);
