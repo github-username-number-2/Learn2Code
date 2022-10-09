@@ -2,5 +2,10 @@ creating a difference editor with required code after waiting for 60 seconds in 
 
 
 things to do:
+make rest of tutorials
+
+things to do not important:
 fix tutorial timer inconsistency
+
+done:
 set cursor position on file change
