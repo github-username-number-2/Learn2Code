@@ -69,11 +69,11 @@ const htmlminifyConfig = {
 						case "html":
 							newContents = replaceMarkdown(contents, `<script type="module">`, `</script>`, code =>
 								`<script type="module">${uglify.minify(code).code}</script>`
-							);
+							);console.log(newContents)
 							newContents = replaceMarkdown(newContents, `<script>`, `</script>`, code =>
 								`<script>${uglify.minify(code).code}</script>`
-							);
-							newContents = htmlminify.minify(contents, htmlminifyConfig);
+							);console.log(newContents)
+							newContents = htmlminify.minify(contents, htmlminifyConfig);console.log(newContents)
 							break;
 
 						case "css":
