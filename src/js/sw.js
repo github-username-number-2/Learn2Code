@@ -8,6 +8,8 @@ const cachedAssets = [
 	"/pages/editor.html",
 	"/pages/editor/editor.js",
 	"/pages/editor/editor.css",
+	"/js/main.js",
+	"/css/main.css",
 	"/favicon.png",
 	"/data/tutorials/tutorialIndex.js",
 ];
@@ -16,7 +18,7 @@ self.addEventListener("install", event =>
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
 			for (const asset of cachedAssets) {
-				try {console.log(asset)
+				try {
 					cache.add(asset);
 				} catch {
 					console.log("Error: Request for asset failed: " + asset);
@@ -40,7 +42,7 @@ self.addEventListener("fetch", async event => {
 	console.log(event);
 
 	event.respondWith(
-		caches.match(event.request).then(cacheResult =>
+		/*caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(response => {
 				if (response.status === 200) {
 					const cache = caches.open(cacheName);
@@ -49,24 +51,24 @@ self.addEventListener("fetch", async event => {
 					return response;
 				}
 
-				return new Response(
+				return */new Response(
 					`
 						<!DOCTYPE html>
             			<html lang="en">
             			<head>
               				<meta charset="utf-8">
-              				<title>Error ${response.status}</title>
+              				<title>Error ${/*response.status*/200}</title>
             			</head>
             			<body>
-              				<pre>Error ${response.status}</pre>
+              				<pre>Error ${/*response.status*/200}</pre>
             			</body>
             			</html>
 					`,
 					{
 						headers: new Headers({ "content-type": "text/html; charset=utf-8" })
 					},
-				);
+				)/*;
 			})
-		)
+		)*/
 	);
 });
