@@ -50,7 +50,7 @@ self.addEventListener("fetch", async event => {
 	console.log(event);
 
 	event.respondWith(
-		/*caches.match(event.request).then(cacheResult =>
+		caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(response => {
 				if (response.status === 200) {
 					const cache = caches.open(cacheName);
@@ -59,24 +59,27 @@ self.addEventListener("fetch", async event => {
 					return response;
 				}
 
-				return */new Response(
-		`
+				return new Response(
+					`
 						<!DOCTYPE html>
             			<html lang="en">
             			<head>
               				<meta charset="utf-8">
-              				<title>Error ${/*response.status*/200}</title>
+              				<title>Error ${response.status}</title>
             			</head>
             			<body>
-              				<pre>Error ${/*response.status*/200}</pre>
+              				<pre>Error ${response.status}</pre>
             			</body>
             			</html>
 					`,
-		{
-			headers: new Headers({ "content-type": "text/html; charset=utf-8" })
-		},
-	)/*;
+					{
+						headers: new Headers({
+							"status": response.status,
+							"content-type": "text/html; charset=utf-8",
+						})
+					},
+				);
 			})
-		)*/
+		)
 	);
 });
