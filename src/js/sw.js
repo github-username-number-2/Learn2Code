@@ -16,10 +16,9 @@ const cachedAssets = [
 	"/js/initializePage.js",
 	"/js/storageManager.js",
 	"/js/functions.js",
-	"/js/.js",
 	"/css/main.css",
 	"/favicon.png",
-	"/data/iconData.js",
+	"/data/iconData.json",
 	"/data/tutorials/tutorialIndex.js",
 ];
 
