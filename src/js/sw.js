@@ -1,7 +1,13 @@
 const cacheName = "CacheV1";
 
 const cachedAssets = [
-	"_L2C_RESERVED_INDEX_.html",
+	"index.html",
+	"pages/index/index.js",
+	"pages/index/index.css",
+	"pages/editor.html",
+	"pages/editor/editor.js",
+	"pages/editor/editor.css",
+	"favicon.png",
 ];
 
 self.addEventListener("install", event =>
