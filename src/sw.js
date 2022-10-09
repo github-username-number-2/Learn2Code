@@ -55,8 +55,8 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", async event =>
 	event.respondWith(
 		caches.match(event.request).then(cacheResult =>
-			cacheResult || fetch(event.request).then(response => {
-				const cache = caches.open(cacheName);
+			cacheResult || fetch(event.request).then(async response => {
+				const cache = await caches.open(cacheName);
 				cache.put(event.request, response);
 
 				return response;
