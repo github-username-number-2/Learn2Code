@@ -56,7 +56,7 @@ self.addEventListener("fetch", async event =>
 	event.respondWith(
 		caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(async response => {
-				if (new URL(response.url).host === window.location.host) {
+				if (new URL(response.url).host === self.location.host) {
 					const cache = await caches.open(cacheName);
 					cache.put(event.request, response.clone());
 				}
