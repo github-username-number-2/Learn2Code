@@ -232,6 +232,8 @@ window.addEventListener("load", async () => {
 			tutorialsContainer.style.transform = `scale(${currentScale})`;
 
 			event.preventDefault();
+		}, {
+			passive: false,
 		});
 	}
 
