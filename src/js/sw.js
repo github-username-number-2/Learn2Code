@@ -17,7 +17,7 @@ self.addEventListener("install", event =>
 		caches.open(cacheName).then(cache => {
 			for (const asset of cachedAssets) {
 				try {console.log(asset)
-					cache.put(asset);
+					cache.add(asset);
 				} catch {
 					console.log("Error: Request for asset failed: " + asset);
 				}
