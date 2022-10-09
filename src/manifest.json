@@ -2,9 +2,13 @@
 	"name": "Learn2Code",
 	"icons": [
 		{
-			"src": "/images/logoSolid.png"
+			"src": "/images/logoSolid.png",
+			"type": "image/png",
+			"sizes": "512x512"
 		}
 	],
 	"start_url": "/index.html",
-	"display": "standalone"
+	"display": "standalone",
+	"background_color": "#007700",
+	"theme_color": "#007700"
 }
