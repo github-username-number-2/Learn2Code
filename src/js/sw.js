@@ -16,7 +16,7 @@ self.addEventListener("install", event =>
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
 			for (const asset of cachedAssets) {
-				try {
+				try {console.log(asset)
 					cache.add(asset);
 				} catch {
 					console.log("Error: Request for asset failed: " + asset);
