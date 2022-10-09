@@ -58,7 +58,7 @@ window.addEventListener("load", async () => {
 				elementFromString(`
 					<div id="tutorial_${tutorialID}" class="tutorialContainer" style="left: ${tutorialData.left}vh; top: ${tutorialData.top}vh">
 						<div class="difficultyBar"></div>
-						<img src="/data/tutorials/resources/${tutorialID}/icon.png">
+						<img src="/data/tutorials/resources/${tutorialID}/icon.png" alt="${tutorialData.display} preview icon">
 						<h1>${tutorialData.display}</h1>
 						<p>${Math.trunc(tutorialProgress.progressPercent)}% Complete</p>
 						<div class="tutorialMask"></div>
