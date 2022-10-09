@@ -5,7 +5,7 @@
   "main": "pages",
   "scripts": {
     "spellCheck": "cspell \"**\" --unique -r ./src -e js/libraries/mime.js",
-    "deploy": "git add -A && git commit -m uhhhhh && git pull && git push https://github.com/github-username-number-2/Learn2Code && firebase deploy --only hosting:learn2c0de"
+    "deploy": "node build.mjs && git add -A && git commit -m uhhhhh && git pull && git push https://github.com/github-username-number-2/Learn2Code && firebase deploy --only hosting:learn2c0de"
   },
   "repository": {
     "type": "git",
@@ -20,10 +20,15 @@
   "homepage": "https://github.com/github-username-number-2/Learn2Code#readme",
   "description": "",
   "devDependencies": {
-    "eslint": "^8.23.1",
-    "parcel-bundler": "^1.12.5"
+    "eslint": "^8.23.1"
   },
   "dependencies": {
-    "firebase": "^9.10.0"
+    "clean-css": "^5.3.1",
+    "csso": "^5.0.5",
+    "del": "^7.0.0",
+    "firebase": "^9.10.0",
+    "html-minifier": "^4.0.0",
+    "jsonminify": "^0.4.2",
+    "uglify-js": "^3.17.3"
   }
 }
