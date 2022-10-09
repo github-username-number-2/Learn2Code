@@ -18,11 +18,9 @@ self.addEventListener("install", event =>
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
 			for (const asset of cachedAssets) {
-				try {
-					cache.add(asset);
-				} catch {
-					console.log("Error: Request for asset failed: " + asset);
-				}
+				cache.add(asset).catch(
+					() => console.log("Error: Request for asset failed: " + asset)
+				);
 			}
 		})
 	)
@@ -52,7 +50,7 @@ self.addEventListener("fetch", async event => {
 				}
 
 				return */new Response(
-					`
+		`
 						<!DOCTYPE html>
             			<html lang="en">
             			<head>
@@ -64,10 +62,10 @@ self.addEventListener("fetch", async event => {
             			</body>
             			</html>
 					`,
-					{
-						headers: new Headers({ "content-type": "text/html; charset=utf-8" })
-					},
-				)/*;
+		{
+			headers: new Headers({ "content-type": "text/html; charset=utf-8" })
+		},
+	)/*;
 			})
 		)*/
 	);
