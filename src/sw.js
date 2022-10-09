@@ -68,7 +68,7 @@ self.addEventListener("fetch", async event => {
 							<title>Error ${response.status}</title>
 						</head>
 						<body>
-							<pre>Error ${response.status}</pre>
+							<h1>Error ${response.status}</h1>
 						</body>
 						</html>
 					`,
