@@ -1,21 +1,27 @@
 const cacheName = "CacheV1";
 
 const cachedAssets = [
-	"",
-	"index.html",
-	"pages/index/index.js",
-	"pages/index/index.css",
-	"pages/editor.html",
-	"pages/editor/editor.js",
-	"pages/editor/editor.css",
-	"favicon.png",
-	"tutorialIndex.js",
+	"/",
+	"/index.html",
+	"/pages/index/index.js",
+	"/pages/index/index.css",
+	"/pages/editor.html",
+	"/pages/editor/editor.js",
+	"/pages/editor/editor.css",
+	"/favicon.png",
+	"/data/tutorials/tutorialIndex.js",
 ];
 
 self.addEventListener("install", event =>
 	event.waitUntil(
 		caches.open(cacheName).then(cache => {
-			cache.addAll(cachedAssets);
+			for (const asset of cachedAssets) {
+				try {
+					cache.add(asset);
+				} catch {
+					console.log("Error: Request for asset failed: " + asset);
+				}
+			}
 		})
 	)
 );
