@@ -1,7 +1,7 @@
 import { elementFromString } from "/js/functions.js";
 
 // register service worker
-navigator.serviceWorker.register("/js/sw.js");
+navigator.serviceWorker.register("/sw.js");
 
 // prevents dragging of images and text selection
 document.addEventListener("dragstart", event => event.preventDefault());
