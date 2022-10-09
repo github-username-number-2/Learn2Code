@@ -20,7 +20,9 @@ self.addEventListener("activate", event => {
 	);
 });
 
-self.addEventListener("fetch", async event =>
+self.addEventListener("fetch", async event => {
+	console.log(event);
+
 	event.respondWith(
 		caches.match(event.request).then(cacheResult =>
 			cacheResult || fetch(event.request).then(response => {
@@ -28,5 +30,5 @@ self.addEventListener("fetch", async event =>
 				cache.add(event.request, response);
 			})
 		)
-	)
-);
+	);
+});
