@@ -68,10 +68,10 @@ const htmlminifyConfig = {
 
 						case "html":
 							newContents = replaceMarkdown(contents, `<script type="module">`, `</script>`, code =>
-								`<script type="module">${uglify.minify(code)}</script>`
+								`<script type="module">${uglify.minify(code).code}</script>`
 							);
 							newContents = replaceMarkdown(newContents, `<script>`, `</script>`, code =>
-								uglify.minify(code)
+								`<script>${uglify.minify(code).code}</script>`
 							);
 							newContents = htmlminify.minify(contents, htmlminifyConfig);
 							break;
