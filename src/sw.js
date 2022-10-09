@@ -1,4 +1,4 @@
-const cacheName = "CacheV2";
+const cacheName = "CacheV3";
 
 const cachedAssets = [
 	"/",
