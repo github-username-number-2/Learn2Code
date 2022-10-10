@@ -1,1 +1,0 @@
-const actionData={fileSystem:{}},tutorialData={info:{display:""},actionList:[["beginTutorial"],["loadFileSystem",actionData.fileSystem],["setRequiredFileSystem",actionData.fileSystem],["createCheckpoint"],["endTutorial"]]};export default tutorialData;
