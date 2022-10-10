@@ -64,9 +64,9 @@ self.addEventListener("fetch", async event =>
 				const resourceAge = new Date(cacheResult.headers.get("date")).getTime() + 1000 * 60 * 60,
 					resourceExpiryTime = fileExpiryTimes[new URL(cacheResult.url).pathname];
 
-				if (!resourceExpiryTime || Date.now() > resourceAge * resourceExpiryTime) {
+				// if offline return from cache, else update if resource has expired
+				if (!navigator.onLine || !resourceExpiryTime || Date.now() > resourceAge * resourceExpiryTime)
 					return cacheResult;
-				}
 			}
 
 			return fetch(event.request).then(async response => {
