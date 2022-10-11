@@ -46,6 +46,15 @@ export default {
 		},
 
 		// incomplete
+		data_types: {
+			display: "Data Types",
+			description: ``,
+			left: 30,
+			top: 90,
+			prerequisites: [],
+			relatedLinks: [
+			],
+		},
 		dom_manipulation: {
 			display: "DOM Manipulation",
 			description: `Without DOM manipulation, page content would be unchangeable, static. Using built in methods of DOM manipulation in JavaScript allow you to modify the HTML of a page with much more flexibility than CSS. Any part of the page can be modified, including adding and deleting elements and their attributes.`,
