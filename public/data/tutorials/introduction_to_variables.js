@@ -115,5 +115,10 @@ alert(add(0, 2));
 
 ---
 
+Click the run button.
+>>>
+
+---
+
 Currently, the 2 other methods of declaring variables are \`let\` and \`const\`, and these will be discussed in a later tutorial.
 `};
