@@ -46,7 +46,7 @@ export default {
 		},
 
 		// incomplete
-		variables: {
+		introduction_to_variables: {
 			display: "Introduction To Variables",
 			description: ``,
 			left: 30,
