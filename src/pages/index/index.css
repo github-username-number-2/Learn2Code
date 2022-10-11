@@ -95,6 +95,7 @@
 	position: fixed;
 	left: 0;
 	top: 0;
+	z-index: 2;
 	width: 100vw;
 	height: 100vh;
 	background-color: #00000055;
@@ -104,7 +105,7 @@
 	position: fixed;
 	left: calc(11vh + 12vw);
 	top: 4.5vh;
-	z-index: 1;
+	z-index: 2;
 	width: 10vw;
 	height: 4.7vh;
 	border-top: 0.5vh solid #595959;
@@ -120,7 +121,7 @@
 	position: fixed;
 	left: calc(50% - 50vh);
 	top: 20vh;
-	z-index: 1;
+	z-index: 2;
 	width: 100vh;
 	height: 70vh;
 	border: 1vh solid #808080;
@@ -293,6 +294,7 @@
 	box-sizing: border-box;
 	position: absolute;
 	transform: translateX(-50%);
+	z-index: 1;
 	width: 20vh;
 	height: 26vh;
 	border: 0.5vh solid #999999;

@@ -154,11 +154,11 @@ window.addEventListener("load", async () => {
 					prerequisiteData.left, prerequisiteData.top
 				];
 
-				const canvasWidth = Math.abs(tutorialLeft - prerequisiteLeft),
-					canvasHeight = tutorialTop - prerequisiteTop - 26,
+				const canvasWidth = Math.abs(tutorialLeft - prerequisiteLeft + 1),
+					canvasHeight = tutorialTop - prerequisiteTop - 24,
 					scaledHeight = canvasHeight * scale;
 
-				canvas.style.top = prerequisiteTop + 31 + "vh";
+				canvas.style.top = prerequisiteTop + 30 + "vh";
 				canvas.style.height = canvasHeight + "vh";
 
 				canvas.height = scaledHeight;
@@ -173,15 +173,15 @@ window.addEventListener("load", async () => {
 					const scaledWidth = canvasWidth * scale;
 					canvas.width = scaledWidth;
 
-					canvas.style.left = Math.min(tutorialLeft, prerequisiteLeft) + 5 + "vh";
+					canvas.style.left = Math.min(tutorialLeft, prerequisiteLeft) + 4 + "vh";
 					canvas.style.width = canvasWidth + "vh";
 
 					context.lineWidth = lineWidth;
 					context.strokeStyle = strokeStyle;
 
 					const lineDirectionLeft = tutorialLeft > prerequisiteLeft;
-					context.moveTo(lineDirectionLeft ? 0 : scaledWidth, 0);
-					context.lineTo(lineDirectionLeft ? scaledWidth : 0, scaledHeight);
+					context.moveTo(lineDirectionLeft ? -scaledWidth : scaledWidth * 2, -scaledHeight);
+					context.lineTo(lineDirectionLeft ? scaledWidth * 2 : -scaledWidth, scaledHeight * 2);
 				} else {
 					const scaledWidth = 2 * scale;
 					canvas.width = scaledWidth;
