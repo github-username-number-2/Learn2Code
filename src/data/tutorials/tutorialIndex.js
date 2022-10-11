@@ -46,10 +46,19 @@ export default {
 		},
 
 		// incomplete
+		variables: {
+			display: "Introduction To Variables",
+			description: ``,
+			left: 30,
+			top: 90,
+			prerequisites: [],
+			relatedLinks: [
+			],
+		},
 		data_types: {
 			display: "Data Types",
 			description: ``,
-			left: 30,
+			left: 60,
 			top: 90,
 			prerequisites: [],
 			relatedLinks: [
