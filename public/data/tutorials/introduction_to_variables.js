@@ -105,7 +105,7 @@ alert(add(0, 2));
 
 <{c s main.js
 var add = function (n1, n2) {
-return n1 + n2;
+  return n1 + n2;
 };
 
 alert(add(3, 8));
