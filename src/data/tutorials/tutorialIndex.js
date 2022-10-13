@@ -46,6 +46,15 @@ export default {
 		},
 
 		// incomplete
+		functions: {
+			display: "Functions",
+			description: ``,
+			left: 60,
+			top: 90,
+			prerequisites: [],
+			relatedLinks: [
+			],
+		},
 		introduction_to_variables: {
 			display: "Introduction To Variables",
 			description: ``,

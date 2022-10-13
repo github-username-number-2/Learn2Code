@@ -83,10 +83,10 @@ self.addEventListener("fetch", async event =>
 						<html lang="en">
 						<head>
 							<meta charset="utf-8">
-							<title>Error code: ${response.status}</title>
+							<title>Error 404</title>
 						</head>
 						<body>
-							<h1>Error code: ${response.status}</h1>
+							<h1>Error 404: This file does not exist.</h1>
 						</body>
 						</html>
 					`,
