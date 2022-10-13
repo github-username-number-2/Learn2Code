@@ -49,7 +49,7 @@ export default {
 		functions: {
 			display: "Functions",
 			description: ``,
-			left: 60,
+			left: 90,
 			top: 90,
 			prerequisites: [],
 			relatedLinks: [
