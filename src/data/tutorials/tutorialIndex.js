@@ -46,6 +46,15 @@ export default {
 		},
 
 		// incomplete
+		if_statements: {
+			display: "if Statements",
+			description: ``,
+			left: 120,
+			top: 90,
+			prerequisites: [],
+			relatedLinks: [
+			],
+		},
 		functions: {
 			display: "Functions",
 			description: ``,

@@ -3,6 +3,7 @@ creating a difference editor with required code after waiting for 60 seconds in 
 
 things to do:
 make rest of tutorials
+redesign ui
 
 things to do not important:
 fix tutorial timer inconsistency

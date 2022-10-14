@@ -1,5 +1,3 @@
-"use strict";
-
 import * as del from "del";
 import * as fs from "fs";
 
