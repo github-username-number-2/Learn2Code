@@ -49,6 +49,19 @@ if (navigator.onLine) {
 }
 ]>
 
+<{c s main.js
+if (navigator.onLine) {
+  alert("You are connected to the internet.");
+} else {
+  alert("You are not connected to the internet.");
+}
+}>
+
+---
+
+Click the run button.
+>>>
+
 ---
 
 There are also \`if else-if\` and \`if else-if else\` statements. \`if-else\` can be chained as many times as necessary:
