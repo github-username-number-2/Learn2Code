@@ -81,7 +81,7 @@ if (condition1) {
 
 As you may have noticed, \`if\` statements do not check if values are \`true\` or \`false\`. They instead check whether or not values are truthy or falsy.
 
-Truthy and falsy are not data types, but categories for different values. From <a href="https://developer.mozilla.org/en-US/docs/Glossary/Truthy">MDN</a>:
+Truthy and falsy are not data types, but categories for different values. From <a href="https://developer.mozilla.org/en-US/docs/Glossary/Truthy" target="_blank">MDN</a>:
 "a truthy value is a value that is considered true when encountered in a Boolean context. All values are truthy unless they are defined as falsy. That is, all values are truthy except false, 0, -0, 0n, "", null, undefined, and NaN."
 
 ---
