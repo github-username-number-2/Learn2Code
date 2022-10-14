@@ -94,7 +94,8 @@ if (confirm("Close tab?")) {
 ]>
 
 <{c s main.js
-if (confirm("Close tab?")) {
+var response = prompt("Close tab?");
+if (response === "yes" || response === "y") {
   window.close();
 }
 }>
