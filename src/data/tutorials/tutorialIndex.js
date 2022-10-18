@@ -57,7 +57,7 @@ export default {
 		},
 		functions: {
 			display: "Functions",
-			description: `Functions allow programmers to write smaller, more maintainable and more efficient code. They allow complexity to be abstracted away from the main program.`,
+			description: `Functions allow programmers to write smaller, more maintainable, more efficient code, and allow complexity to be abstracted away from the main program.`,
 			left: 90,
 			top: 90,
 			prerequisites: [],

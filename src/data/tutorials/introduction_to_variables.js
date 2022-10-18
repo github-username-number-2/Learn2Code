@@ -99,7 +99,7 @@ var x = 0;
 In main.js, declare a variable and initialize it to a function, then alert the result of the function as shown:
 <[text/javascript
 var add = function (n1, n2) {
-return n1 + n2;
+	return n1 + n2;
 };
 
 alert(add(3, 8));
@@ -109,7 +109,7 @@ alert(add(0, 2));
 
 <{c s main.js
 var add = function (n1, n2) {
-  return n1 + n2;
+	return n1 + n2;
 };
 
 alert(add(3, 8));
