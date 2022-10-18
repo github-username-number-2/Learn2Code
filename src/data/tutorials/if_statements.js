@@ -1,6 +1,6 @@
 export default {
 	info: {
-		display: "",
+		display: "if Statements",
 	},
 	actionString: `
 {
