@@ -44,50 +44,12 @@ export default {
 				"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar",
 			],
 		},
-
-		// incomplete
-		if_statements: {
-			display: "if Statements",
-			description: ``,
-			left: 120,
-			top: 90,
-			prerequisites: [],
-			relatedLinks: [
-			],
-		},
-		functions: {
-			display: "Functions",
-			description: `Functions allow programmers to write smaller, more maintainable, more efficient code, and allow complexity to be abstracted away from the main program.`,
-			left: 90,
-			top: 90,
-			prerequisites: [],
-			relatedLinks: [
-			],
-		},
-		introduction_to_variables: {
-			display: "Introduction To Variables",
-			description: ``,
-			left: 30,
-			top: 90,
-			prerequisites: [],
-			relatedLinks: [
-			],
-		},
-		data_types: {
-			display: "Data Types",
-			description: ``,
-			left: 60,
-			top: 90,
-			prerequisites: [],
-			relatedLinks: [
-			],
-		},
 		dom_manipulation: {
 			display: "DOM Manipulation",
 			description: `Without DOM manipulation, page content would be unchangeable, static. Using built in methods of DOM manipulation in JavaScript allow you to modify the HTML of a page with much more flexibility than CSS. Any part of the page can be modified, including adding and deleting elements and their attributes.`,
-			left: -60,
-			top: 120,
-			prerequisites: [],
+			left: -30,
+			top: 150,
+			prerequisites: ["basics_of_css", "functions"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction",
 				"https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById",
@@ -111,7 +73,7 @@ export default {
 			display: "Events & Event Listeners",
 			description: `Events happen when the user interacts with a webpage, something loads, an error happens, etc. Event listeners allow JavaScript programs to capture those events and make decisions based on their properties.`,
 			left: -28,
-			top: 150,
+			top: 180,
 			prerequisites: ["dom_manipulation"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Web/API/Event",
@@ -122,9 +84,9 @@ export default {
 		setTimeout_setInterval: {
 			display: "setTimeout and setInterval",
 			description: `In certain cases, a program may need to wait a certain amount of time before executing code. To do this, are the setTimeout and setInterval functions. setTimeout will add a delay before executing code, while setInterval runs code over and over with a delay in between.`,
-			left: 40,
-			top: 120,
-			prerequisites: [],
+			left: 0,
+			top: 150,
+			prerequisites: ["functions"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Web/API/setTimeout",
 				"https://developer.mozilla.org/en-US/docs/Web/API/setInterval",
@@ -133,11 +95,54 @@ export default {
 		pong: {
 			display: "Pong",
 			description: `Pong is a tennis based game released in 1972 by Atari. Originally Pong was not programmed, but instead built using physical electronic logic gates. Although it could seem simple on the surface, programming Pong will require all of the knowledge described in the previous tutorials.`,
-			left: 28,
-			top: 180,
-			prerequisites: ["events_and_event_listeners", "setTimeout_setInterval"],
+			left: 0,
+			top: 210,
+			prerequisites: ["events_and_event_listeners", "setTimeout_setInterval", "if_statements"],
 			relatedLinks: [
 				"https://developer.mozilla.org/en-US/docs/Games/Introduction",
+			],
+		},
+		if_statements: {
+			display: "if Statements",
+			description: `Description coming soon...`,
+			left: 30,
+			top: 120,
+			prerequisites: ["data_types"],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Glossary/Truthy",
+				"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else",
+			],
+		},
+		functions: {
+			display: "Functions",
+			description: `Functions allow programmers to write smaller, more maintainable, more efficient code, and allow complexity to be abstracted away from the main program.`,
+			left: 5,
+			top: 120,
+			prerequisites: ["data_types"],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+				"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions",
+				"https://developer.mozilla.org/en-US/docs/Glossary/Scope",
+			],
+		},
+		introduction_to_variables: {
+			display: "Introduction To Variables",
+			description: `Description coming soon...`,
+			left: 30,
+			top: 60,
+			prerequisites: ["javascript_basic_syntax"],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Variables",
+			],
+		},
+		data_types: {
+			display: "Data Types",
+			description: `Description coming soon...`,
+			left: 30,
+			top: 90,
+			prerequisites: ["introduction_to_variables"],
+			relatedLinks: [
+				"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures",
 			],
 		},
 	},
