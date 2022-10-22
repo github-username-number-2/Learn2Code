@@ -1,7 +1,10 @@
 import * as fs from "fs";
 
+const scanTarget = process.argv[2],
+	noIgnore = Boolean(process.argv[3]);
+
 const fileLines = [];
-await scanDirectory("./src/", ["./src/images", "./src/js/libraries", "./src/data/tutorials/resources", "./src/favicon.png", "./src/data/iconData.json"], fileLines);
+await scanDirectory(scanTarget, noIgnore ? [] : [scanTarget + "images", scanTarget + "js/libraries", scanTarget + "data/tutorials/resources", scanTarget + "favicon.png", scanTarget + "data/iconData.json"], fileLines);
 
 let totalLines = 0,
 	totalBytes = 0;

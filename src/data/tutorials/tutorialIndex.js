@@ -115,7 +115,7 @@ export default {
 		},
 		functions: {
 			display: "Functions",
-			description: `Functions allow programmers to write smaller, more maintainable, more efficient code, and allow complexity to be abstracted away from the main program.`,
+			description: `Functions allow programmers to write smaller, more maintainable, more efficient code, and allow complexity to be abstracted away from the main program. Functions are a very common aspect of programming and they exist within most programming languages.`,
 			left: 5,
 			top: 120,
 			prerequisites: ["data_types"],

@@ -5,7 +5,10 @@
   "main": "pages",
   "scripts": {
     "spellCheck": "cspell \"**\" --unique -r ./src -e js/libraries/mime.js",
-    "countLines": "node countLines.mjs",
+    "countLinesSrc": "node countLines.mjs ./src/",
+    "countLinesSrcNoIgnore": "node countLines.mjs ./src/ noIgnore",
+    "countLinesPublic": "node countLines.mjs ./public/",
+    "countLinesPublicNoIgnore": "node countLines.mjs ./public/ noIgnore",
     "deploy": "node build.mjs && git add -A && git commit -m uhhhhh && git pull && git push https://github.com/github-username-number-2/Learn2Code && firebase deploy --only hosting:learn2c0de"
   },
   "repository": {
