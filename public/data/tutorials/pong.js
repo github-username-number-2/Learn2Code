@@ -686,7 +686,7 @@ Now, all that is left to do is the \`endGame\` function. Add this code to the ve
 function endGame(winner) {
   clearInterval(interval);
 
-  alert(winner);
+  alert(winner + " Wins");
 
   startButton.style.display = "block";
 }
@@ -698,7 +698,7 @@ function endGame(winner) {
 function endGame(winner) {
   clearInterval(interval);
 
-  alert(winner);
+  alert(winner + " Wins");
 
   startButton.style.display = "block";
 }
