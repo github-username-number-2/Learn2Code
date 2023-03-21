@@ -752,7 +752,7 @@ export default async function createFileSystemManager() {
 			for (const file of fileInput.files) {
 				let filePath = activePath;
 				const pathArray = (uploadFiles ? file.name : file.webkitRelativePath).split("/"),
-					fileName = pathArray.pop();
+					fileName = pathArray.pop().replaceAll(" ", "");
 
 				for (const item of pathArray) {
 					filePath += " " + item.replaceAll(/[^a-zA-Z0-9._-]/g, "");
