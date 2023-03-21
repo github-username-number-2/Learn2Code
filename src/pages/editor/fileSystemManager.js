@@ -769,7 +769,7 @@ export default async function createFileSystemManager() {
 				const folderExists = manager.selectItem(name, path);
 				if (
 					folderExists
-					&& !await confirmCustom(`Folder "${path.replaceAll(" ", "/").substring(4)}/${name}" already exists. Would you like to overwrite it?<br><br>If overwritten, all contents will be deleted.`, { confirmText: "Overwrite contents", cancelText: "Keep contents" })
+					&& !await confirmCustom(`Folder "<strong>${path.replaceAll(" ", "/").substring(4)}/${name}</strong>" already exists. Would you like to overwrite it?<br><br>If overwritten, all contents will be deleted, else, the folder will not be uploaded.`, { confirmText: "Overwrite contents", cancelText: "Keep contents" })
 				) continue;
 				else if (folderExists)
 					manager.removeItem(name, path);
@@ -778,15 +778,23 @@ export default async function createFileSystemManager() {
 			}
 
 			for (const file of addedFilesList) {
-				const [relativeFullPath, contents] = file,
-					[name, relativePath] = splitPath(relativeFullPath);
+				const [fullPath, contents] = file,
+					[name, path] = splitPath(fullPath);
+
+				const folderExists = manager.selectItem(name, path);
+				if (
+					folderExists
+					&& !await confirmCustom(`File "<strong>${path.replaceAll(" ", "/").substring(4)}/${name}</strong>" already exists. Would you like to overwrite it?<br><br>If overwritten, all contents will be deleted, else, the file will not be uploaded.`, { confirmText: "Overwrite contents", cancelText: "Keep contents" })
+				) continue;
+				else if (folderExists)
+					manager.removeItem(name, fullPath);
 
 				const encoding = isValidUTF8(contents) ? "utf-8" : "base64";
 
 				manager.addItem(
 					name,
 					[arrayBufferToString(contents, encoding), encoding],
-					relativePath,
+					path,
 				);
 			}
 
