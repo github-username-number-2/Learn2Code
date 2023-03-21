@@ -84,6 +84,7 @@ Truthy and falsy are not data types, but categories for different values. From <
 
 Delete all code in main.js and write the following:
 <[text/javascript
+var response = prompt("Close tab?");
 if (confirm("Close tab?")) {
   window.close();
 }
