@@ -105,7 +105,7 @@ export default function initializeStorageManager() {
 				anchor.remove();
 
 				function getRandom4Bits() {
-					return Math.floor(Math.random() * 16).toString(2);
+					return Math.floor(Math.random() * 16).toString(2).padStart(4, "0");
 				}
 			},
 			async loadFromFile() {

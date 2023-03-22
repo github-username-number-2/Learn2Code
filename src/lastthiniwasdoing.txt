@@ -1,12 +1,3 @@
-creating a difference editor with required code after waiting for 60 seconds in tutorialFunctions.js and fileSystemManager.js
-
-
 things to do:
-make rest of tutorials
-redesign ui
-
-things to do not important:
-fix tutorial timer inconsistency
-
-done:
-set cursor position on file change
+	make rest of tutorials
+	redesign ui
