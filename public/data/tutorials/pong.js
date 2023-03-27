@@ -556,17 +556,12 @@ This code simply checks if the ball's X position is 0 pixels away from the left 
 
 Now write the logic to detect collisions with the paddles. That section of code should then look like this:
 <[text/javascript
-if (ballX <= 20) {
+if (ballX <= 0) {
   endGame("Player 2");
 }
-if (ballX >= 780) {
+if (ballX >= 760) {
   endGame("Player 1");
 }
-
-var paddle1Top = paddle1.offsetTop,
-  paddle1Bottom = paddle1Top + 50,
-  paddle2Top = paddle2.offsetTop,
-  paddle2Bottom = paddle2Top + 50;
 
 if (ballX < 50 && ballX > 30) {
   if (ballY > paddle1Top - 40 && ballY < paddle1Bottom) {
@@ -584,11 +579,6 @@ if (ballX > 710 && ballX < 730) {
 This checks if the ball's X position is within range to be contacted by a paddle. If it is, it checks if the Y position is between the paddle's top and bottom. If so, reverse the X speed and add a small random value (can be negative) to the Y speed.
 
 <{c i main.js 75 0 
-
-    var paddle1Top = paddle1.offsetTop,
-      paddle1Bottom = paddle1Top + 50,
-      paddle2Top = paddle2.offsetTop,
-      paddle2Bottom = paddle2Top + 50;
 
     if (ballX < 50 && ballX > 30) {
       if (ballY > paddle1Top - 40 && ballY < paddle1Bottom) {
@@ -608,11 +598,6 @@ This checks if the ball's X position is within range to be contacted by a paddle
 
 The last collision related code is the code to check collisions with the top and bottom walls:
 <[text/javascript
-var paddle1Top = paddle1.offsetTop,
-  paddle1Bottom = paddle1Top + 50,
-  paddle2Top = paddle2.offsetTop,
-  paddle2Bottom = paddle2Top + 50;
-
 if (ballX < 50 && ballX > 30) {
   if (ballY > paddle1Top - 40 && ballY < paddle1Bottom) {
     ballSpeedX = -ballSpeedX;
