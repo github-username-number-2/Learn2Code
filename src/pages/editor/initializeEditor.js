@@ -12,10 +12,13 @@ export default async function initializeEditor() {
 			tutorialData = (await import(`/data/tutorials/${tutorialID}.js`)).default;
 
 			// if dev mode enabled
-			alert(localStorage.getItem("devMode"));
 			if (localStorage.getItem("devMode"))
 				alert(JSON.stringify(tutorialData));
 		} catch {
+			// if dev mode enabled
+			if (localStorage.getItem("devMode"))
+				alert("reading tutorial data failed");
+
 			alertCustom("Error: Could not load tutorial<br><br>Tutorials can be accessed from the main page under the tutorials tab<br><br>You will be redirected automatically in 15 seconds");
 			setTimeout(() => window.location.href = "//" + window.location.host, 15000);
 
