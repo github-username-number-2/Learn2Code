@@ -22,16 +22,19 @@ export default async function initializeEditor() {
 		if ("actionString" in tutorialData)
 			tutorialData.actionList = parseActionString(tutorialData.actionString);
 
-		// check if tutorial is unlocked
-		const tutorialIndex = (await import("/data/tutorials/tutorialIndex.js")).default,
-			tutorialPrerequisites = tutorialIndex.tutorialList[tutorialID].prerequisites;
+		// if dev mode is not enabled
+		if (!localStorage.getItem("devMode")) {
+			// check if tutorial is unlocked
+			const tutorialIndex = (await import("/data/tutorials/tutorialIndex.js")).default,
+				tutorialPrerequisites = tutorialIndex.tutorialList[tutorialID].prerequisites;
 
-		for (const requiredTutorialID of tutorialPrerequisites) {
-			if (!(await storageManager.getTutorialProgress(requiredTutorialID)).completedOnce) {
-				alertCustom("This tutorial has not been unlocked yet. You will be redirected to home in 15 seconds.");
-				setTimeout(() => window.location.href = "//" + window.location.host, 15000);
+			for (const requiredTutorialID of tutorialPrerequisites) {
+				if (!(await storageManager.getTutorialProgress(requiredTutorialID)).completedOnce) {
+					alertCustom("This tutorial has not been unlocked yet. You will be redirected to home in 15 seconds.");
+					setTimeout(() => window.location.href = "//" + window.location.host, 15000);
 
-				return;
+					return;
+				}
 			}
 		}
 

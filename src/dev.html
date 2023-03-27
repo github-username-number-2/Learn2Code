@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+	<button id="setDevMode">Set Dev Mode</button>
+	<button id="disableDevMode">Disable Dev Mode</button>
+
+	<script>
+		document.getELementById("setDevMode").onclick = function () {
+			localStorage.setItem("devMode", "1");
+		};
+		document.getElementById("disableDevMode").onclick = function () {
+			localStorage.removeItem("devMode");
+		};
+	</script>
+</body>
+</html>
