@@ -24,6 +24,7 @@ export default async function initializeEditor() {
 
 		// if dev mode is not enabled
 		if (!localStorage.getItem("devMode")) {
+
 			// check if tutorial is unlocked
 			const tutorialIndex = (await import("/data/tutorials/tutorialIndex.js")).default,
 				tutorialPrerequisites = tutorialIndex.tutorialList[tutorialID].prerequisites;
@@ -36,6 +37,8 @@ export default async function initializeEditor() {
 					return;
 				}
 			}
+		} else {
+			alert("dev mode enabled");
 		}
 
 		runTutorial(tutorialData);
