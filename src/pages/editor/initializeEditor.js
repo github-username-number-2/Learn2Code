@@ -12,6 +12,7 @@ export default async function initializeEditor() {
 			tutorialData = (await import(`/data/tutorials/${tutorialID}.js`)).default;
 
 			// if dev mode enabled
+			alert(localStorage.getItem("devMode"));
 			if (localStorage.getItem("devMode"))
 				alert(JSON.stringify(tutorialData));
 		} catch {
