@@ -1,4 +1,4 @@
-const cacheName = "_L2C_RESERVED_CACHE_MAIN_V1_";
+const cacheName = "_L2C_RESERVED_CACHE_MAIN_V2_";
 
 const cachedAssets = [
 	"_L2C_RESERVED_INDEX_.html",
