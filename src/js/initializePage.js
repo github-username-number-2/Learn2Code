@@ -18,7 +18,9 @@ document.getElementById("logo").addEventListener("click", () =>
 
 // page load function
 window.loadPage = () => {
-	document.getElementById("mask").style.display = "none";
+	// if no popups exist
+	if (!mask.innerHTML)
+		document.getElementById("mask").style.display = "none";
 
 	document.getElementById("saveIcon").addEventListener("click", async () => {
 		if (await confirmCustom("Load existing save or create new save?", { confirmText: "Load save file", cancelText: "Create save file" }))
