@@ -526,9 +526,11 @@ startButton.onclick = function () {
 
     if (ballX <= 0) {
       endGame("Player 2");
+      return;
     }
     if (ballX >= 760) {
       endGame("Player 1");
+      return;
     }
   }, 10);
 };
@@ -541,9 +543,11 @@ This code simply checks if the ball's X position is 0 pixels away from the left 
 
     if (ballX <= 0) {
       endGame("Player 2");
+      return;
     }
     if (ballX >= 760) {
       endGame("Player 1");
+      return;
     }
 }>
 
@@ -553,9 +557,11 @@ Now write the logic to detect collisions with the paddles. That section of code 
 <[text/javascript
 if (ballX <= 0) {
   endGame("Player 2");
+  return;
 }
 if (ballX >= 760) {
   endGame("Player 1");
+  return;
 }
 
 if (ballX < 50 && ballX > 30) {
@@ -573,7 +579,7 @@ if (ballX > 710 && ballX < 730) {
 ]>
 This checks if the ball's X position is within range to be contacted by a paddle. If it is, it checks if the Y position is between the paddle's top and bottom. If so, reverse the X speed and add a small random value (can be negative) to the Y speed.
 
-<{c i main.js 75 0 \n
+<{c i main.js 77 0 \n
     if (ballX < 50 && ballX > 30) {
       if (ballY > paddle1Top - 40 && ballY < paddle1Bottom) {
         ballSpeedX = -ballSpeedX;
@@ -614,7 +620,7 @@ if (ballY >= 460) {
 ]>
 If a collision is detected, the vertical speed is reversed.
 
-<{c i main.js 93 0 \n
+<{c i main.js 90 0 \n
     if (ballY <= 0) {
       ballSpeedY = -ballSpeedY;
     }
@@ -651,7 +657,7 @@ ball.style.left = ballX + ballSpeedX + "px";
 ball.style.top = ballY + ballSpeedY + "px";
 ]>
 
-<{c i main.js 100 0 \n
+<{c i main.js 97 0 \n
     ball.style.left = ballX + ballSpeedX + "px";
     ball.style.top = ballY + ballSpeedY + "px";
 }>
@@ -665,6 +671,9 @@ function endGame(winner) {
 
   alert(winner + " Wins");
 
+  ball.style.left = "380px";
+  ball.style.top = "230px";
+
   startButton.style.display = "block";
 }
 ]>
@@ -674,6 +683,9 @@ function endGame(winner) {
   clearInterval(interval);
 
   alert(winner + " Wins");
+  
+  ball.style.left = "380px";
+  ball.style.top = "230px";
 
   startButton.style.display = "block";
 }
